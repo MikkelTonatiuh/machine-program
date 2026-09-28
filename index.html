@@ -18,11 +18,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@87.5..100,400..500&family=Newsreader:ital,opsz,wght@0,6..72,300..400;1,6..72,300&display=swap" crossorigin>
 <style>
-:root { color-scheme: dark; --ink: #ece7de; --ink2: #aeb5b8; --ink3: #818b90; --amber: #e0a060;
+:root { color-scheme: dark; --ink: #ece7de; --ink2: #aeb5b8; --ink3: #818b90; --amber: #e0a060; --ember: #c4511f;
   --line: rgba(236,231,222,.12); --line2: rgba(236,231,222,.26); --gut: 20px; --ease: cubic-bezier(.2,0,0,1);
   --sl: max(var(--gut), env(safe-area-inset-left, 0px)); --sr: max(var(--gut), env(safe-area-inset-right, 0px));
   --serif: Newsreader, "Iowan Old Style", Georgia, serif; --sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
-  --top: 59px; --arc: 577px; --ty0: 644px; --tx0: 0px; --tx1: 390px; --bx0: 0px; --bw: 390px; --fy: 318px; --fh: 518px; }
+  --top: 59px; --arc: 522px; --ty0: 588px; --tx0: 0px; --tx1: 390px; --bx0: 0px; --bw: 390px; --fy: 291px; --fh: 463px; }
 [hidden] { display: none !important; }
 *, *::before, *::after { box-sizing: border-box; }
 html { height: 100%; background: linear-gradient(#0a0d10 50%, #111 50%); overflow: hidden; overscroll-behavior: none; }
@@ -34,7 +34,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .app { position: relative; height: 100%; overflow: hidden; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .stagebox { position: absolute; inset: 0; touch-action: pinch-zoom; cursor: grab; }
 .stagebox:active { cursor: grabbing; }
-.app.picking .stagebox { cursor: ns-resize; }
+.app.adjusting .stagebox { cursor: ns-resize; }
 .stage { position: absolute; inset: 0; }
 .stage .mce-stage { transition: opacity .4s var(--ease); }
 .stagebox.is-booting .mce-stage { opacity: 0; }
@@ -58,57 +58,67 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .daybtn svg, .resetview svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; opacity: .8; }
 .resetview { pointer-events: auto; width: 36px; height: 36px; margin-right: -9px; display: grid; place-items: center; color: var(--ink2); }
 .resetview svg { width: 17px; height: 17px; stroke-width: 1.5; }
+.turntip { margin: 0; font: 400 12.5px/1 var(--sans); color: var(--ink3); letter-spacing: .01em; white-space: nowrap; }
 @media (hover: hover) { .daybtn:hover, .resetview:hover { color: var(--ink); } }
 .info { position: absolute; left: 0; right: 0; top: var(--ty0); z-index: 2; display: flex; flex-direction: column; align-items: center;
-  padding: 0 var(--sr) 0 var(--sl); text-align: center; pointer-events: none; transition: opacity .25s var(--ease); }
+  padding: 0 var(--sr) 0 var(--sl); text-align: center; pointer-events: none; }
 .info > * { margin: 0; max-width: 34rem; }
-.ctx { display: flex; align-items: baseline; justify-content: center; margin-bottom: 6px; font: 400 13.5px/1.3 var(--sans); color: var(--ink3); font-variant-numeric: tabular-nums; }
-.ctx button { position: relative; margin-left: 12px; pointer-events: auto; color: var(--amber); font-weight: 500; }
-.ctx button::after { content: ""; position: absolute; inset: -14px -12px; }
 .kicker { font: 500 12.5px/1.2 var(--sans); color: var(--ink2); letter-spacing: .015em; margin-bottom: 4px; }
 .kicker[data-tone="warm"] { color: var(--amber); }
 .name { max-width: 100%; font: 300 clamp(31px, 8.7vw, 44px)/1.06 var(--serif); letter-spacing: -.012em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ncheck svg { width: .6em; height: .6em; margin: 0 .2em 0 -.1em; vertical-align: -.02em; fill: none; stroke: var(--amber); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
 .clock { font: 300 clamp(62px, 18.5vw, 88px)/1 var(--serif); letter-spacing: -.02em; font-variant-numeric: tabular-nums lining-nums; }
 .line { margin-top: 11px; font: 400 14.5px/1.3 var(--sans); color: var(--ink2); font-variant-numeric: tabular-nums; }
+.line[data-tone="go"] { color: var(--amber); font-weight: 500; }
 .ticks { display: inline-flex; gap: 4px; margin: 0 4px 0 10px; vertical-align: middle; position: relative; top: -1px; }
 .ticks i { display: block; width: 12px; height: 3px; border-radius: 2px; background: rgba(236,231,222,.2); }
 .ticks i.on { background: rgba(236,231,222,.86); }
 .ticks i.cur { background: rgba(236,231,222,.42); }
+.ticks i.go { background: var(--amber); box-shadow: 0 0 9px 1px rgba(255,140,60,.5); }
+.ticks i.glow { animation: glow 1.6s var(--ease) both; }
+@keyframes glow { 0%, 40% { background: #ffcf9e; box-shadow: 0 0 12px 3px rgba(255,108,40,.9); } 100% { background: rgba(236,231,222,.86); box-shadow: 0 0 0 0 rgba(255,108,40,0); } }
 .mus { margin-top: 5px; font: 400 13.5px/1.3 var(--sans); color: var(--ink3); }
-.guide { margin-top: 15px; max-width: min(30em, 100%); font: italic 300 17.5px/1.35 var(--serif); color: var(--ink); text-wrap: balance; }
-.guide[data-tone="soft"] { color: var(--ink3); font-size: 16px; }
-.guide[data-tone="tip"] { color: var(--ink2); }
-.app.picking .info { opacity: .3; }
-.app.picking .guide { visibility: hidden; }
-.app[data-mode="rest"] .line { margin-top: 8px; }
-.app[data-mode="rest"] .clock { font-size: clamp(56px, 18.5vw, 76px); }
-.app[data-mode="rest"] .kicker { margin-bottom: 3px; }
-.picker { position: absolute; left: var(--bx0); width: var(--bw); top: var(--fy); height: 0; z-index: 5; pointer-events: none; }
-.pnum { --nf: min(26vw, calc(var(--fh) * .21), 120px); position: absolute; left: 50%; top: 0; width: min(46vw, 190px); height: min(calc(var(--fh) * .26), 136px); transform: translate(-50%, -50%); border-radius: 20px; pointer-events: none; }
-.picker.sticky .pnum { pointer-events: auto; cursor: pointer; }
-.pnum:focus-visible { outline-offset: 4px; }
-.picker.sticky .pnum::after { content: ""; position: absolute; left: 50%; top: calc(50% + var(--nf) * .43); width: calc(var(--nf) * .42); height: 2px; transform: translateX(-50%); border-radius: 1px; background: rgba(224,160,96,.75); }
-.wheel { --sp: min(19vw, calc(var(--fh) * .155), 88px); position: absolute; left: 50%; top: 0; }
-.wheel span { position: absolute; left: 0; top: 0; font: 300 min(26vw, calc(var(--fh) * .21), 120px)/1 var(--serif); color: var(--ink); font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; will-change: transform, opacity; }
-.prange { position: absolute; left: calc(50% + min(18vw, calc(var(--fh) * .15), 84px)); top: 0; transform: translateY(-50%); margin: 0; text-align: left;
-  font: 500 13px/1.35 var(--sans); color: var(--ink2); font-variant-numeric: tabular-nums; }
-.prange span { display: block; color: var(--ink3); font-weight: 400; }
-.prange span:first-child { color: var(--ink2); font-weight: 500; }
-.toast, .hint { position: absolute; left: 0; right: 0; bottom: 10px; z-index: 6; display: flex; align-items: center; justify-content: center; gap: 0;
-  height: 44px; margin: 0; padding: 0 var(--sr) 0 var(--sl); font: 400 14px/1 var(--sans); color: var(--ink2); pointer-events: none; }
-.hint { color: var(--ink3); font-size: 13.5px; }
-.toast .dot { padding: 0 7px; }
-.toast button { pointer-events: auto; height: 44px; padding: 0 2px; color: var(--amber); font-weight: 500; }
-.toast .tfoot { padding-left: 2px; color: var(--ink3); font-size: 13.5px; white-space: pre; }
-.app.picking .toast { visibility: hidden; }
-.kb { position: absolute; left: 0; right: 0; bottom: 0; z-index: 8; display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; justify-content: safe center; gap: 6px;
-  padding: 8px var(--sr) 10px var(--sl); background: #121416; border-top: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
-.kb:not(:focus-within) { width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); border: 0; white-space: nowrap; }
-.kb button, .kb input { flex: none; height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line2); font: 500 13px/1 var(--sans); color: var(--ink); background: transparent; white-space: nowrap; }
-.kb button:disabled { opacity: .4; cursor: default; }
-.kb input { width: 62px; padding: 0 6px; text-align: center; font-variant-numeric: tabular-nums; }
-.kbset { display: inline-flex; flex: none; align-items: center; gap: 6px; }
-.kbset label { font: 500 13px/1 var(--sans); color: var(--ink2); }
+.app[data-view="rest"] .line { margin-top: 8px; }
+.app[data-view="rest"] .clock { font-size: clamp(56px, 18.5vw, 76px); }
+.app[data-view="rest"] .kicker { margin-bottom: 3px; }
+.act { position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; flex-direction: column; align-items: center;
+  padding: 0 var(--sr) 12px var(--sl); pointer-events: none; }
+.note { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; column-gap: 8px; max-width: min(100%, 30rem); min-height: 21px; margin: 0 0 8px;
+  font: 400 14.5px/1.4 var(--sans); color: var(--ink2); text-align: center; text-wrap: balance; font-variant-numeric: tabular-nums; }
+.note[data-tone="guide"], .note[data-tone="soft"], .note[data-tone="tip"] { font: italic 300 16.5px/1.3 var(--serif); color: #cfd2cf; }
+.note[data-tone="soft"] { color: var(--ink3); }
+.note[data-tone="tip"] { color: var(--ink2); }
+.note[data-tone="done"] { color: var(--ink); }
+.nicon { display: inline-flex; align-self: center; }
+.nicon svg { width: 16px; height: 16px; fill: none; stroke: var(--amber); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
+.undo { position: relative; pointer-events: auto; padding: 0 2px; font: 500 14.5px/1.4 var(--sans); color: var(--amber); }
+.undo::after { content: ""; position: absolute; inset: -12px -14px; }
+.sel { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 0 0 10px; pointer-events: auto; touch-action: manipulation; }
+.stepbtn { width: 48px; height: 48px; flex: none; border-radius: 50%; display: grid; place-items: center; color: var(--ink); border: 1px solid rgba(236,231,222,.28);
+  transition: background-color .15s var(--ease), border-color .15s var(--ease), opacity .15s var(--ease); }
+.stepbtn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.stepbtn:active { background: rgba(236,231,222,.16); }
+.stepbtn[aria-disabled="true"] { opacity: .3; cursor: default; }
+.num { display: block; min-width: 118px; margin: 0; text-align: center; white-space: nowrap; font: 300 46px/48px var(--serif); color: var(--ink); font-variant-numeric: tabular-nums lining-nums; letter-spacing: -.01em; }
+.num .n { display: inline-block; min-width: 1.05em; transform-origin: 50% 64%; transition: transform .18s var(--ease), color .2s var(--ease); }
+.num .u { font: 400 13.5px/1 var(--sans); color: var(--ink3); letter-spacing: 0; }
+.num.big .n { transform: scale(1.3); }
+.num.bump .n { animation: bump .3s var(--ease); }
+.num.big.bump .n { animation-name: bumpbig; }
+@keyframes bump { from { transform: scale(1.32); } to { transform: scale(1); } }
+@keyframes bumpbig { from { transform: scale(1.46); } to { transform: scale(1.3); } }
+.primary { position: relative; display: flex; align-items: center; justify-content: center; gap: 9px; width: min(100%, 360px); height: 56px; flex: none;
+  pointer-events: auto; touch-action: manipulation; border-radius: 999px; border: 1px solid rgba(236,231,222,.36); background: rgba(236,231,222,.08);
+  color: var(--ink); font: 500 16.5px/1 var(--sans); letter-spacing: .01em; white-space: nowrap;
+  transition: background-color .2s var(--ease), border-color .2s var(--ease), box-shadow .35s var(--ease), color .2s var(--ease); }
+.pic { display: inline-flex; }
+.primary[data-act="next"] .pic { order: 2; }
+.pic svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.primary:active { background: rgba(236,231,222,.17); }
+.primary[data-ack] { background: var(--ember); border-color: rgba(255,168,112,.6); color: #fff; box-shadow: 0 0 30px rgba(255,96,36,.42); cursor: default; }
+.primary[data-ack] .pic svg { width: 27px; height: 27px; stroke-width: 2.3; }
+@media (hover: hover) { .primary:not([data-ack]):hover { background: rgba(236,231,222,.13); border-color: rgba(236,231,222,.5); }
+  .stepbtn:not([aria-disabled="true"]):hover { border-color: rgba(236,231,222,.55); } .undo:hover { color: #f2c08a; } }
 .days { position: absolute; inset: 0; z-index: 9; display: flex; justify-content: center; background: #0b0d10; }
 .dayswrap { display: flex; flex-direction: column; width: 100%; max-width: 460px; height: 100%; padding: 6px var(--sr) 18px var(--sl); }
 .dayshead { display: flex; align-items: center; justify-content: space-between; min-height: 52px; }
@@ -126,21 +136,35 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .dayrow:focus-visible { outline-offset: -2px; border-radius: 8px; }
 @media (hover: hover) { .dayrow:hover .nm { color: var(--ink); } }
 .savenote { margin: auto 0 0; padding-top: 16px; font: 400 12.5px/1.4 var(--sans); color: var(--ink3); }
-.app.side .info { left: var(--tx0); right: 0; top: var(--top); bottom: calc(100% - var(--arc)); justify-content: center; align-items: flex-start; text-align: left; padding: 0 var(--sr) 18px 12px; }
+.app.side .info { left: var(--tx0); right: 0; top: var(--top); bottom: calc(var(--actb, 14px) + 112px); justify-content: flex-end; justify-content: safe flex-end; align-items: flex-start; text-align: left; padding: 0 var(--sr) 0 12px; }
+.app.side[data-view="set"] .info { bottom: calc(var(--actb, 14px) + 176px); }
 .app.side .name { font-size: clamp(28px, 4.3vw, 54px); }
 .app.side .clock { font-size: clamp(56px, 8.5vw, 104px); }
 .app.side .info > * { max-width: 30rem; }
-.app.side .toast, .app.side .hint { left: var(--tx0); justify-content: flex-start; padding-left: 0; }
-.app.side .ctx { justify-content: flex-start; }
+.app.side .act { left: var(--tx0); bottom: var(--actb, 14px); align-items: flex-start; padding: 0 var(--sr) 0 12px; }
+.app.side .note, .app.side .sel, .app.side .primary { width: min(100%, 340px); max-width: none; }
+.app.side .num .u { color: var(--ink2); }
 .app.side .dayswrap { max-width: 640px; }
 .app.side .daylist { display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; }
 .app.side .dayrow { min-height: 48px; padding: 11px 0 9px; }
 .app.side .dayrow .nm { font-size: 22px; }
 @media (min-width: 1000px) and (min-height: 600px) {
   .app.side .line { font-size: 17px; margin-top: 14px; } .app.side .mus { font-size: 15.5px; } .app.side .kicker { font-size: 14px; }
-  .app.side .guide { font-size: 21px; margin-top: 18px; } .app.side .toast, .app.side .hint { font-size: 15px; }
+  .app.side .note { font-size: 15.5px; } .app.side .note[data-tone="guide"], .app.side .note[data-tone="soft"], .app.side .note[data-tone="tip"] { font-size: 18px; }
 }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+@media (max-height: 699px) {
+  .app:not(.side) .mus { display: none; }
+  .app:not(.side) .note { margin-bottom: 5px; }
+  .app:not(.side) .note[data-tone="guide"], .app:not(.side) .note[data-tone="soft"], .app:not(.side) .note[data-tone="tip"] { font-size: 15.5px; line-height: 1.22; }
+  .app:not(.side) .sel { margin-bottom: 8px; }
+}
+@media (max-height: 419px) { .app.side .mus { display: none; } }
+.app.longnote:not(.side) .mus { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  .num.big .n { transform: none; } .num.big .n, .num.bump .n { color: var(--amber); }
+  .ticks i.glow { background: #ffcf9e; box-shadow: 0 0 12px 3px rgba(255,108,40,.85); }
+}
 :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 html:has(.app.dlg) { background: #0b0d10 !important; }
 .credit { margin: 0; padding-top: 4px; font: 400 12px/1.4 var(--sans); color: var(--ink3); opacity: .82; }
@@ -158,30 +182,26 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     <nav class="segs" id="segs" aria-label="Today's steps"></nav>
     <div class="bar">
       <button class="daybtn" id="daybtn" type="button" aria-haspopup="dialog"><span id="daylabel"></span><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="m2.5 4.5 3.5 3.5 3.5-3.5"/></svg></button>
+      <p class="turntip" id="turntip" hidden>Drag sideways to turn</p>
       <button class="resetview" id="resetview" type="button" aria-label="Reset the view" hidden><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4.2 8.2A6 6 0 1 1 4 11.6"/><path d="M3.6 4.2v4.2h4.2"/></svg></button>
     </div>
   </header>
   <section class="info" id="info" aria-label="Now">
-    <p class="ctx" id="ctx" hidden><span id="ctxt"></span><button id="ctxundo" type="button" hidden>Undo</button></p>
     <p class="kicker" id="kicker" hidden></p>
     <h1 class="name" id="name"></h1>
     <p class="clock" id="clock" hidden></p>
     <p class="line" id="line"></p>
     <p class="mus" id="mus" hidden></p>
-    <p class="guide" id="guide" hidden></p>
   </section>
-  <div class="picker" id="picker" hidden><div class="wheel" id="wheel" aria-hidden="true"></div><p class="prange" aria-hidden="true"><span id="prange"></span><span>reps</span></p><button class="pnum" id="pnum" type="button" aria-label="Log the reps"></button></div>
-  <p class="hint" id="hint" hidden>Drag up or down to log reps &middot; sideways to turn</p>
-  <div class="toast" id="toast" hidden><span id="tmsg"></span><span class="dot" aria-hidden="true">&middot;</span><button id="tundo" type="button">Undo</button><span class="tfoot" id="tfoot" hidden></span></div>
-  <div class="kb" id="kb" role="group" aria-label="Workout controls">
-    <span class="kbset" id="kbset" hidden><label for="kbreps">Reps</label><input id="kbreps" type="number" inputmode="numeric" min="0" max="40" step="1"><button id="kblog" type="button">Log set</button></span>
-    <button id="kbskip" type="button" hidden>Skip rest</button>
-    <button id="kbtimer" type="button" hidden>Start timer</button>
-    <button id="kbcont" type="button" hidden>Continue</button>
-    <button id="kbprev" type="button" aria-label="Previous step">Previous</button>
-    <button id="kbnext" type="button" aria-label="Next step">Next</button>
-    <button id="kbreset" type="button" aria-label="Reset the view">Reset view</button>
-  </div>
+  <section class="act" id="act" aria-label="Actions" hidden>
+    <p class="note" id="note" hidden><span class="nicon" id="nicon" aria-hidden="true" hidden><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="m4.4 10.6 3.7 3.6 7.6-8.4"/></svg></span><span id="notet"></span><button class="undo" id="undo" type="button" hidden>Undo</button></p>
+    <div class="sel" id="sel" role="group" aria-label="Reps for this set" hidden>
+      <button class="stepbtn" id="minus" type="button" aria-label="One rep fewer"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4.5 10h11"/></svg></button>
+      <output class="num" id="reps" aria-live="polite"><span class="n" id="repsn"></span> <span class="u">reps</span></output>
+      <button class="stepbtn" id="plus" type="button" aria-label="One rep more"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4.5 10h11M10 4.5v11"/></svg></button>
+    </div>
+    <button class="primary" id="primary" type="button" hidden><span class="pic" id="pic" aria-hidden="true"></span><span id="plabel"></span></button>
+  </section>
   <div class="days" id="days" role="dialog" aria-modal="true" aria-labelledby="daystitle" hidden>
     <div class="dayswrap">
       <div class="dayshead"><h2 id="daystitle">Choose a day</h2><button class="daysclose" id="daysclose" type="button" aria-label="Close"><svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="m2.5 2.5 9 9m0-9-9 9"/></svg></button></div>
@@ -496,11 +516,16 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       return { mode: 'side', top, arc: { x: w / 2, y: arcY, R }, box: boxOn(0, split, arcY, 0.84),
         text: { x0: split, y0: top, x1: w, y1: h }, dip: { fig: figRoom, all: room }, fade: [h - 52, h - 4] };
     }
-    // Under the arc: the figure's deepest dip (gap, ~0.115 of the box height), the text block (up to ~146 px: name, set
-    // line, muscles, a guidance line; or the rest's label, clock and next line) and the foot line (~54 px) must fit, and
-    // the planet keeps at least 28 % of the height; the arc sits where that leaves it (solved in a few steps, since the
-    // box, and so the gap, depends on the arc).
-    const frac = a < 0.9 ? 0.81 : a < 1.1 ? 0.83 : 0.84, TEXT = 200;
+    // Under the arc: the figure's deepest dip (gap, ~0.115 of the box height), then TEXT px for the set's screen, the
+    // fullest one (tools/build.mjs styles): the text block (the title, 1.06 x its clamp(31, 8.7vw, 44) px, the set line
+    // and the muscles, 53 px; a short screen, under 700 px, leaves the muscles out: 30 px), 18 px of air, and the action
+    // area at the bottom (156 px: the note line, the rep selector and the 56 px primary button, 12 px above the edge).
+    // The planet keeps at least 28 % of the height; the arc sits where that leaves it (solved in a few steps, since the
+    // box, and so the gap, depends on the arc). On a tall phone the box is as wide as it may be (1.5 x its width) before
+    // the arc reaches its place, so the action area costs the figure little or nothing there; elsewhere the figure is
+    // framed a little smaller than with v6's 200 px (text and a foot line).
+    const frac = a < 0.9 ? 0.81 : a < 1.1 ? 0.83 : 0.84;
+    const TEXT = Math.round(1.06 * clamp(0.087 * w, 31, 44) + (h < 700 ? 30 : 53) + 18 + 156);
     let arcY = Math.round(h * 0.68), box = null, gap = 0;
     for (let k = 0; k < 4; k++) { box = boxOn(0, w, arcY, frac); gap = Math.round(0.115 * (box.y1 - box.y0)); arcY = Math.round(h - Math.max(gap + TEXT, h * 0.28)); }
     box = boxOn(0, w, arcY, frac); gap = Math.round(0.115 * (box.y1 - box.y0));
@@ -518,28 +543,32 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
 // Machine Program: the guided workout player around the figure engine (the installable web app).
 // One full-screen stage and nothing to scroll: the figure plays by itself above the horizon arc, the text lives on the
 // dark planet below it, and the day is followed from start to end in place:
-//   warm-up timer (5 min bike) -> each exercise's sets, logged with the rep picker -> rest, counted down by a brighter
-//   ember light sweeping along the rim -> a match cut to the next exercise -> the end of the day. Recovery days: the bike
-//   timer, the two ab exercises, then 10 min stretching.
+//   warm-up timer (5 min bike) -> each exercise's sets -> rest, counted down by a brighter ember light sweeping along the
+//   rim -> a match cut to the next exercise -> the end of the day. Recovery days: the bike timer, the two ab exercises,
+//   then 10 min stretching.
 // The figure always plays and loops, in every state, whatever prefers-reduced-motion says (reduced motion only softens
-// the page's own motion: fades, the turn's inertia, the grain).
-// Logging a set (a plain tap or click never logs):
-//   - drag up or down on the stage during a set: the rep picker opens at once on the default and follows the drag;
-//     releasing logs that number; sliding far sideways, releasing outside the frame or losing the pointer cancels
-//   - press and hold still (450 ms), or the mouse wheel over the stage, or Up / Down: the picker opens and stays open;
-//     drag, scroll or Up / Down change the number, a tap on the number (or Enter) logs it, a tap elsewhere or Escape
-//     cancels
-//   - Undo is offered for the whole rest that follows a set
-// A horizontal drag turns the figure (yaw), a double tap resets the view; a single tap skips the rest, starts or
-// finishes a timer, or shows the exercise's tip. Keyboard and screen readers get the same through visually hidden
-// controls (they show while focused), and a polite live region announces sets and rest.
+// the page's own motion: fades, the turn's inertia, the grain, the buttons' transitions).
+// v7 "clear actions": every state has ONE visible primary button at the bottom, in thumb reach (Start, Done, Skip rest,
+// Continue, Next: Day 2), and every action answers at once where the finger is:
+//   - a set: the rep selector "-  10 reps  +" above the Done button. It starts on what was done on this set last time,
+//     else the top of the range. Done logs the set with the number shown: the button turns into an ember check for a
+//     moment, the set's tick lights up, "Set 2 done . 10 reps  Undo" appears above the button, then the rest
+//   - a drag up or down on the stage changes the number live (the numeral grows while it follows); a drag never logs
+//   - rest: the countdown, "Next: ...", the done line with its Undo for the whole rest, and Skip rest; when it ends (a
+//     haptic where allowed) the next set appears with a short highlight, "Set 3 . go"
+//   - timed steps: Start, then Done (finishes early); a warm-up or stretching that runs out moves on by itself, with the
+//     same ember check
+// A horizontal drag turns the figure (yaw), a double tap resets the view, a single tap on the stage during a set shows
+// the exercise's tip; nothing on the stage logs, skips or starts anything. The buttons are real buttons for the keyboard
+// and screen readers (Up / Down also change the reps, Left / Right turn the figure), and a polite live region announces
+// sets and rest. A new primary action takes no press for a moment, so a double tap never does two things.
 // Saving: the installable web app keeps the progress in localStorage on this phone (the day picker says so; where
 // nothing can be kept at all, that this view cannot save).
 // It is written only after something the viewer did (a set, undo, a step finished, the day finished or changed), one
 // write at a time, each awaited.
-// Cold start: the program is inlined in the page and this file runs before three.js, so the horizon, the progress line
-// and the text paint at once; the stage is created at DOMContentLoaded and the first figure fades in over the same
-// horizon. Without WebGL or three.js everything but the figure still works.
+// Cold start: the program is inlined in the page and this file runs before three.js, so the horizon, the progress line,
+// the text and the buttons paint at once; the stage is created at DOMContentLoaded and the first figure fades in over
+// the same horizon. Without WebGL or three.js everything but the figure still works.
 // Test and verification hooks: ?fast=1 runs every timer 30x faster (?fast=<n>: n x), window.__app exposes the state;
 // ?day=1..7&ex=<id>&t=<phase|peak|still> opens an exercise frozen on a frame (verify's phone shot; nothing is saved).
 (function (g) {
@@ -553,7 +582,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // tools/build.mjs (stage.html's default) and tools/verify.mjs read this line, so every check runs in this finish.
   const FINISH = 'clay';
   const SPEED = Q.has('fast') ? (+Q.get('fast') > 1 ? +Q.get('fast') : 30) : 1;
-  const VERIFY = Q.has('t'); // a verification shot: frozen frame, no first-time hint, nothing saved
+  const VERIFY = Q.has('t'); // a verification shot: frozen frame, no first-time tip, nothing saved
   const now = () => (g.performance ? g.performance.now() : Date.now());
   const clamp = (x, a, b) => (x < a ? a : x > b ? b : x);
   // reduced motion softens only the page's own motion (fades); the figure always plays
@@ -563,37 +592,37 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   const MID = ' \u00b7 ', ND = '\u2013';
   const dash = (s) => String(s).replace(/-/g, ND);
   const mmss = (sec) => { sec = Math.max(0, sec); const m = Math.floor(sec / 60), s = Math.floor(sec % 60); return m + ':' + (s < 10 ? '0' : '') + s; };
-  const REPS_MAX = 40; // the rep picker and every logged set: 0..40
-  // Words that match the pointer in use: "Tap" on touch, "Click" with a mouse. The first guess comes from the device
-  // (a fine pointer that hovers is a mouse); every pointer event updates it.
+  const REPS_MAX = 40; // the rep selector and every logged set: 0..40
+  const ACK_MS = 600, AUTO_ACK_MS = 900; // the ember check after Done (and after a timer that ran out on its own)
+  const GO_MS = 1800, GLOW_MS = 1600, NOTE_MS = 8000; // "Set 3 . go"; the tick just logged; a done line on the next step
+  const LOCK_MS = 450; // a primary button whose action just changed takes no press for this long
+  // the pointer in use (touch or mouse): the first guess from the device, then every press on the stage
   let pointerKind = typeof g.matchMedia === 'function' && g.matchMedia('(hover: hover) and (pointer: fine)').matches ? 'mouse' : 'touch';
-  const mouse = () => pointerKind === 'mouse';
-  const verb = () => (mouse() ? 'Click' : 'Tap');
   const T = {
     warmSets: 'First, 2 light warm-up sets. No need to log them.',
     warmSetsAdd: 'First, 2 light warm-up sets (no need to log them), then add weight.',
     lastSet: 'Last set: go until you can\u2019t do another rep',
     addToday: 'Add weight today',
     addNext: 'Next time: add weight',
-    hint: () => (mouse() ? 'Scroll or drag up/down to log reps' + MID + 'sideways to turn' : 'Drag up or down to log reps' + MID + 'sideways to turn'),
-    start: () => verb() + ' to start the timer',
-    early: () => verb() + ' to finish early',
-    finish: () => verb() + ' to finish',
-    skip: () => verb() + ' to skip',
-    cont: () => verb() + ' to continue',
-    pickDrag: 'Release to log' + MID + 'slide sideways to cancel',
-    pickSticky: () => (pickBy === 'key' ? 'Up or down to change' + MID + 'Enter to log' + MID + 'Esc to cancel'
-      : mouse() ? 'Scroll or drag to change' + MID + 'click the number to log' : 'Drag to change' + MID + 'tap the number to log'),
-    notLogged: 'Not logged',
+    undone: 'Undone',
     local: 'Saved on this phone',
     nosave: 'Not saved in this view',
+  };
+  const ICONS = {
+    check: '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="m4.4 10.6 3.7 3.6 7.6-8.4"/></svg>',
+    next: '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4.5 10h11m-4.4-4.6 4.6 4.6-4.6 4.6"/></svg>',
   };
   const loadJSON = (p) => (MCE.loadJSON ? MCE.loadJSON(p)
     : fetch(p).then((r) => { if (!r.ok) throw new Error('fetch ' + p + ' ' + r.status); return r.json(); }));
 
   // ---------------------------------------------------------------- elements
-  const app = $('app'), box = $('stagebox'), stageEl = $('stage'), soon = $('soon'), pickerEl = $('picker'), pnum = $('pnum');
-  const E = { ctx: $('ctx'), ctxt: $('ctxt'), ctxundo: $('ctxundo'), kicker: $('kicker'), name: $('name'), clock: $('clock'), line: $('line'), mus: $('mus'), guide: $('guide') };
+  const app = $('app'), box = $('stagebox'), stageEl = $('stage'), soon = $('soon');
+  const E = {
+    kicker: $('kicker'), name: $('name'), clock: $('clock'), line: $('line'), mus: $('mus'),
+    act: $('act'), note: $('note'), nicon: $('nicon'), notet: $('notet'), undo: $('undo'),
+    sel: $('sel'), minus: $('minus'), plus: $('plus'), reps: $('reps'), repsn: $('repsn'),
+    primary: $('primary'), pic: $('pic'), plabel: $('plabel'), tip: $('turntip'),
+  };
 
   // ---------------------------------------------------------------- saving
   const LS_LOG = 'machine-program:log:v1', LS_UI = 'machine-program:ui:v1';
@@ -731,14 +760,19 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     day: 0, step: 0, adhoc: false,
     mode: 'boot',      // 'set' | 'rest' | 'timer' | 'done' (a finished step, revisited) | 'end'
     rest: null,        // { t0, dur, after, next, msg, msgUntil, set: { k, n } }
-    timers: new Map(), // 'day:step' -> { t0, ended, full }: the day's running timed steps (local only; one per step)
+    timers: new Map(), // 'day:step' -> { t0, full }: the day's running timed steps (local only; one per step)
     flash: null,       // { text, until }: a message in the kicker for a moment (add weight before stretching)
-    footMsg: null,     // { text, until }: a quiet word in the foot line (Not logged)
+    ack: null,         // { until, view, note }: the moment after Done: that screen as it was, the button an ember check
+    note: null,        // { text, undo, until }: a done line above the controls of the next step for a while
+    go: null,          // { day, step, k, until }: the next set's highlight, "Set 3 . go"
+    glow: null,        // { day, step, k, t0, until }: the tick of the set just logged lights up
+    sel: null,         // { day, step, k, v }: the rep selector's number for the set on screen (kept on this device)
     tipUntil: 0, end: null, rimFade: null,
   };
   const tkey = (d, i) => d + ':' + i;
   const timerOf = (d, i) => ui.timers.get(tkey(d, i)) || null;
   const curTimer = () => timerOf(ui.day, ui.step);
+  const ackOn = () => !!(ui.ack && now() < ui.ack.until);
 
   // ---------------------------------------------------------------- text
   const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -749,18 +783,18 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     return cap(joinAnd(p) + (s.length ? (p.length ? ', with ' : '') + joinAnd(s) : ''));
   }
   const repsRange = (st, e) => st.lo + (st.hi !== st.lo ? ND + st.hi : '') + ' reps' + (e.unilateral ? ' each arm' : '');
+  const repsWord = (n) => n + (n === 1 ? ' rep' : ' reps');
   function defaultReps(d, i) {
     const st = stepsOf(d)[i], k = setsOf(d, i).length, L = S.last[st.ex], v = L && L.reps && L.reps[k];
     return clamp(Number.isFinite(v) && v > 0 ? v : st.hi, 0, REPS_MAX);
   }
-  // the guidance line during a set (the rules card, in context)
+  // the guidance of a set (the rules card, in context): the note line above the rep selector
   function guideFor(d, i) {
     const st = stepsOf(d)[i], k = setsOf(d, i).length, L = S.last[st.ex];
-    if (now() < ui.tipUntil) return { text: exOf(st.ex).cue || '', tone: 'tip' };
     if (st.first && k === 0) return { text: L && L.top ? T.warmSetsAdd : T.warmSets };
     if (k === st.n - 1) return { text: T.lastSet };
     if (k === 0 && L && L.top) return { text: T.addToday };
-    if (L && L.reps && L.reps[k]) return { text: 'Last time ' + L.reps[k] + ' reps', tone: 'soft' };
+    if (L && L.reps && L.reps[k]) return { text: 'Last time ' + repsWord(L.reps[k]), tone: 'soft' };
     return null;
   }
   function restNext(r) {
@@ -768,6 +802,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (r.next === r.after) return 'Next: Set ' + (setsOf(ui.day, r.next).length + 1) + ' of ' + st.n;
     return 'Next: ' + (st.t === 'sets' ? exOf(st.ex).name : st.name);
   }
+  // what a logged set did, for the done line: "Set 2 done . 10 reps", or "Chest press done" after the exercise's last set
+  const doneText = (st, set, exDone) => (exDone ? exOf(st.ex).name + ' done' : 'Set ' + set.k + ' done' + MID + repsWord(set.n));
   // The title stays on one line when it can (shrinking at most to 26 px), otherwise it wraps at spaces, never at a hyphen.
   function fitName() {
     const el = E.name; el.style.fontSize = '';
@@ -778,75 +814,163 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   if (doc.fonts && doc.fonts.ready) doc.fonts.ready.then(fitName);
 
   const setText = (el, s) => { s = s || ''; if (el.textContent !== s) el.textContent = s; el.hidden = !s; };
-  // the set line with the set ticks beside "Set 2 of 4" (logged sets filled, the one in progress lighter):
-  // "Set 2 of 4 [ticks] . 8-10 reps"; textContent stays the plain line
+  // the title, with the end of the day's check before it
+  let nameKey = '';
+  function setName(s, check) {
+    const key = (check ? '1|' : '0|') + (s || '');
+    if (key === nameKey) return; nameKey = key;
+    E.name.textContent = ''; E.name.hidden = !s;
+    if (!s) return;
+    if (check) { const c = doc.createElement('span'); c.className = 'ncheck'; c.innerHTML = ICONS.check; E.name.append(c); }
+    E.name.append(s);
+  }
+  // the set line with the set ticks beside "Set 2 of 4" (logged sets filled, the one in progress lighter, the one just
+  // logged glowing, the next one lit for its "go"): "Set 2 of 4 [ticks] . 8-10 reps"; textContent stays the plain line
   let lineKey = '';
-  function setLine(text, ticks) {
-    const key = text + '|' + (ticks ? ticks.done + '/' + ticks.n : '');
+  function setLine(text, ticks, tone) {
+    const gl = ticks && ticks.glow != null ? ticks.glow : -1;
+    const key = text + '|' + (ticks ? ticks.n + '/' + ticks.done + '/' + gl + '/' + (ticks.go ? 1 : 0) : '') + '|' + (tone || '');
     if (key === lineKey) return; lineKey = key;
     const el = E.line; el.textContent = ''; el.hidden = !text;
+    if (tone) el.dataset.tone = tone; else delete el.dataset.tone;
     if (!ticks) { el.textContent = text; return; }
-    const cut = text.indexOf(MID), a = doc.createElement('span'), t = doc.createElement('span'), b = doc.createElement('span');
+    const cut = tone === 'go' ? -1 : text.indexOf(MID), a = doc.createElement('span'), t = doc.createElement('span'), b = doc.createElement('span');
     a.textContent = cut < 0 ? text : text.slice(0, cut); b.textContent = cut < 0 ? '' : text.slice(cut);
     t.className = 'ticks'; t.setAttribute('aria-hidden', 'true');
-    for (let k = 0; k < ticks.n; k++) { const i = doc.createElement('i'); if (k < ticks.done) i.className = 'on'; else if (k === ticks.done) i.className = 'cur'; t.appendChild(i); }
+    for (let k = 0; k < ticks.n; k++) {
+      const i = doc.createElement('i');
+      if (k < ticks.done) i.className = k === gl ? 'on glow' : 'on';
+      else if (k === ticks.done) i.className = ticks.go ? 'cur go' : 'cur';
+      // a line built again while the tick still glows goes on from where the glow was
+      if (k === gl && ticks.t0 != null) i.style.animationDelay = -Math.round(now() - ticks.t0) + 'ms';
+      t.appendChild(i);
+    }
     el.append(a, t, b);
   }
-  let lastView = '', foot = '';
-  // Everything the text shows, from the state (the clock is kept current by the loop between renders). The text block
-  // holds what is happening and the guidance; every "Tap to ..." instruction goes to one quiet line at the bottom (the
-  // foot), which the rep picker's instructions replace while it is open.
-  function render() {
-    const d = ui.day, i = ui.step, st = ui.mode === 'end' || ui.mode === 'boot' ? null : stepsOf(d)[i], t = now();
-    const v = { ctx: '', kicker: '', name: '', clock: '', line: '', ticks: null, mus: '', guide: '', tone: '', kTone: '', foot: '' };
+
+  // ---------------------------------------------------------------- what the screen shows
+  // The view of the state: the text block under the arc (kicker, name or clock, line with ticks, muscles) and the action
+  // area at the bottom (note, rep selector, the primary button). kind: which layout the text block takes.
+  function viewNow() {
+    const d = ui.day, i = ui.step, t = now(), st = ui.mode === 'end' || ui.mode === 'boot' ? null : stepsOf(d)[i];
+    const v = { kind: ui.mode, kicker: '', kTone: '', name: '', check: false, clock: '', line: '', lTone: '', ticks: null, mus: '', note: null, sel: false, primary: null };
+    const glowAt = (step) => (ui.glow && t < ui.glow.until && ui.glow.day === d && ui.glow.step === step ? ui.glow : null);
     if (ui.mode === 'set') {
-      const e = exOf(st.ex), k = setsOf(d, i).length, gd = guideFor(d, i);
-      v.name = e.name; v.line = 'Set ' + Math.min(k + 1, st.n) + ' of ' + st.n + MID + repsRange(st, e); v.ticks = { n: st.n, done: k };
+      const e = exOf(st.ex), k = setsOf(d, i).length, gw = glowAt(i);
+      const go = !!(ui.go && t < ui.go.until && ui.go.day === d && ui.go.step === i && ui.go.k === k);
+      v.name = e.name;
+      v.line = go ? 'Set ' + (k + 1) + MID + 'go' : 'Set ' + Math.min(k + 1, st.n) + ' of ' + st.n + MID + repsRange(st, e);
+      v.lTone = go ? 'go' : '';
+      v.ticks = { n: st.n, done: k, go, glow: gw ? gw.k : null, t0: gw ? gw.t0 : null };
       v.mus = musLine(e.muscles);
-      if (gd) { v.guide = gd.text; v.tone = gd.tone || ''; }
-      if (!hintSeen) v.foot = T.hint();
+      v.sel = true;
+      const r = selValue();
+      v.primary = { act: 'done', label: 'Done', icon: 'check', aria: 'Done: log set ' + (k + 1) + ' with ' + repsWord(r) };
+      const gd = guideFor(d, i);
+      if (t < ui.tipUntil && e.cue) v.note = { text: e.cue, tone: 'tip' };
+      else if (gd) v.note = { text: gd.text, tone: gd.tone || 'guide' };
     } else if (ui.mode === 'rest') {
-      // the rest keeps its context: what was just logged (with Undo for the whole rest), then Rest, the clock, what is next
-      const r = ui.rest, msg = r.msg && t < r.msgUntil, ex = stepsOf(d)[r.after];
-      if (r.set) v.ctx = exOf(ex.ex).name + MID + 'Set ' + r.set.k + MID + r.set.n + (r.set.n === 1 ? ' rep' : ' reps');
+      // the rest: Rest (or the add-weight message for a moment), the countdown, what is next (with the exercise's ticks);
+      // above the button what was just done, with Undo for the whole rest
+      const r = ui.rest, msg = r.msg && t < r.msgUntil, same = r.next === r.after, gw = glowAt(r.next);
       v.kicker = msg ? r.msg : 'Rest'; v.kTone = msg ? 'warm' : '';
-      v.clock = restClock(); v.line = restNext(r); v.foot = T.skip();
+      v.clock = restClock(); v.line = restNext(r);
+      if (same) v.ticks = { n: stepsOf(d)[r.next].n, done: setsOf(d, r.next).length, glow: gw ? gw.k : null, t0: gw ? gw.t0 : null };
+      if (r.set) v.note = { text: doneText(stepsOf(d)[r.after], r.set, !same), tone: 'done', icon: true, undo: 'rest' };
+      v.primary = { act: 'skip', label: 'Skip rest' };
     } else if (ui.mode === 'timer') {
-      const tm = curTimer();
+      const tm = curTimer(), nm = st.name.toLowerCase();
       v.line = st.line;
-      if (!tm) { v.name = st.name; v.foot = T.start(); }
-      else {
-        v.kicker = tm.ended ? st.name + MID + 'done' : st.name; v.clock = timerClock(st, tm);
-        v.foot = st.auto ? T.early() : T.finish();
-      }
+      if (!tm) { v.name = st.name; v.primary = { act: 'start', label: 'Start', aria: 'Start the ' + nm + ' timer' }; }
+      else { v.kicker = st.name; v.clock = timerClock(st, tm); v.primary = { act: 'finish', label: 'Done', icon: 'check', aria: 'Done: finish the ' + nm }; }
     } else if (ui.mode === 'done') {
       if (st.t === 'sets') { const e = exOf(st.ex), a = setsOf(d, i); v.name = e.name; v.line = a.length + ' sets done' + MID + a.join(', ') + ' reps'; v.mus = musLine(e.muscles); }
       else { v.name = st.name; v.line = 'Done'; }
-      v.foot = T.cont();
+      // the button names where it goes: the next open step (the day's end when none is left)
+      const nx = openAfter(d, i), ns = nx >= 0 ? stepsOf(d)[nx] : null;
+      v.primary = ns ? { act: 'continue', label: 'Next: ' + (ns.t === 'sets' ? exOf(ns.ex).name : ns.name) } : { act: 'continue', label: 'Finish the day' };
     } else if (ui.mode === 'end' && ui.end) {
+      // the end of the day: "Day 1 done" with a check, what it held, the next day as the button
       const x = ui.end, nd = (x.day + 1) % P.days.length;
-      v.name = dayLabel(x.day) + ' \u2014 done';
+      v.name = 'Day ' + (x.day + 1) + ' done'; v.check = true;
       v.line = (x.entry.exercises ? x.entry.exercises + (x.entry.exercises === 1 ? ' exercise' : ' exercises') + MID : '') + x.entry.sets + (x.entry.sets === 1 ? ' set' : ' sets') + (x.entry.bike ? MID + x.entry.bike + ' min bike' : '');
-      v.guide = 'Next: ' + dayLabel(nd); v.foot = T.cont();
       if (x.msg && t < x.msgUntil) { v.kicker = x.msg; v.kTone = 'warm'; }
+      if (x.note) v.note = { text: x.note, tone: 'done', icon: true, undo: 'end' };
+      v.primary = { act: 'next', label: 'Next: ' + dayLabel(nd), icon: 'next', aria: 'Next: ' + dayLabel(nd).replace(MID, ', ') };
     }
+    // a done line carried over to this step for a while ("Warm-up done . Undo"), in place of the guidance; the tip a tap
+    // on the figure asked for wins while it shows (the Undo stays valid and comes back with the line)
+    const tipOn = ui.mode === 'set' && t < ui.tipUntil;
+    if (ui.note && t < ui.note.until && !tipOn && (ui.mode === 'set' || ui.mode === 'timer' || ui.mode === 'done')) v.note = Object.assign({ tone: 'done', icon: true }, ui.note);
     // a message for a moment where the kicker is free (e.g. "Next time: add weight" on the stretching screen)
     if (ui.flash && t < ui.flash.until && !v.kicker && (ui.mode === 'timer' || ui.mode === 'set')) { v.kicker = ui.flash.text; v.kTone = 'warm'; }
-    if (pick) v.foot = pick.mode === 'drag' ? T.pickDrag : T.pickSticky();
-    else if (ui.footMsg && t < ui.footMsg.until) v.foot = ui.footMsg.text;
-    setText(E.ctxt, v.ctx); E.ctx.hidden = !v.ctx; E.ctxundo.hidden = !(v.ctx && undo && undo.for === 'rest');
+    return v;
+  }
+  // the moment after Done (or a timer that ran out): the screen as it was, with the set's tick lit and the done line;
+  // the button is an ember check and takes no press. then: the step change that waits for the moment to end (the next
+  // figure cuts in after it, not under the old text)
+  function ackView(before, note, ms, then) {
+    ui.ack = { until: now() + ms, view: before, note, then: then || null };
+    kickLoop();
+  }
+  let lastView = '', primKey = '', primLock = 0;
+  // Everything the screen shows, from the state (the clock is kept current by the loop between renders).
+  function render() {
+    let v = viewNow();
+    if (ui.ack && now() < ui.ack.until) {
+      v = Object.assign({}, ui.ack.view, { note: ui.ack.note, sel: false, primary: { act: 'ack', ack: true, icon: 'check', label: '', aria: ui.ack.note ? ui.ack.note.text : 'Done' } });
+    }
     setText(E.kicker, v.kicker); E.kicker.dataset.tone = v.kTone;
-    setText(E.name, v.name); setText(E.clock, v.clock);
-    setLine(v.line, v.ticks); setText(E.mus, v.mus);
-    setText(E.guide, v.guide); E.guide.dataset.tone = v.tone;
-    foot = v.foot;
+    setName(v.name, v.check); setText(E.clock, v.clock);
+    setLine(v.line, v.ticks, v.lTone); setText(E.mus, v.mus);
     app.dataset.mode = ui.mode;
     wake.set(ui.mode !== 'end'); // the screen stays awake while a day is on
-    const key = ui.mode + '|' + v.name + '|' + v.line;
+    app.dataset.view = v.kind;
+    const key = v.kind + '|' + v.name + '|' + v.line;
     if (key !== lastView) { lastView = key; fitName(); }
-    renderTop(); renderKb(); renderHint();
+    const hadFocus = E.act.contains(doc.activeElement) ? doc.activeElement : null;
+    paintNote(v.note); paintSel(v.sel); paintPrimary(v.primary);
+    // a control that had the keyboard's focus went away with the state (the selector in the rest, the Undo): the focus
+    // goes to the primary button, so a keyboard user stays in the action area
+    if (hadFocus && hadFocus !== E.primary && (hadFocus.offsetParent === null || hadFocus.hidden)) { try { E.primary.focus({ preventScroll: true }); } catch (_) { /* fine */ } }
+    renderTop(); renderTip();
     stageEl.setAttribute('aria-label', stageLabel());
     dimFor();
+  }
+  function paintNote(n) {
+    const el = E.note;
+    if (!n || !n.text) { el.hidden = true; E.undo.hidden = true; app.classList.remove('longnote'); return; }
+    el.hidden = false; el.dataset.tone = n.tone || '';
+    E.nicon.hidden = !n.icon;
+    if (E.notet.textContent !== n.text) E.notet.textContent = n.text;
+    E.undo.hidden = !(n.undo && undo && undo.for === n.undo);
+    // a note on two lines (a long tip or guidance on a narrow screen) takes the muscles line's room while it shows
+    app.classList.toggle('longnote', E.note.offsetHeight > 1.7 * parseFloat(getComputedStyle(E.note).lineHeight));
+  }
+  function paintSel(on) {
+    E.sel.hidden = !on;
+    if (!on) return;
+    const v = String(selValue());
+    if (E.repsn.textContent !== v) E.repsn.textContent = v;
+    E.minus.setAttribute('aria-disabled', +v <= 0 ? 'true' : 'false');
+    E.plus.setAttribute('aria-disabled', +v >= REPS_MAX ? 'true' : 'false');
+  }
+  function paintPrimary(p) {
+    const b = E.primary;
+    if (!p) { b.hidden = true; primKey = ''; delete b.dataset.act; return; }
+    b.hidden = false;
+    const key = p.act + '|' + (p.label || '') + '|' + (p.icon || '');
+    if (key !== primKey) {
+      // a new action takes no press for a moment: a double tap on Skip rest never logs the next set
+      if (b.dataset.act !== p.act && p.act !== 'ack') primLock = now() + LOCK_MS;
+      primKey = key; b.dataset.act = p.act;
+      E.pic.innerHTML = p.icon ? ICONS[p.icon] : ''; E.pic.hidden = !p.icon;
+      E.plabel.textContent = p.label || ''; E.plabel.hidden = !p.label;
+      if (p.ack) b.setAttribute('data-ack', ''); else b.removeAttribute('data-ack');
+    }
+    b.setAttribute('aria-disabled', p.ack ? 'true' : 'false');
+    const aria = p.aria || p.label;
+    if (b.getAttribute('aria-label') !== aria) b.setAttribute('aria-label', aria);
   }
   function stageLabel() {
     const st = ui.mode === 'end' ? null : stepsOf(ui.day)[ui.step], id = figOf(st);
@@ -898,7 +1022,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // ---------------------------------------------------------------- the flow
   function openDay(d, o) {
     o = o || {};
-    cancelRest(); ui.end = null; closePicker(false); clearUndo();
+    cancelRest(); ui.end = null; ui.ack = null; ui.note = null; ui.go = null; ui.glow = null; clearUndo();
     if (ui.mode !== 'boot' && (d !== ui.day || ui.adhoc !== (d < 0))) { ui.timers.clear(); saveTimers(); } // another day's timers stop (at boot they are restored instead)
     ui.adhoc = d < 0; ui.day = d;
     let p = d >= 0 ? S.prog[d] : null;
@@ -906,116 +1030,136 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const n = stepsOf(d).length, want = o.step != null ? o.step : p ? p.step : 0;
     goStep(clamp(want | 0, 0, n - 1), { cut: true });
   }
+  // o.go: arrived from a rest or a finished timer: the set gets its short highlight ("Set 3 . go")
   function goStep(i, o) {
     o = o || {};
     const d = ui.day, st = stepsOf(d)[i];
     ui.step = i; ui.tipUntil = 0;
     if (S.prog[d]) S.prog[d].step = i;
     ui.mode = isDone(d, i) ? 'done' : st.t === 'sets' ? 'set' : 'timer';
-    closePicker(false);
+    ui.go = o.go && ui.mode === 'set' ? { day: d, step: i, k: setsOf(d, i).length, until: now() + GO_MS } : null;
     showFigure(figOf(st), o.cut);
-    render(); announceStep(); prefetch(); kickLoop();
+    render(); if (!o.quiet) announceStep(o.pre); prefetch(); kickLoop();
   }
-  // a tap on a progress segment (or the previous / next step controls): that step, as far as it has got; the end
-  // screen's segments stay put (the day is done: the day picker opens any day)
+  // a tap on a progress segment: that step, as far as it has got; the end screen's segments stay put (the day is done:
+  // the day picker opens any day)
   function jumpTo(i) {
     if (dialogOpen() || ui.mode === 'end') return;
-    if (i === ui.step && ui.mode !== 'rest') return;
-    closePicker(false); cancelRest(); goStep(i, { cut: true });
+    if (i === ui.step && ui.mode !== 'rest' && !ackOn()) return;
+    cancelGesture(); ui.ack = null; dropNote(); cancelRest(); goStep(i, { cut: true });
   }
   function continueDay() { // from a finished step: the next open one, or the end of the day when none is left
     const nx = openAfter(ui.day, ui.step);
-    if (nx >= 0) goStep(nx, { cut: true }); else if (!ui.adhoc) { snapshot(); finishDay(); Save.persist(); }
+    if (nx >= 0) goStep(nx, { cut: true }); else if (!ui.adhoc) { undo = null; finishDay(null, null); Save.persist(); announce(endSpeech()); }
   }
 
-  // log one set with its reps (a user action: saved)
-  function logSet(n) {
-    if (ui.mode !== 'set') return;
-    closePicker(false); // logged another way (the keyboard bar) while the picker was open
+  // Done: log one set with the reps shown (a user action: saved). The screen answers at once: the button an ember check,
+  // the set's tick lit, the done line with its Undo above the button; the rest (or what comes next) follows the moment.
+  function logSet(n, how) {
+    if (ui.mode !== 'set' || ackOn()) return;
     const d = ui.day, i = ui.step, st = stepsOf(d)[i];
     n = clamp(Math.round(n), 0, REPS_MAX);
+    const before = viewNow(); // the set as it is on screen: it stays for the moment of the check
     snapshot();
     if (ui.adhoc) { S.prog[-1] = S.prog[-1] || { sets: {}, done: {} }; }
     const p = ensureProg(d), a = (p.sets[i] = (p.sets[i] || []).concat([n]));
     p.at = Date.now(); p.step = i; if (!ui.adhoc) S.current = d;
-    markHint();
-    const set = { k: a.length, n };
+    undo.sel = { day: d, step: i, k: a.length - 1, v: n }; // an Undo puts this number back on the selector
+    lastLog = { how: how || 'done', v: n, t: Math.round(now()) };
+    ui.sel = null; saveSel(); // the next set starts on its own default
+    const set = { k: a.length, n }, t0 = now(), exDone = a.length >= st.n, line = doneText(st, set, exDone);
+    ui.glow = { day: d, step: i, k: a.length - 1, t0, until: t0 + GLOW_MS };
+    Object.assign(before, { kind: 'set', lTone: '', line: 'Set ' + a.length + ' of ' + st.n + MID + repsRange(st, exOf(st.ex)), ticks: { n: st.n, done: a.length, glow: a.length - 1, t0 } });
+    const said = 'Set ' + set.k + ' done, ' + repsWord(n) + '.';
     let msg = null;
-    if (a.length >= st.n) { // the exercise is done: remember its reps for next time
+    haptic(14);
+    if (exDone) { // the exercise is done: remember its reps for next time
       const top = a.every((x) => x >= st.hi);
       S.last[st.ex] = { reps: a.slice(), at: Date.now(), top };
       if (top) msg = T.addNext;
       const nx = openAfter(d, i); // the next open step, earlier ones included; none: the day is done
-      if (nx < 0) { finishDay(msg); toast(n + ' reps'); Save.persist(); announce('Logged ' + n + ' reps. ' + endSpeech()); return; }
+      if (nx < 0) {
+        finishDay(msg, line); ackView(before, { text: line, tone: 'done', icon: true, undo: 'end' }, ACK_MS);
+        render(); Save.persist(); announce(said + ' ' + endSpeech()); return;
+      }
       p.step = nx;
-      // a timed step next (the recovery day's stretching) is its own rest: straight there, the message shown there
+      // a timed step next (the recovery day's stretching) is its own rest: straight there, the message and the done line
+      // (with its Undo) shown there
       if (stepsOf(d)[nx].t !== 'sets') {
-        if (msg) ui.flash = { text: msg, until: now() + 4500 };
-        goStep(nx, { cut: true }); toast(n + ' reps'); Save.persist(); announce('Logged ' + n + ' reps.' + (msg ? ' ' + msg + '.' : '')); return;
+        if (msg) ui.flash = { text: msg, until: now() + ACK_MS + 4500 };
+        undo.for = 'note'; ui.note = { text: line, undo: 'note', until: now() + ACK_MS + NOTE_MS };
+        ackView(before, { text: line, tone: 'done', icon: true, undo: 'note' }, ACK_MS, () => goStep(nx, { cut: true, quiet: true }));
+        render(); Save.persist(); announce(said + (msg ? ' ' + msg + '.' : '') + ' Next: ' + stepsOf(d)[nx].name + '.'); return;
       }
       startRest(i, nx, msg, set);
     } else startRest(i, i, null, set);
-    Save.persist();
+    ackView(before, { text: line, tone: 'done', icon: true, undo: 'rest' }, ACK_MS);
+    render(); Save.persist();
     const r = ui.rest;
-    announce('Logged ' + n + ' reps. Rest ' + Math.round(r.dur * SPEED / 60000) + ' minutes. ' + restNext(r) + '.' + (msg ? ' ' + msg + '.' : ''));
+    announce(said + ' Rest ' + Math.round(r.dur * SPEED / 60000) + ' minutes. ' + restNext(r) + '.' + (msg ? ' ' + msg + '.' : ''));
   }
-  // rest after a set: Undo stays offered for all of it (in the rest's context line)
+  // rest after a set: Undo stays offered for all of it (on the done line above the button)
   function startRest(after, next, msg, set, restored) {
     const st = stepsOf(ui.day)[after];
     const dur = restored ? restored.dur : (st.rest || 120) * 1000 / SPEED;
-    ui.rest = { t0: restored ? now() - (dur - restored.left) : now(), dur, after, next, msg, msgUntil: msg ? now() + (restored ? restored.msgLeft : 4500) : 0, set };
-    ui.mode = 'rest'; ui.tipUntil = 0; ui.rimFade = null;
+    ui.rest = { t0: restored ? now() - (dur - restored.left) : now(), dur, after, next, msg, msgUntil: msg ? now() + (restored ? restored.msgLeft : ACK_MS + 4500) : 0, set };
+    ui.mode = 'rest'; ui.tipUntil = 0; ui.rimFade = null; ui.go = null;
     if (undo) undo.for = 'rest';
-    hideToast(true);
     saveRest();
     render(); prefetch(); kickLoop();
   }
   function cancelRest() { if (ui.rest) { ui.rest = null; rimOff(); saveRest(); if (undo && undo.for === 'rest') undo = null; } }
-  // the rest ran out (auto: a short haptic) or was skipped: the next set, or a match cut to the next exercise; the rim
-  // light fades from where it was
+  // the rest ran out (auto: a haptic) or was skipped: the next set with its "go", or a match cut to the next exercise;
+  // the rim light fades from where it was
   function endRest(auto) {
     const r = ui.rest; if (!r) return;
     ui.rest = null; ui.rimFade = { t0: now(), p: Math.min(1, (now() - r.t0) / r.dur) };
     if (undo && undo.for === 'rest') undo = null;
     saveRest();
-    if (auto) haptic([24, 70, 24]);
-    goStep(r.next, { cut: r.next !== r.after });
-    if (auto) announce('Rest over.');
+    haptic(auto ? [24, 70, 24] : 10);
+    goStep(r.next, { cut: r.next !== r.after, go: true, pre: auto ? 'Rest over.' : '' });
   }
 
-  // Timed steps: a tap starts the timer; while it runs a tap finishes the step (Undo for a few seconds). One timer per
-  // step: looking at another step leaves it running. The warm-up moves on by itself when its 5 minutes are up (saved,
-  // like a tap); the recovery bike fills the rim over 20 minutes and keeps counting; stretching waits at 0:00 for a tap.
-  function timerTap() {
+  // Timed steps: Start starts the timer; while it runs Done finishes the step early. One timer per step: looking at
+  // another step leaves it running. The warm-up and stretching move on by themselves when their time is up (saved, like
+  // Done, with the same ember check); the recovery bike fills the rim over 20 minutes and keeps counting.
+  function timerStart() {
     const d = ui.day, i = ui.step, st = stepsOf(d)[i];
-    if (!curTimer()) {
-      ui.timers.set(tkey(d, i), { t0: now(), ended: false });
-      saveTimers(); render(); kickLoop();
-      announce(st.name + ' timer started, ' + Math.round(st.sec / 60) + ' minutes.');
-      return;
-    }
-    finishTimer(false);
+    if (curTimer()) return;
+    ui.timers.set(tkey(d, i), { t0: now() });
+    saveTimers(); haptic(10); render(); kickLoop();
+    announce(st.name + ' timer started, ' + Math.round(st.sec / 60) + ' minutes.');
   }
-  // the timed step i (default: the one on screen) is finished: by a tap, or on its own (the warm-up's 5 minutes); a
-  // warm-up that runs out while another step is on screen is only marked done
+  // the timed step i (default: the one on screen) is finished: by Done, or on its own (its time is up); one that runs out
+  // while another step is on screen is only marked done
   function finishTimer(auto, i) {
     const d = ui.day, here = i == null || i === ui.step; if (i == null) i = ui.step;
     const st = stepsOf(d)[i], tm = timerOf(d, i);
-    if (!auto) snapshot();
+    const before = here ? viewNow() : null;
+    if (auto) undo = here ? null : undo; else snapshot();
     const p = ensureProg(d); p.done[i] = 1; p.at = Date.now(); if (!ui.adhoc) S.current = d;
     if (st.open && tm) p.bike = Math.max(1, Math.round(elapsedOf(tm) / 60));
     ui.timers.delete(tkey(d, i)); saveTimers();
     if (!here) { Save.persist(); render(); return; }
     ui.rimFade = { t0: now(), p: 1 };
+    const line = st.name + ' done' + (st.open && p.bike ? MID + p.bike + ' min' : '');
+    if (auto && !st.open) before.clock = '0:00';
     const nx = openAfter(d, i);
-    if (nx < 0) finishDay(null); else { p.step = nx; goStep(nx, { cut: true }); }
-    Save.persist();
-    if (auto) { haptic([24, 70, 24]); announce(st.name + ' done.'); return; }
-    toast(st.name + ' done');
+    let then = null;
+    if (nx < 0) finishDay(null, line, !auto);
+    else {
+      p.step = nx;
+      if (!auto) { undo.for = 'note'; ui.note = { text: line, undo: 'note', until: now() + (auto ? AUTO_ACK_MS : ACK_MS) + NOTE_MS }; }
+      then = () => goStep(nx, { cut: true, go: true });
+    }
+    ackView(before, { text: line, tone: 'done', icon: true, undo: auto ? null : nx < 0 ? 'end' : 'note' }, auto ? AUTO_ACK_MS : ACK_MS, then);
+    render(); Save.persist();
+    haptic(auto ? [24, 70, 24] : 14);
     announce(st.name + ' done.' + (ui.mode === 'end' ? ' ' + endSpeech() : ''));
   }
-  // the day is finished: into the history (the last 90 days), the last finished day, the end screen
-  function finishDay(msg) {
+  // the day is finished: into the history (the last 90 days), the last finished day, the end screen; note: the done line
+  // of the last action (its Undo offered while the end screen shows)
+  function finishDay(msg, note, undoable) {
     const d = ui.day, p = S.prog[d] || { sets: {}, done: {} }, L = stepsOf(d), t = Date.now();
     const entry = { day: d, at: t, sets: 0, exercises: 0, ex: {} };
     L.forEach((st, i) => {
@@ -1032,9 +1176,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     }
     const prog = clone({ sets: p.sets || {}, done: p.done || {} });
     delete S.prog[d];
-    ui.timers.clear(); saveTimers(); cancelRest(); closePicker(false);
-    ui.end = { day: d, entry, prog, msg, msgUntil: msg ? now() + 4500 : 0 };
+    ui.timers.clear(); saveTimers(); cancelRest(); cancelGesture(); ui.go = null; ui.note = null;
+    if (undo) { if (undoable === false) undo = null; else undo.for = 'end'; }
+    ui.end = { day: d, entry, prog, msg, msgUntil: msg ? now() + ACK_MS + 4500 : 0, note: note || null };
     ui.mode = 'end'; ui.step = L.length - 1;
+    markTurn(); // the first day is done: the tip about turning has had its time
     showFigure(null, true);
     render(); kickLoop();
   }
@@ -1042,100 +1188,77 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function continueEnd() { const nd = (ui.end.day + 1) % P.days.length; ui.end = null; openDay(nd, { step: 0 }); }
 
   // Undo: the whole document and position as they were before the last action (one level). Offered for the whole rest
-  // that follows a set (in the rest's context line), otherwise while its toast shows.
+  // that follows a set and on the end screen (the done line above the button), otherwise while its done line shows on
+  // the next step. A set undone puts its number back on the selector.
   let undo = null;
-  function snapshot() { undo = { S: clone(S), day: ui.day, step: ui.step, timers: [...ui.timers].map(([k, v]) => [k, Object.assign({}, v)]), for: 'toast' }; }
-  function clearUndo() { undo = null; hideToast(true); }
+  function snapshot() { undo = { S: clone(S), day: ui.day, step: ui.step, timers: [...ui.timers].map(([k, v]) => [k, Object.assign({}, v)]), sel: null, for: 'note' }; }
+  function clearUndo() { undo = null; }
+  function dropNote() { if (ui.note && ui.note.undo && undo && undo.for === ui.note.undo) undo = null; ui.note = null; }
   function doUndo() {
     const u = undo; if (!u) return;
-    undo = null; hideToast(true);
+    // the set this Undo takes back, when the record does not name it (a rest carried over from v6): the one set more that
+    // the document holds for that step now
+    if (!u.sel && u.S && u.S.prog) {
+      const cur = S.prog[u.day] && S.prog[u.day].sets[u.step], prev = (u.S.prog[u.day] && u.S.prog[u.day].sets[u.step]) || [];
+      if (cur && cur.length === prev.length + 1) u.sel = { day: u.day, step: u.step, k: prev.length, v: cur[cur.length - 1] };
+    }
+    undo = null; ui.ack = null; ui.note = null; ui.glow = null;
     S = u.S; cancelRest(); ui.end = null; ui.day = u.day;
     ui.rimFade = ui.mode === 'rest' || ui.mode === 'end' ? { t0: now(), p: 1 } : null;
     if (u.timers) { ui.timers = new Map(u.timers); saveTimers(); }
-    goStep(u.step, { cut: true });
-    Save.persist();
-    announce('Undone.');
+    if (u.sel) { ui.sel = u.sel; saveSel(); }
+    ui.note = { text: T.undone, tone: 'plain', until: now() + 1600 };
+    goStep(u.step, { cut: true, quiet: true });
+    Save.persist(); haptic(10);
+    announce('Undone. ' + stepSpeech());
   }
 
-  // ---------------------------------------------------------------- the rep picker
-  // Two ways open: 'drag' (a vertical drag on the stage: the release logs) and 'sticky' (hold still, the wheel, Up / Down:
-  // it stays open; a tap on the number or Enter logs, a tap elsewhere or Escape cancels). The number follows the
-  // pointer at PICK_PX per rep, up = more; on touch the numerals sit above the finger.
-  const PICK_PX = 24;
-  let pick = null, pickBy = 'pointer', lastLog = null;
-  const wheelEl = $('wheel');
-  function openPicker(mode, by, at) {
-    if (ui.mode !== 'set' || dialogOpen()) return false;
-    const v = defaultReps(ui.day, ui.step), st = stepsOf(ui.day)[ui.step];
-    pickBy = by || 'pointer';
-    pick = { mode, base: v, pos: v, v, ay: at ? at.y : 0, ax: at ? at.x : 0, touch: !!(at && at.touch), at: now() };
-    $('prange').textContent = st.lo + (st.hi !== st.lo ? ND + st.hi : '');
-    pickerEl.hidden = false; pickerEl.classList.toggle('sticky', mode === 'sticky');
-    app.classList.add('picking');
-    placePicker(at);
-    renderWheel(); haptic(12); markHint(); render();
+  // ---------------------------------------------------------------- the rep selector
+  // "-  10 reps  +" above Done: its number is the set's default (what was done on this set last time, else the top of
+  // the range) until the viewer changes it with - / +, a drag on the stage, the wheel over it or Up / Down; kept on this
+  // device for the set on screen (a reload in the middle of a set keeps the number)
+  function selValue() {
+    const d = ui.day, i = ui.step, s = ui.sel;
+    if (ui.mode === 'end' || !stepsOf(d)[i] || stepsOf(d)[i].t !== 'sets') return 0;
+    const k = setsOf(d, i).length;
+    return s && s.day === d && s.step === i && s.k === k ? s.v : defaultReps(d, i);
+  }
+  function setSel(v) {
+    if (ui.mode !== 'set' || ackOn()) return false;
+    const d = ui.day, i = ui.step, k = setsOf(d, i).length;
+    v = clamp(Math.round(v), 0, REPS_MAX);
+    if (v === selValue()) return false;
+    ui.sel = { day: d, step: i, k, v };
+    paintSel(true); bump(); haptic(6);
+    E.primary.setAttribute('aria-label', 'Done: log set ' + (k + 1) + ' with ' + repsWord(v));
     return true;
   }
-  // the picker's place: the middle of the sky; on touch above the finger (the numerals never sit under it), moving up
-  // only as far as the finger comes up. pick.finger: where the finger is while it is down (the wheel fades out toward it)
-  function placePicker(at) {
-    if (!pick) return;
-    if (!pick.touch || !at) { pickerEl.style.top = ''; return; }
-    const cs = getComputedStyle(app), top = parseFloat(cs.getPropertyValue('--top')) || 56, fy = parseFloat(cs.getPropertyValue('--fy')) || 300;
-    const r = app.getBoundingClientRect(), y = at.y - r.top, minY = top + 64;
-    if (pick.py == null) pick.py = clamp(y - 150, minY, fy);
-    pick.py = Math.max(minY, Math.min(pick.py, y - 118));
-    pick.finger = y;
-    pickerEl.style.top = Math.round(pick.py) + 'px';
+  function saveSel() {
+    if (VERIFY || ui.adhoc) return;
+    const u = lsGet(LS_UI) || {};
+    u.sel = ui.sel ? Object.assign({}, ui.sel) : null;
+    lsSet(LS_UI, u);
   }
-  // the drag's vertical travel from the anchor (the press) sets the number, up = more, past a 12 px dead zone: back
-  // where the press began is the number it started from
-  function movePicker(y) {
-    if (!pick) return;
-    const d = y - pick.ay, m = Math.sign(d) * Math.max(0, Math.abs(d) - DECIDE);
-    pick.pos = clamp(pick.base - m / PICK_PX, -0.45, REPS_MAX + 0.45);
-    const v = clamp(Math.round(pick.pos), 0, REPS_MAX);
-    if (v !== pick.v) { pick.v = v; haptic(6); }
-    renderWheel();
+  function restoreSel() {
+    const s = (lsGet(LS_UI) || {}).sel;
+    if (s && typeof s === 'object' && [s.day, s.step, s.k, s.v].every(Number.isInteger)) ui.sel = { day: s.day, step: s.step, k: s.k, v: clamp(s.v, 0, REPS_MAX) };
   }
-  // a step of the wheel or the arrow keys (+1 = up = more); during a drag the anchor moves along, so the drag goes on
-  // from the new number (and its release still logs)
-  function stepPicker(k) {
-    if (!pick) return;
-    const v = clamp(pick.v + k, 0, REPS_MAX);
-    pick.base = v; pick.pos = v; if (G && (G.kind === 'adjust' || G.kind === 'held' || G.kind === 'drag')) pick.ay = G.y;
-    if (v !== pick.v) { pick.v = v; haptic(6); }
-    renderWheel();
+  // the numeral answers every change: it grows and settles (with reduced motion it turns amber for a moment)
+  let bumpT = 0;
+  function bump() {
+    const el = E.reps; el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
+    clearTimeout(bumpT); bumpT = setTimeout(() => el.classList.remove('bump'), 320);
   }
-  function closePicker(commit, how) {
-    if (!pick) return;
-    const v = pick.v; pick = null;
-    pickerEl.hidden = true; pickerEl.classList.remove('sticky'); pickerEl.style.top = '';
-    app.classList.remove('picking');
-    if (commit) { lastLog = { how: how || 'picker', v, t: Math.round(now()) }; logSet(v); } else render();
-  }
-  function renderWheel() {
-    if (!wheelEl.childElementCount) for (let k = 0; k < 7; k++) wheelEl.appendChild(doc.createElement('span'));
-    const base = Math.round(pick.pos), sp = parseFloat(getComputedStyle(wheelEl).getPropertyValue('--sp')) || 64;
-    // numerals fade out before the top band (the picker sits high above a finger) and, while a finger is down, toward
-    // it: a numeral whose lower edge comes within 22 px above the finger is gone, so none sits under it
-    const band = parseFloat(getComputedStyle(app).getPropertyValue('--top')) || 56, py = pickerEl.offsetTop;
-    const fin = pick.touch && pick.finger != null ? pick.finger : null;
-    [...wheelEl.children].forEach((el, k) => {
-      const n = base - 3 + k, dist = n - pick.pos, a = Math.abs(dist), y = py + dist * sp;
-      el.textContent = n >= 0 && n <= REPS_MAX ? String(n) : '';
-      const sc = 1 - Math.min(1, a) * 0.46 - Math.max(0, a - 1) * 0.1, low = y + sp * 0.45 * sc; // low: the digits' lower edge
-      el.style.transform = 'translate(-50%, -50%) translateY(' + (dist * sp).toFixed(1) + 'px) scale(' + sc.toFixed(3) + ')';
-      el.style.opacity = (Math.max(0, a < 0.5 ? 1 - a * 0.9 : 0.55 - (a - 0.5) * 0.24) * clamp((y - band - sp * 0.3) / (sp * 0.5), 0, 1)
-        * (fin == null ? 1 : clamp((fin - 22 - low) / 16, 0, 1))).toFixed(3);
-      el.className = n === pick.v ? 'on' : '';
-    });
-    pnum.setAttribute('aria-label', 'Log ' + pick.v + (pick.v === 1 ? ' rep' : ' reps'));
+  // - / +, the wheel, the keys: one rep at a time
+  function stepSel(k, how) {
+    if (!setSel(selValue() + k)) return;
+    saveSel();
+    if (how === 'key' || how === 'button') announce(repsWord(selValue()));
   }
 
   // ---------------------------------------------------------------- figure on the stage
   let stage = null, engine = 'pending', booting = true, still = null, fadeEnd = 0, req = 0, loadingNow = false, figHidden = false, wantFig = null;
-  let placeholderOn = false, failN = 0, failT = 0, glDown = false;
+  let placeholderOn = false, failN = 0, failT = 0, glDown = false, lastLog = null;
   function showFigure(id, cut) {
     wantFig = id;
     if (!id) { hideFigure(); return; }
@@ -1169,13 +1292,13 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function hideFigure() {
     req++; loadingState(false); soon.hidden = true; placeholderOn = false;
     if (!figHidden) { figHidden = true; box.classList.add('nofig'); }
-    syncRender();
+    syncRender(); renderTip();
     if (booting) { waiting(false); bootDone(); }
   }
   function placeholder(msg) {
     soon.textContent = msg; soon.hidden = false; placeholderOn = true;
     if (stage) stage.glCanvas.style.visibility = 'hidden';
-    loadingState(false); waiting(false); bootDone(); syncRender();
+    loadingState(false); waiting(false); bootDone(); syncRender(); renderTip();
   }
   // Only a visible figure renders: not while there is no figure (stretching, the end of the day), a placeholder, a
   // figure still loading, or the opaque day picker over the stage. The loop keeps its place meanwhile.
@@ -1185,12 +1308,12 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function loadingState(on) {
     if (loadingNow === on) return;
     loadingNow = on; box.classList.toggle('is-loading', on);
-    syncRender();
+    syncRender(); renderTip();
   }
   function shown() {
     loadingState(false); soon.hidden = true; placeholderOn = false;
     if (stage) { stage.glCanvas.style.visibility = ''; if (!VERIFY && !stage.isPlaying()) stage.play(); }
-    syncRender();
+    syncRender(); renderTip();
     if (booting) { waiting(false); bootDone(); }
   }
   function bootDone() {
@@ -1209,8 +1332,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     stage.prefetch(ids.filter((x) => x !== (stage.cur && stage.cur.id)));
     if (exOf('bike').ready && !ids.includes('bike')) stage.prefetch(['bike'], { idle: true }); // every day starts on the bike
   }
-  // the figure dims a little while resting and more behind the rep picker
-  function dimFor() { if (stage) stage.setDim(pick ? 0.34 : ui.mode === 'rest' ? 0.58 : 1); }
+  // the figure dims a little while resting
+  function dimFor() { if (stage) stage.setDim(ui.mode === 'rest' ? 0.58 : 1); }
   function freeze() {
     const tq = Q.get('t');
     if (stage && stage.cur && tq != null) { stage.pause(); stage.setPhase(tq === 'peak' || tq === 'still' ? stage.info()[tq] : +tq); }
@@ -1231,37 +1354,33 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   function loop() {
     if (raf) { cancelAnimationFrame(raf); raf = 0; }
-    const t = now();
+    const t = now(), ack = ackOn();
     let need = false;
-    // timed steps running while another step is on screen: a warm-up that runs out is done (saved); stretching waits
+    // timed steps running while another step is on screen: a warm-up or stretching that runs out is done (saved)
     for (const [k, tm] of [...ui.timers]) {
       const [kd, ki] = k.split(':').map(Number); if (kd !== ui.day || ki === ui.step) continue;
       const st = stepsOf(kd)[ki]; if (!st) { ui.timers.delete(k); continue; }
-      const el = elapsedOf(tm);
-      if (!st.open && el >= st.sec) { if (st.auto) { finishTimer(true, ki); continue; } tm.ended = true; }
-      if (!tm.ended) need = true;
+      if (!st.open && elapsedOf(tm) >= st.sec) { finishTimer(true, ki); continue; }
+      need = true;
     }
     if (ui.mode === 'rest' && ui.rest) {
       const r = ui.rest, el = t - r.t0;
-      if (el >= r.dur) { endRest(true); return; }
-      setText(E.clock, restClock());
-      const msg = r.msg && t < r.msgUntil, kk = msg ? r.msg : 'Rest';
-      if (E.kicker.textContent !== kk) { setText(E.kicker, kk); E.kicker.dataset.tone = msg ? 'warm' : ''; }
-      rim(el / r.dur);
+      if (el >= r.dur && !ack) { endRest(true); return; }
+      if (!ack) {
+        setText(E.clock, restClock());
+        const msg = r.msg && t < r.msgUntil, kk = msg ? r.msg : 'Rest';
+        if (E.kicker.textContent !== kk) { setText(E.kicker, kk); E.kicker.dataset.tone = msg ? 'warm' : ''; }
+      }
+      rim(Math.min(1, el / r.dur));
       need = true;
     } else if (ui.mode === 'timer' && curTimer()) {
       const st = stepsOf(ui.day)[ui.step], tm = curTimer(), el = elapsedOf(tm);
-      if (!st.open && el >= st.sec) {
-        if (st.auto) { finishTimer(true); return; }
-        // time is up (stretching): drawn once, then the loop sleeps until the tap that finishes it
-        if (!tm.ended) { tm.ended = true; haptic([24, 70, 24]); render(); announce(st.name + ' time is up. ' + T.finish() + '.'); }
-        rim(1, { head: false });
-      } else {
-        if (st.open && el >= st.sec && !tm.full) { tm.full = true; haptic([24, 70, 24]); }
-        rim(Math.min(1, el / st.sec), el >= st.sec ? { head: false } : null);
-        need = true;
-      }
-      setText(E.clock, timerClock(st, tm));
+      // time is up (the warm-up, stretching): the step is done and the day moves on, with the ember check
+      if (!st.open && el >= st.sec && !ack) { finishTimer(true); return; }
+      if (st.open && el >= st.sec && !tm.full) { tm.full = true; haptic([24, 70, 24]); }
+      rim(Math.min(1, el / st.sec), el >= st.sec ? { head: false } : null);
+      need = true;
+      if (!ack) setText(E.clock, timerClock(st, tm));
       const seg = $('segs').children[ui.step]; if (seg) seg.style.setProperty('--f', segFill(ui.day, ui.step).toFixed(4));
     } else if (ui.mode === 'end') {
       const x = ui.end, k = Math.min(1, (t - (x.t0 || (x.t0 = t))) / 900);
@@ -1274,9 +1393,14 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if (k > 0) { rim(ui.rimFade.p, { head: false, k }); need = true; } else { ui.rimFade = null; rimOff(); }
     }
     if (ui.mode !== 'end' && ui.mode !== 'rest' && !(ui.mode === 'timer' && curTimer()) && !ui.rimFade) rimOff();
-    if (ui.tipUntil && t >= ui.tipUntil) { ui.tipUntil = 0; render(); } else if (ui.tipUntil) need = true;
+    // the moments that end by themselves: the ember check, a done line on the next step, "Set 3 . go", a tick's glow,
+    // the tip, a message in the kicker
+    if (ui.ack) { if (t >= ui.ack.until) { const f = ui.ack.then; ui.ack = null; if (f) f(); else render(); } else need = true; }
+    if (ui.note) { if (t >= ui.note.until) { dropNote(); render(); } else need = true; }
+    if (ui.go) { if (t >= ui.go.until) { ui.go = null; render(); } else need = true; }
+    if (ui.glow) { if (t >= ui.glow.until) { ui.glow = null; render(); } else need = true; }
+    if (ui.tipUntil) { if (t >= ui.tipUntil) { ui.tipUntil = 0; render(); } else need = true; }
     if (ui.flash) { if (t >= ui.flash.until) { ui.flash = null; render(); } else need = true; }
-    if (ui.footMsg) { if (t >= ui.footMsg.until) { ui.footMsg = null; render(); } else need = true; }
     if (need) { if (!doc.hidden) raf = requestAnimationFrame(loop); }
     else if (iv) { clearInterval(iv); iv = 0; }
   }
@@ -1298,14 +1422,14 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if (!t || t.day !== ui.day || !Number.isInteger(t.step) || !stepsOf(ui.day)[t.step] || stepsOf(ui.day)[t.step].t !== 'timer' || isDone(ui.day, t.step)) continue;
       const age = Date.now() - t.startedAt;
       if (!(age >= 0 && age < 3 * 3600e3)) continue;
-      ui.timers.set(tkey(ui.day, t.step), { t0: now() - age, ended: false }); any = true;
+      ui.timers.set(tkey(ui.day, t.step), { t0: now() - age }); any = true;
     }
     if (any) { render(); kickLoop(); }
   }
   function saveRest() {
     if (VERIFY || ui.adhoc) return;
     const u = lsGet(LS_UI) || {}, r = ui.rest;
-    u.rest = r ? { day: ui.day, after: r.after, next: r.next, dur: r.dur, endsAt: Date.now() + (r.dur - (now() - r.t0)), msg: r.msg || null, msgLeft: Math.max(0, r.msgUntil - now()), set: r.set || null, undo: undo && undo.for === 'rest' ? { S: undo.S, day: undo.day, step: undo.step } : null } : null;
+    u.rest = r ? { day: ui.day, after: r.after, next: r.next, dur: r.dur, endsAt: Date.now() + (r.dur - (now() - r.t0)), msg: r.msg || null, msgLeft: Math.max(0, r.msgUntil - now()), set: r.set || null, undo: undo && undo.for === 'rest' ? { S: undo.S, day: undo.day, step: undo.step, sel: undo.sel || null } : null } : null;
     lsSet(LS_UI, u);
   }
   function restoreRest() {
@@ -1317,35 +1441,21 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     ui.step = r.after;
     showFigure(figOf(L[r.after]), true);
     // (its timers are left as they run now: the stored ones were timed on the previous page's clock)
-    if (r.undo && r.undo.S) { undo = { S: sane(r.undo.S), day: r.undo.day, step: r.undo.step, timers: null, for: 'rest' }; }
+    if (r.undo && r.undo.S) {
+      const s = r.undo.sel, okSel = s && typeof s === 'object' && [s.day, s.step, s.k, s.v].every(Number.isInteger);
+      undo = { S: sane(r.undo.S), day: r.undo.day, step: r.undo.step, timers: null, sel: okSel ? { day: s.day, step: s.step, k: s.k, v: clamp(s.v, 0, REPS_MAX) } : null, for: 'rest' };
+    }
     startRest(r.after, r.next, r.msg, r.set, { dur: r.dur, left, msgLeft: r.msgLeft || 0 });
   }
 
-  // ---------------------------------------------------------------- small feedback: toast, hint, tip, haptics, speech
-  let toastT = 0;
-  function toast(msg) {
-    $('tmsg').textContent = msg; $('toast').hidden = false;
-    if (undo) undo.for = 'toast';
-    clearTimeout(toastT); toastT = setTimeout(() => hideToast(), 5000);
-    renderHint();
-  }
-  // keepUndo: the toast goes but the undo it offered stays (it moves to the rest's context line)
-  function hideToast(keepUndo) { clearTimeout(toastT); $('toast').hidden = true; if (!keepUndo && undo && undo.for === 'toast') undo = null; renderHint(); }
-  const uiPrefs = () => lsGet(LS_UI) || {};
-  let hintSeen = !!uiPrefs().hint || VERIFY;
-  function markHint() { if (hintSeen) return; hintSeen = true; const u = uiPrefs(); u.hint = 1; lsSet(LS_UI, u); if (ui.mode === 'set') render(); }
-  // The foot line: the first-time hint, the picker's instructions or the "Tap to ..." of the moment. The "10 reps . Undo"
-  // toast takes the same line for its few seconds: a short instruction stays on it beside the toast ("15 reps . Undo .
-  // Tap to start the timer" on the stretching screen), a long hint waits until the toast has gone.
-  function renderHint() {
-    const el = $('hint'), toastOn = !$('toast').hidden && !pick, both = toastOn && !!foot && foot.length <= 32;
-    if (el.textContent !== foot) el.textContent = foot;
-    el.hidden = !foot || toastOn;
-    const tf = $('tfoot'), tt = both ? MID + foot : '';
-    if (tf.textContent !== tt) tf.textContent = tt;
-    tf.hidden = !both;
-  }
+  // ---------------------------------------------------------------- small feedback: tip, haptics, speech
   function showTip() { const st = stepsOf(ui.day)[ui.step]; if (!exOf(st.ex).cue) return; ui.tipUntil = now() + 4500; render(); kickLoop(); }
+  // The one-time tip "Drag sideways to turn", top right (where the reset icon appears once the figure is turned): shown
+  // while a figure is on screen until the viewer turns one or finishes a day (remembered on this device).
+  const uiPrefs = () => lsGet(LS_UI) || {};
+  let turnSeen = !!uiPrefs().turnTip || VERIFY;
+  function markTurn() { if (turnSeen) return; turnSeen = true; const u = uiPrefs(); u.turnTip = 1; lsSet(LS_UI, u); renderTip(); }
+  function renderTip() { const on = !turnSeen && turnable() && ui.mode !== 'end' && !(stage && stage.view().turned); if (E.tip.hidden === on) E.tip.hidden = !on; }
   // Haptics only after the viewer has touched the frame (browsers block and report a vibrate before that).
   function haptic(p) {
     try {
@@ -1355,131 +1465,93 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   let lastSaid = '';
   function announce(s) { const el = $('status'); if (!s) return; el.textContent = s === lastSaid ? s + '\u00a0' : s; lastSaid = el.textContent; }
-  function announceStep() {
+  // what the step on screen is, in words: "Chest press, set 2 of 4, 8 to 10 reps, 10 selected."
+  function stepSpeech() {
+    const d = ui.day, st = ui.mode === 'end' ? null : stepsOf(d)[ui.step];
+    if (!st) return '';
+    if (ui.mode === 'set') { const e = exOf(st.ex), k = setsOf(d, ui.step).length; return e.name + ', set ' + (k + 1) + ' of ' + st.n + ', ' + st.lo + ' to ' + st.hi + ' reps' + (e.unilateral ? ' each arm' : '') + ', ' + selValue() + ' selected.'; }
+    if (ui.mode === 'timer') return st.name + ', ' + dash(st.line).replace(ND, ' to ') + '.';
+    if (ui.mode === 'done') return (st.t === 'sets' ? exOf(st.ex).name : st.name) + ', done.';
+    return '';
+  }
+  function announceStep(pre) {
     if (booting && !acted) return;
-    const d = ui.day, st = stepsOf(d)[ui.step];
-    if (ui.mode === 'set') { const e = exOf(st.ex), k = setsOf(d, ui.step).length; announce(e.name + ', set ' + (k + 1) + ' of ' + st.n + ', ' + st.lo + ' to ' + st.hi + ' reps' + (e.unilateral ? ' each arm' : '') + '.'); }
-    else if (ui.mode === 'timer') announce(st.name + ', ' + dash(st.line).replace(ND, ' to ') + '.');
+    announce(((pre ? pre + ' ' : '') + stepSpeech()).trim());
   }
 
   // ---------------------------------------------------------------- gestures on the stage
   // One pointer at a time (touch, pen or mouse). The direction is decided after 12 px of movement: mostly up / down on a
-  // set opens the rep picker (release logs), mostly sideways turns the figure (yaw only). Still for 450 ms on a set: the
-  // sticky picker. Short and still: a tap. A release outside the frame, a lost pointer capture, a mouse move with no
-  // button down, a second finger or the page being hidden cancel the gesture (nothing logs), and a new press replaces a
-  // stale one. (Not the window's blur: in the viewer's out-of-process frame it can fire just after a press starts.)
-  // The stage is touch-action: pinch-zoom, so the browser keeps pinch zoom and leaves every one-finger gesture to the
-  // page (no scrolling, no back / forward swipe).
-  const DECIDE = 12, HOLD_MS = 450, CANCEL_X = 56;
+  // set changes the rep selector's number live (up = more, 24 px a rep past a 12 px dead zone; it never logs), mostly
+  // sideways turns the figure (yaw only). Short and still: a tap (the exercise's tip during a set; two quick taps reset
+  // the view). A lost pointer capture, pointercancel, a mouse move with no button down (released outside the frame), a
+  // second finger or the page being hidden end the gesture; a second finger or pointercancel also put the number back
+  // (pinch zoom is the browser's). The stage is touch-action: pinch-zoom, so every one-finger gesture is the page's.
+  const DECIDE = 12, REP_PX = 24;
   let G = null, lastTap = null, tapT = 0, wheelAcc = 0;
   const turnable = () => !!(stage && stage.cur && !figHidden && !loadingNow && !placeholderOn && engine === 'ready');
-  const onStage = (t) => !!t && (box.contains(t) || pickerEl.contains(t));
+  const onStage = (t) => !!t && box.contains(t);
   const outside = (e) => e.clientX < 0 || e.clientY < 0 || e.clientX > g.innerWidth || e.clientY > g.innerHeight;
-  function notePointer(e) { const k = e.pointerType === 'mouse' ? 'mouse' : 'touch'; if (k !== pointerKind) { pointerKind = k; if (ui.mode !== 'boot') render(); } }
   app.addEventListener('pointerdown', (e) => {
     if (!onStage(e.target)) return;
     if (!e.isPrimary) { cancelGesture(true); return; } // a second finger: pinch zoom is the browser's
     if (e.pointerType === 'mouse' && e.button !== 0) return;
-    notePointer(e);
-    if (G) cancelGesture(false); // a press whose release never came here: replaced, never logged
-    if (dialogOpen()) return;
-    const onNum = !!(pick && pick.mode === 'sticky' && pnum.contains(e.target) && now() - pick.at > 60);
-    G = { id: e.pointerId, type: e.pointerType, x0: e.clientX, y0: e.clientY, x: e.clientX, y: e.clientY, t0: now(), kind: 'pending', sticky: !!(pick && pick.mode === 'sticky'), onNum, hold: 0, trail: [[now(), e.clientX]], el: e.target };
-    try { (onNum ? pnum : box).setPointerCapture(e.pointerId); } catch (_) { /* fine */ }
-    if (ui.mode === 'set' && !G.sticky) G.hold = setTimeout(() => {
-      if (!G || G.kind !== 'pending') return;
-      if (openPicker('sticky', 'pointer', { x: G.x, y: G.y, touch: G.type !== 'mouse' })) { G.kind = 'held'; pick.ay = G.y; }
-    }, HOLD_MS);
+    pointerKind = e.pointerType === 'mouse' ? 'mouse' : 'touch';
+    if (G) cancelGesture(false); // a press whose release never came here: replaced
     wake.on();
+    if (dialogOpen()) return;
+    G = { id: e.pointerId, type: e.pointerType, x0: e.clientX, y0: e.clientY, x: e.clientX, y: e.clientY, t0: now(), kind: 'pending', trail: [[now(), e.clientX]] };
+    try { box.setPointerCapture(e.pointerId); } catch (_) { /* fine */ }
   });
   app.addEventListener('pointermove', (e) => {
-    if (!G) { if (e.pointerType === 'mouse' && onStage(e.target)) notePointer(e); return; }
-    if (e.pointerId !== G.id) return;
-    // the button was released where this frame could not see it (outside the frame): the gesture is over, nothing logs
-    if (e.pointerType === 'mouse' && e.buttons === 0) { cancelGesture(true); return; }
-    const dx = e.clientX - G.x0, dy = e.clientY - G.y0, ix = e.clientX - G.x, iy = e.clientY - G.y;
-    G.x = e.clientX; G.y = e.clientY; G.maxDy = Math.max(G.maxDy || 0, Math.abs(dy));
-    // where the pointer last moved mostly up or down: a sideways slide is measured from there (not from the press), so
-    // it cancels however long the drag was before it
-    if (G.sx == null || Math.abs(iy) >= Math.abs(ix)) G.sx = e.clientX;
-    // A mouse dragged out of the frame: the viewer's frame hears nothing once the pointer is outside it (no moves, no
-    // release, no leave event). A drag whose last move was at the frame's edge, or on its way out, followed by 0.9 s of
-    // silence has been released out there: it is over and nothing logs. (Touch always reports its release.)
-    clearTimeout(G.outT);
-    if (e.pointerType === 'mouse') {
-      const W = g.innerWidth, Hh = g.innerHeight, x = e.clientX, y = e.clientY, nx = x + ix, ny = y + iy, EDGE = 24;
-      if (x < EDGE || y < EDGE || x > W - EDGE || y > Hh - EDGE || nx < 0 || ny < 0 || nx > W || ny > Hh) G.outT = setTimeout(() => {
-        if (!G || G.id !== e.pointerId) return;
-        const logging = G.kind === 'drag'; cancelGesture(true);
-        if (logging) { ui.footMsg = { text: T.notLogged, until: now() + 1400 }; render(); kickLoop(); }
-      }, 900);
-    }
+    if (!G || e.pointerId !== G.id) return;
+    // the button was released where this frame could not see it (outside the frame): the gesture is over
+    if (e.pointerType === 'mouse' && e.buttons === 0) { cancelGesture(false); return; }
+    const dx = e.clientX - G.x0, dy = e.clientY - G.y0, ix = e.clientX - G.x;
+    G.x = e.clientX; G.y = e.clientY;
     G.trail.push([now(), e.clientX]); if (G.trail.length > 8) G.trail.shift();
     if (G.kind === 'pending') {
       if (dx * dx + dy * dy < DECIDE * DECIDE) return;
-      clearTimeout(G.hold);
       const vertical = Math.abs(dy) > Math.abs(dx);
-      if (G.sticky) { G.kind = vertical && pick ? 'adjust' : 'none'; if (pick) { pick.base = pick.v; pick.pos = pick.v; pick.ay = G.y0; } return; }
-      if (vertical && ui.mode === 'set' && openPicker('drag', 'pointer', { x: e.clientX, y: e.clientY, touch: G.type !== 'mouse' })) { G.kind = 'drag'; pick.ay = G.y0; return; }
-      if (!vertical && turnable()) { G.kind = 'turn'; stage.orbitStart(); markHint(); stage.orbitBy(dx * 0.42, 0); return; }
-      G.kind = 'none'; return;
+      if (vertical && ui.mode === 'set' && !ackOn()) { G.kind = 'adjust'; G.base = selValue(); G.sel = ui.sel; E.reps.classList.add('big'); app.classList.add('adjusting'); }
+      else if (!vertical && turnable()) { G.kind = 'turn'; stage.orbitStart(); markTurn(); stage.orbitBy(dx * 0.42, 0); return; }
+      else { G.kind = 'none'; return; }
     }
     if (G.kind === 'turn') stage.orbitBy(ix * 0.42, 0);
-    else if (G.kind === 'drag') {
-      // sliding far sideways during the drag cancels (nothing logs; the rest of the gesture does nothing)
-      if (Math.abs(e.clientX - G.sx) > CANCEL_X) { G.kind = 'none'; closePicker(false); ui.footMsg = { text: T.notLogged, until: now() + 1400 }; render(); kickLoop(); return; }
-      placePicker({ y: e.clientY }); movePicker(e.clientY);
-    } else if (G.kind === 'held' || G.kind === 'adjust') { placePicker({ y: e.clientY }); movePicker(e.clientY); }
+    else if (G.kind === 'adjust') {
+      if (ui.mode !== 'set' || ackOn()) { endAdjust(G, false); G.kind = 'none'; return; }
+      const m = Math.sign(dy) * Math.max(0, Math.abs(dy) - DECIDE);
+      setSel(G.base - Math.round(m / REP_PX));
+    }
   });
+  function endAdjust(g0, revert) {
+    E.reps.classList.remove('big'); app.classList.remove('adjusting');
+    if (revert) { ui.sel = g0.sel || null; paintSel(ui.mode === 'set' && !ackOn()); }
+    if (ui.mode === 'set') { saveSel(); if (selValue() !== g0.base) announce(repsWord(selValue())); }
+  }
   // the end of a press: e = the pointer event (pointerup), or null with cancel = true (anything that is not a release
-  // inside the frame); drop: also close a sticky picker the gesture opened or adjusted
-  function endGesture(e, cancel) {
+  // inside the frame); revert: the drag's number goes back to what it was (a second finger, pointercancel)
+  function endGesture(e, cancel, revert) {
     if (!G || (e && e.pointerId !== G.id)) return;
-    const g0 = G; G = null; clearTimeout(g0.hold); clearTimeout(g0.outT);
+    const g0 = G; G = null;
     if (e && outside(e)) cancel = true;
-    // a drag logs only when the pointer really travelled up or down since the press (never a still press)
-    if (g0.kind === 'drag') { closePicker(!cancel && g0.maxDy >= DECIDE, 'drag'); return; }
-    if (g0.kind === 'held' || g0.kind === 'adjust') { if (cancel) closePicker(false); else { if (pick) { pick.finger = null; renderWheel(); } render(); } return; }
+    if (g0.kind === 'adjust') { endAdjust(g0, !!revert); return; }
     if (g0.kind === 'turn') {
       const tr = g0.trail, a = tr[0], b = tr[tr.length - 1], dt = (b[0] - a[0]) / 1000;
       const v = !cancel && dt > 0.008 && now() - b[0] < 90 ? ((b[1] - a[1]) / dt) * 0.42 : 0;
       stage.orbitEnd(v); return;
     }
-    if (cancel || g0.kind !== 'pending') { if (cancel && g0.sticky) closePicker(false); return; }
-    // a tap: on the sticky picker's number it logs; elsewhere it cancels the sticky picker, or it is the stage's tap
-    if (g0.sticky) {
-      const r = pnum.getBoundingClientRect(), onIt = e && e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
-      closePicker(g0.onNum && onIt, 'number'); return;
-    }
+    if (cancel || g0.kind !== 'pending') return;
     if (now() - g0.t0 < 600) onTap(g0.x, g0.y);
   }
-  function cancelGesture(drop) {
-    if (!G) return;
-    const g0 = G;
-    endGesture(null, true);
-    if (drop && pick && (g0.kind === 'held' || g0.kind === 'adjust' || g0.sticky)) closePicker(false);
-  }
+  function cancelGesture(revert) { if (G) endGesture(null, true, revert); }
   app.addEventListener('pointerup', (e) => endGesture(e, false));
   app.addEventListener('pointercancel', (e) => { if (G && e.pointerId === G.id) cancelGesture(true); });
-  app.addEventListener('lostpointercapture', (e) => { if (G && e.pointerId === G.id) cancelGesture(true); });
-  box.addEventListener('contextmenu', (e) => e.preventDefault()); // a long press is the sticky picker, never a context menu
-  pickerEl.addEventListener('contextmenu', (e) => e.preventDefault());
-  // the number, activated from the keyboard (pointer taps on it are handled as gestures above)
-  pnum.addEventListener('click', (e) => { if (e.detail === 0 && pick) closePicker(true, 'number-key'); });
-  // the mouse wheel over the stage during a set: the sticky picker (the first notch opens it on the default), then a
-  // rep per notch (up = more; a trackpad's small deltas add up, 50 px per rep)
-  app.addEventListener('wheel', (e) => {
-    if (!onStage(e.target) || ui.mode !== 'set' || dialogOpen()) return;
-    e.preventDefault();
-    pointerKind = 'mouse';
-    const dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 400 : 1);
-    if (!dy) return;
-    if (!pick) { wheelAcc = 0; openPicker('sticky', 'wheel'); return; }
-    let steps = 0;
-    if (Math.abs(dy) >= 50) { steps = -Math.sign(dy) * Math.max(1, Math.round(Math.abs(dy) / 100)); wheelAcc = 0; }
-    else { wheelAcc += dy; while (Math.abs(wheelAcc) >= 50) { steps -= Math.sign(wheelAcc); wheelAcc -= Math.sign(wheelAcc) * 50; } }
-    if (steps) stepPicker(steps);
-  }, { passive: false });
+  app.addEventListener('lostpointercapture', (e) => { if (G && e.pointerId === G.id) cancelGesture(false); });
+  box.addEventListener('contextmenu', (e) => e.preventDefault()); // a long press never opens a context menu on the stage
+  // A one-finger drag on the stage is the page's (the number, the turn): the browser starts no scroll gesture and no
+  // fling from it (it would anyway take the next tap, on - / + or Done right after a quick drag, as the one that stops
+  // the fling, and drop its click). Two fingers are left alone: pinch zoom stays the browser's.
+  box.addEventListener('touchmove', (e) => { if (e.touches.length === 1 && e.cancelable) e.preventDefault(); }, { passive: false });
   // a double tap resets the view; while the view is turned a single tap waits for a possible second one
   function onTap(x, y) {
     const t = now();
@@ -1492,71 +1564,55 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (stage && stage.view().turned) { clearTimeout(tapT); tapT = setTimeout(() => { tapT = 0; singleTap(); }, 320); }
     else singleTap();
   }
-  // a single tap never logs a set: it skips the rest, starts or finishes a timer, continues, or shows the tip
-  function singleTap() {
-    if (dialogOpen()) return;
-    if (ui.mode === 'rest') endRest(false);
-    else if (ui.mode === 'timer') timerTap();
-    else if (ui.mode === 'set') showTip();
-    else if (ui.mode === 'done') continueDay();
-    else if (ui.mode === 'end') continueEnd();
-  }
+  // a single tap on the stage never logs, skips or starts anything: during a set it shows the exercise's tip
+  function singleTap() { if (!dialogOpen() && ui.mode === 'set' && !ackOn()) showTip(); }
 
-  // ---------------------------------------------------------------- keyboard and screen readers
-  // The visually hidden controls (they show as a bar while one of them has focus) do everything the gestures do.
-  const K = { reps: $('kbreps'), log: $('kblog'), skip: $('kbskip'), timer: $('kbtimer'), cont: $('kbcont'), prev: $('kbprev'), next: $('kbnext'), reset: $('kbreset') };
-  function renderKb() {
-    const m = ui.mode, set = m === 'set', kb = $('kb'), had = kb.contains(doc.activeElement);
-    $('kbset').hidden = !set;
-    if (set && doc.activeElement !== K.reps) K.reps.value = defaultReps(ui.day, ui.step);
-    K.skip.hidden = m !== 'rest';
-    K.timer.hidden = m !== 'timer';
-    if (m === 'timer') { const run = !!curTimer(), st = stepsOf(ui.day)[ui.step]; K.timer.textContent = run ? 'Finish ' + st.name.toLowerCase() : 'Start ' + st.name.toLowerCase(); K.timer.setAttribute('aria-label', run ? 'Finish ' + st.name.toLowerCase() : 'Start the ' + st.name.toLowerCase() + ' timer'); }
-    K.cont.hidden = !(m === 'end' || m === 'done');
-    K.prev.disabled = m === 'end' || ui.step <= 0; K.next.disabled = m === 'end' || ui.step >= stepsOf(ui.day).length - 1;
-    K.reset.disabled = !turnable();
-    // the control that had focus went away with the state (the timer's Finish, Log set, Skip rest): focus moves to the
-    // control of the new state, so a keyboard user stays in the bar instead of starting over from the top of the page
-    const a = doc.activeElement;
-    if (had && (!a || a === doc.body || !kb.contains(a) || a.offsetParent === null || a.disabled)) {
-      const to = set ? K.reps : m === 'rest' ? K.skip : m === 'timer' ? K.timer : (m === 'end' || m === 'done') ? K.cont : K.next;
-      try { to.focus({ preventScroll: true }); } catch (_) { /* fine */ }
-    }
+  // ---------------------------------------------------------------- the buttons and the keys
+  // The primary button does what its state says (the mode is checked as well, so a stale press does nothing); a new
+  // action takes no press for LOCK_MS and none during the ember check.
+  function primaryAct() {
+    wake.on();
+    if (dialogOpen() || ackOn() || now() < primLock) return;
+    const a = E.primary.dataset.act;
+    dropNote(); // a new action: the previous step's done line and its Undo are over
+    if (a === 'done' && ui.mode === 'set') logSet(selValue(), 'done');
+    else if (a === 'skip' && ui.mode === 'rest') endRest(false);
+    else if (a === 'start' && ui.mode === 'timer' && !curTimer()) timerStart();
+    else if (a === 'finish' && ui.mode === 'timer' && curTimer()) finishTimer(false);
+    else if (a === 'continue' && ui.mode === 'done') continueDay();
+    else if (a === 'next' && ui.mode === 'end') continueEnd();
   }
-  K.log.addEventListener('click', () => { const v = +K.reps.value; if (K.reps.value !== '' && Number.isFinite(v) && v >= 0) { lastLog = { how: 'kb', v, t: Math.round(now()) }; logSet(clamp(v, 0, REPS_MAX)); } });
-  K.reps.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); K.log.click(); } });
-  K.skip.addEventListener('click', () => endRest(false));
-  K.timer.addEventListener('click', () => timerTap());
-  K.cont.addEventListener('click', () => (ui.mode === 'end' ? continueEnd() : continueDay()));
-  K.prev.addEventListener('click', () => jumpTo(Math.max(0, ui.step - 1)));
-  K.next.addEventListener('click', () => jumpTo(Math.min(stepsOf(ui.day).length - 1, ui.step + 1)));
-  K.reset.addEventListener('click', () => { if (stage) stage.resetView(); });
-  $('tundo').addEventListener('click', doUndo);
-  E.ctxundo.addEventListener('click', doUndo);
+  E.primary.addEventListener('click', primaryAct);
+  E.minus.addEventListener('click', () => { wake.on(); stepSel(-1, 'button'); });
+  E.plus.addEventListener('click', () => { wake.on(); stepSel(1, 'button'); });
+  E.undo.addEventListener('click', () => { wake.on(); const f = doc.activeElement === E.undo; doUndo(); if (f) { try { E.primary.focus({ preventScroll: true }); } catch (_) { /* fine */ } } });
   $('resetview').addEventListener('click', () => { if (stage) stage.resetView(); });
-  // Up / Down open the rep picker and change the number, Enter logs it, Escape cancels; Left / Right turn the view
-  // (except where focus takes arrows itself: the reps field)
+  // the wheel over the rep selector: a rep per notch (up = more; a trackpad's small deltas add up, 50 px a rep)
+  E.sel.addEventListener('wheel', (e) => {
+    if (ui.mode !== 'set') return;
+    e.preventDefault();
+    const dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 400 : 1);
+    if (!dy) return;
+    let steps = 0;
+    if (Math.abs(dy) >= 50) { steps = -Math.sign(dy) * Math.max(1, Math.round(Math.abs(dy) / 100)); wheelAcc = 0; }
+    else { wheelAcc += dy; while (Math.abs(wheelAcc) >= 50) { steps -= Math.sign(wheelAcc); wheelAcc -= Math.sign(wheelAcc) * 50; } }
+    if (steps) stepSel(steps, 'wheel');
+  }, { passive: false });
+  // Up / Down change the reps on a set, Left / Right turn the view, Escape closes the day picker; Enter and Space press
+  // the focused button, as buttons do
   doc.addEventListener('keydown', (e) => {
     if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
-    if (e.key === 'Escape') {
-      if (dialogOpen()) { e.preventDefault(); closeDays(); return; }
-      if (pick || G) { e.preventDefault(); cancelGesture(true); closePicker(false); }
-      return;
-    }
+    if (e.key === 'Escape') { if (dialogOpen()) { e.preventDefault(); closeDays(); } else cancelGesture(true); return; }
     if (dialogOpen()) return;
     const t = e.target && e.target.nodeType === 1 ? e.target : null;
     if (t && (t.isContentEditable || t.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])'))) return;
-    if (e.key === 'Enter' && pick) {
-      if (t && t !== pnum && t.closest('button, a, [role="button"]')) return; // a focused control acts for itself
-      e.preventDefault(); if (G) { clearTimeout(G.hold); G = null; } closePicker(true, 'enter'); return;
-    }
     if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && ui.mode === 'set') {
       e.preventDefault(); wake.on();
-      if (!pick) openPicker('sticky', 'key'); else stepPicker(e.key === 'ArrowUp' ? 1 : -1);
+      stepSel(e.key === 'ArrowUp' ? 1 : -1, 'key');
       return;
     }
     if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && turnable()) {
-      e.preventDefault(); wake.on();
+      e.preventDefault(); wake.on(); markTurn();
       stage.orbitStart(); stage.orbitBy(e.key === 'ArrowLeft' ? -20 : 20, 0); stage.orbitEnd(0);
     }
   });
@@ -1575,7 +1631,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   function openDays() {
     if (ui.adhoc || !P) return;
-    cancelGesture(true); closePicker(false);
+    cancelGesture(false);
     const list = $('daylist'); list.textContent = '';
     const next = S.lastDone ? (S.lastDone.day + 1) % P.days.length : null;
     P.days.forEach((dd, k) => {
@@ -1613,7 +1669,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (k === ui.day && ui.mode !== 'end') return;
     openDay(k);
     if (!ui.adhoc) { const p = ensureProg(k); p.at = Date.now(); p.step = ui.step; S.current = k; Save.persist(); }
-    announce(dayLabel(k).replace(MID, ', ') + '.');
+    announce(dayLabel(k).replace(MID, ', ') + '. ' + stepSpeech());
   }
   function renderSaveNote() { const n = $('savenote'); if (!n) return; n.hidden = Save.mode !== 'local'; n.textContent = lsOK ? T.local : T.nosave; }
   $('daybtn').addEventListener('click', openDays);
@@ -1645,7 +1701,18 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       s.setProperty('--tx0', px(c.text.x0)); s.setProperty('--tx1', px(c.text.x1));
       s.setProperty('--bx0', px(B.x0)); s.setProperty('--bw', px(B.x1 - B.x0));
       s.setProperty('--fy', px((Math.max(c.top, B.y0) + c.arc.y) / 2)); // the middle of the figure's sky
-      s.setProperty('--fh', px(c.arc.y - c.top)); // the height of the sky above the arc (sizes the rep picker)
+      s.setProperty('--fh', px(c.arc.y - c.top)); // the height of the sky above the arc
+      // the side layout: the set's text and its action area make one group in the sky of the text column, centred between
+      // the top band and the rim (at least 26 px clear of the lit line where it is highest under the area, at its left
+      // edge; the glow near the rim is too bright for the quiet text); the action area's bottom stays put in every state
+      // (--actb), the text block sits right above it (tools/build.mjs). G: the set's group, as styled there (the title,
+      // 1.06 x clamp(28, 4.3vw, 54) px, the set line and the muscles line, 20 px of air, the 156 px action area)
+      if (c.mode === 'side') {
+        const W = c.text.x1, H = c.text.y1, R = c.arc.R, dx = c.text.x0 + 12 - c.arc.x;
+        const rimClear = c.arc.y + R - Math.sqrt(Math.max(0, R * R - dx * dx)) - 26, big = W >= 1000 && H >= 600;
+        const G = 1.06 * clamp(0.043 * W, 28, 54) + (big ? 36 : 30) + (H < 420 ? 0 : big ? 25 : 23) + 20 + 156;
+        s.setProperty('--actb', px(H - Math.min(rimClear, c.top + (rimClear - c.top + G) / 2)));
+      } else s.removeProperty('--actb');
       app.classList.toggle('side', c.mode === 'side');
       fitName();
     }
@@ -1738,11 +1805,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   function boot(idx) {
     P = idx;
-    if (!VERIFY) S = sane(lsGet(LS_LOG));
+    if (!VERIFY) { S = sane(lsGet(LS_LOG)); restoreSel(); }
     const t = startTarget();
     openDay(t.day, { step: t.step });
     if (!VERIFY) { restoreTimers(); restoreRest(); }
-    $('top').hidden = false;
+    $('top').hidden = false; E.act.hidden = false;
     // the stage's data and the first exercise start downloading now, alongside three.js; core.js keeps the requests, so
     // the stage picks them up instead of asking again
     if (MCE.loadJSON && !g.MC_DATA) {
@@ -1778,7 +1845,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     engine = 'ready';
     stage.on('resize', (r) => layout(r.comp, r.edge));
     layout(stage.comp, stage.backdrop.edge);
-    stage.on('view', (v) => { $('resetview').hidden = !v.turned; if (v.turned) markHint(); K.reset.disabled = !turnable(); });
+    stage.on('view', (v) => { $('resetview').hidden = !v.turned; if (v.turned) markTurn(); renderTip(); });
     // the WebGL context lost and never back: the quiet placeholder; back later: the figure again
     stage.on('contextfail', () => { glDown = true; if (wantFig) showFigure(wantFig); });
     stage.on('contextrestored', () => { if (glDown) { glDown = false; if (wantFig) showFigure(wantFig); } });
@@ -1813,19 +1880,22 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // test hook (read-only state, plus the program's own actions): harmless in production
   g.__app = {
     state: () => {
-      const tm = ui.mode === 'end' ? null : curTimer();
+      const tm = ui.mode === 'end' ? null : curTimer(), t = now(), b = E.primary;
       return {
-        day: ui.day, step: ui.step, mode: ui.mode, adhoc: ui.adhoc, engine, booting, speed: SPEED,
+        day: ui.day, step: ui.step, mode: ui.mode, screen: app.dataset.view || null, adhoc: ui.adhoc, engine, booting, speed: SPEED,
         id: figOf(ui.mode === 'end' ? null : stepsOf(ui.day)[ui.step]), stageId: stage && stage.cur ? stage.cur.id : null,
         playing: !!(stage && stage.isPlaying()), suspended: !!(stage && stage.suspended), loading: loadingNow, figHidden,
         sets: ui.mode === 'end' ? null : setsOf(ui.day, ui.step), defaultReps: ui.mode === 'set' ? defaultReps(ui.day, ui.step) : null,
-        rest: ui.rest ? { left: +((ui.rest.dur - (now() - ui.rest.t0)) * SPEED / 1000).toFixed(1), next: ui.rest.next, msg: ui.rest.msg && now() < ui.rest.msgUntil ? ui.rest.msg : null, set: ui.rest.set } : null,
-        timer: tm ? { elapsed: +elapsedOf(tm).toFixed(1), ended: !!tm.ended } : null,
-        timers: [...ui.timers].map(([k, v]) => ({ key: k, elapsed: +elapsedOf(v).toFixed(1), ended: !!v.ended })),
-        picker: pick ? pick.v : null, pickerMode: pick ? pick.mode : null, gesture: G ? G.kind : null,
-        toast: $('toast').hidden ? null : $('tmsg').textContent, hint: !$('hint').hidden, foot: !$('hint').hidden ? $('hint').textContent : !$('tfoot').hidden ? $('tfoot').textContent.replace(MID, '') : '',
-        undo: undo ? undo.for : null, pointer: pointerKind, lastLog,
-        text: { ctx: E.ctx.hidden ? '' : E.ctxt.textContent, kicker: E.kicker.textContent, name: E.name.hidden ? '' : E.name.textContent, clock: E.clock.hidden ? '' : E.clock.textContent, line: E.line.textContent, mus: E.mus.hidden ? '' : E.mus.textContent, guide: E.guide.hidden ? '' : E.guide.textContent },
+        reps: ui.mode === 'set' ? selValue() : null, sel: !E.sel.hidden,
+        rest: ui.rest ? { left: +((ui.rest.dur - (t - ui.rest.t0)) * SPEED / 1000).toFixed(1), next: ui.rest.next, msg: ui.rest.msg && t < ui.rest.msgUntil ? ui.rest.msg : null, set: ui.rest.set } : null,
+        timer: tm ? { elapsed: +elapsedOf(tm).toFixed(1) } : null,
+        timers: [...ui.timers].map(([k, v]) => ({ key: k, elapsed: +elapsedOf(v).toFixed(1) })),
+        primary: b.hidden ? null : { act: b.dataset.act || null, label: E.plabel.textContent, ack: b.hasAttribute('data-ack'), locked: t < primLock },
+        note: E.note.hidden ? null : { text: E.notet.textContent, tone: E.note.dataset.tone || '', undo: !E.undo.hidden },
+        ack: ackOn(), go: !!(ui.go && t < ui.go.until), glow: !!(ui.glow && t < ui.glow.until),
+        gesture: G ? G.kind : null, pointer: pointerKind, tip: !E.tip.hidden,
+        undo: undo ? undo.for : null, lastLog,
+        text: { kicker: E.kicker.hidden ? '' : E.kicker.textContent, name: E.name.hidden ? '' : E.name.textContent, clock: E.clock.hidden ? '' : E.clock.textContent, line: E.line.textContent, mus: E.mus.hidden ? '' : E.mus.textContent },
         save: { mode: Save.mode, writes: Save.writes, writing: Save.writing, dirty: Save.dirty, note: $('savenote') ? $('savenote').textContent : '' },
         view: stage ? stage.view() : null, dialog: dialogOpen(),
       };

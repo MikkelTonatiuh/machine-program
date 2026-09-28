@@ -5,9 +5,10 @@ each exercise on its machine with the working muscles lit, and you follow the da
 
 Open it: https://mikkeltonatiuh.github.io/machine-program/
 
-- Drag up or down on the figure to log the reps of a set, drag sideways to turn the figure.
-- Rest runs by itself (the glow along the horizon is the timer); tap to skip it.
-- Tap the day at the top left to choose another day.
+- Every screen has one button at the bottom: Start, Done, Skip rest, Next.
+- On a set, set the reps with − and + (or drag up or down on the figure), then press Done. Undo takes it back.
+- Rest runs by itself (the glow along the horizon is the timer); Skip rest ends it early.
+- Drag sideways on the figure to turn it. Tap the day at the top left to choose another day.
 
 ## Install it on your phone
 
