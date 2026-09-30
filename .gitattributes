@@ -1,0 +1,3 @@
+# The service worker checks every shipped file against a SHA-256 of its exact bytes (tools/pwa.mjs writes them), so a checkout
+# must never change a file: no line-ending conversion, on any machine.
+* -text

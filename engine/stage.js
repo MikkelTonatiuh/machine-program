@@ -5,6 +5,10 @@
 //   stage.play() / pause() / isPlaying() / setPhase(t) / suspend(on) / on(event, fn) / off(event, fn) / destroy()
 //   stage.orbitStart() / orbitBy(dYaw, dTilt) / orbitEnd(vYaw) / resetView() / setView(v) / view()   the viewer's turn
 //   stage.setTimer(p, opts) / setDim(k)                                                             rim light, rest dim
+//   stage.screenBounds()        -> { w, h, fig, all } the figure's (and with the machine, all) extent on screen over the
+//                                  whole loop at the authored view, CSS px in the stage; null while nothing is shown
+//   stage.on('seg', fn)         fn({ phase: 'con' | 'hold' | 'ecc' | 'pause' | 'cycle', dur }) each time the loop enters
+//                                  another phase of the rep (dur: its length in seconds)
 // One WebGL renderer for the whole app, composited over the 2D horizon backdrop, with grain on top.
 // The exercise always plays (autoplay) and loops, whatever prefers-reduced-motion says: the animation is the content.
 // Reduced motion only softens the stage's own motion: no easing of the framing, no inertia after a turn, a static grain,
@@ -468,7 +472,7 @@
     }
     _show(inst) {
       if (this.cur && this.cur !== inst) { this.scene.remove(this.cur.group); this.cur.uYaw = 0; }
-      this.cur = inst; this.scene.add(inst.group);
+      this.cur = inst; this.scene.add(inst.group); this._segKey = null;
       // a new exercise opens at its authored view (the viewer's turn resets)
       this.viewS = { yaw: 0, tilt: 0, w: 0, vYaw: 0, engaged: false, dragging: false, anim: null };
       this._fit();
@@ -514,6 +518,9 @@
       if (!this.cur || this.suspended) return;
       this._applyView();
       const st = this.cur.frame(this.phase);
+      // the shell's coaching text follows the rep: told when the loop enters another phase (lift, hold, lower, pause)
+      const sk = st.phase + '|' + (st.seg ? st.seg.t0 : 0);
+      if (sk !== this._segKey) { this._segKey = sk; this.emit('seg', { phase: st.phase, dur: st.seg ? st.seg.t1 - st.seg.t0 : 0 }); }
       this._keyDir();
       this.renderer.render(this.scene, this.camera);
       if (this.grainCanvas) this.backdrop.drawGrain(this.size.w, this.size.h, this.size.dpr, this.opts.reducedMotion || grainStep === undefined ? (this.backdrop.lastStep >= 0 ? this.backdrop.lastStep : 0) : grainStep);
@@ -756,8 +763,9 @@
       const fp = new THREE.Vector3(T.x, 0, T.z).project(cam);
       const yFloor = (1 - fp.y) / 2 * h, xC = (1 + cxN) / 2 * w;
       let offY = yFloor - arcY, offX = xC - bcx;
-      // keep the figure's top inside the box with a small margin
-      const topPx = (1 - e.y1) / 2 * h - offY, topMin = Bx.y0 + 0.035 * bh;
+      // keep the figure's top inside the box with a small margin (and under comp.figTop when the composition reserves a
+      // band above the figure for the shell's coaching text: the figure backs off until it clears it)
+      const topPx = (1 - e.y1) / 2 * h - offY, topMin = Math.max(Bx.y0 + 0.035 * bh, this.comp.figTop || 0);
       if (topPx < topMin) { const k = (arcY - topMin) / Math.max(1, arcY - topPx); d /= Math.max(0.5, k); place(); const fp2 = new THREE.Vector3(T.x, 0, T.z).project(cam); e = ext(false); cxN = cxOf(); offY = (1 - fp2.y) / 2 * h - arcY; offX = (1 + cxN) / 2 * w - bcx; }
       // camera.shiftX: move the figure by this fraction of the box width (+ right), e.g. to keep a foot plate or a
       // weight stack on one side of the figure inside the frame without shrinking the figure (fitMachine)
@@ -802,6 +810,31 @@
       // the figure's lowest point on screen over the loop (CSS px): where the fade of machine parts may start
       const figBottom = (1 - e.y0) / 2 * h - offY;
       return (inst.fits[key] = { pos: cam.position.clone(), T, offX, offY, d, figBottom, clear, dipBack });
+    }
+    // Where the figure is on screen: its extent over the whole loop at the authored view (the framing _fitFor chose), and
+    // with the machine's parts too (all), in CSS px of the stage. The shell places its coaching text in the free space
+    // around it. Not the viewer's turn: while the figure is turned the shell hides that text. Cached per size.
+    screenBounds() {
+      const inst = this.cur; if (!inst) return null;
+      const THREE = g.THREE, { w, h } = this.size, key = w + 'x' + h;
+      inst.bounds = inst.bounds || {};
+      if (inst.bounds[key]) return inst.bounds[key];
+      const F = this._fitFor(inst), FP = inst.fitPrep;
+      const cam = this._boundsCam || (this._boundsCam = new THREE.PerspectiveCamera(24, 1, 0.05, 80));
+      cam.fov = 24; cam.aspect = w / h; cam.position.copy(F.pos); cam.lookAt(F.T);
+      cam.setViewOffset(w, h, F.offX, F.offY, w, h); cam.updateProjectionMatrix(); cam.updateMatrixWorld(true);
+      const v = new THREE.Vector3(), fig = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity }, all = Object.assign({}, fig);
+      const add = (o, P, n) => {
+        for (let i = 0; i < n; i += 3) {
+          v.set(P[i], P[i + 1], P[i + 2]).project(cam);
+          const x = (v.x + 1) / 2 * w, y = (1 - v.y) / 2 * h;
+          if (x < o.x0) o.x0 = x; if (x > o.x1) o.x1 = x; if (y < o.y0) o.y0 = y; if (y > o.y1) o.y1 = y;
+        }
+      };
+      add(fig, FP.pts, FP.pts.length);
+      Object.assign(all, fig);
+      if (FP.mpts) add(all, FP.mpts, FP.mpts.length);
+      return (inst.bounds[key] = { w, h, fig, all });
     }
     // The orbit framing at the current size for a tilt (deg): the lathe (figure over the loop + machine, about its axis)
     // fitted into the box from the exercise's elevation plus the tilt, its floor point (the axis at the floor) on the
