@@ -71,6 +71,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   box-shadow: 0 14px 34px rgba(0,0,0,.5); }
 .menu button { display: block; width: 100%; padding: 13px 12px; border-radius: 10px; text-align: left; font: 500 15px/1.2 var(--sans); color: var(--ink); }
 .menu button[aria-disabled="true"] { opacity: .38; cursor: default; }
+.menu { max-width: min(280px, calc(100vw - 2 * var(--gut))); }
+.menu small { display: block; margin-top: 3px; font: 400 12.5px/1.3 var(--sans); color: var(--ink3); text-wrap: balance; }
+.menu small:empty { display: none; }
+.mbusy { margin: 0 0 4px; padding: 0 0 4px; border-bottom: 1px solid var(--line); }
+.mbusy[hidden] { display: none; }
 .menu button:active:not([aria-disabled="true"]) { background: rgba(236,231,222,.1); }
 @media (hover: hover) { .menu button:hover:not([aria-disabled="true"]) { background: rgba(236,231,222,.08); } }
 .info { position: absolute; left: 0; right: 0; top: var(--ty0); z-index: 2; display: flex; flex-direction: column; align-items: center;
@@ -83,6 +88,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .clock { font: 300 clamp(62px, 18.5vw, 88px)/1 var(--serif); letter-spacing: -.02em; font-variant-numeric: tabular-nums lining-nums; }
 .line { margin-top: 11px; font: 400 14.5px/1.3 var(--sans); color: var(--ink2); font-variant-numeric: tabular-nums; }
 .line[data-tone="go"] { color: var(--amber); font-weight: 500; }
+.line[data-tone="plan"] { margin-top: 12px; font: 500 16.5px/1.35 var(--sans); color: var(--ink); }
+.app.kicked .mus { display: none; }
 .ticks { display: inline-flex; gap: 4px; margin: 0 4px 0 10px; vertical-align: middle; position: relative; top: -1px; }
 .ticks i { display: block; width: 12px; height: 3px; border-radius: 2px; background: rgba(236,231,222,.2); }
 .ticks i.on { background: rgba(236,231,222,.86); }
@@ -172,6 +179,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   font: 500 14px/1 var(--sans); color: var(--ink); white-space: nowrap; touch-action: manipulation; }
 .dl svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .dl:active { background: rgba(236,231,222,.17); }
+#deload:not([data-on="1"]) { border-color: rgba(224,160,96,.62); color: var(--amber); }
+.food { margin: 0 0 4px; font: 400 13.5px/1.4 var(--sans); color: var(--ink2); text-wrap: pretty; }
 .daysclose { width: 44px; height: 44px; margin-right: -12px; display: grid; place-items: center; color: var(--ink2); }
 .daysclose svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
 @media (min-width: 1000px) { .dayswrap { max-width: 980px; } }
@@ -228,7 +237,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .app.compact .ccue { font-size: 15.5px; line-height: 1.28; }
 .app.compact .crule { display: none; }
 .app.side .info { left: var(--tx0); right: 0; top: var(--top); bottom: calc(var(--actb, 14px) + 112px); justify-content: flex-end; justify-content: safe flex-end; align-items: flex-start; text-align: left; padding: 0 var(--sr) 0 12px; }
-.app.side[data-view="set"] .info { bottom: calc(var(--actb, 14px) + 180px); }
+.app.side[data-view="set"] .info, .app.side[data-view="drop"] .info { bottom: calc(var(--actb, 14px) + 180px); }
 .app.side .name { font-size: clamp(28px, 4.3vw, 54px); }
 .app.side .clock { font-size: clamp(56px, 8.5vw, 104px); }
 .app.side .info > * { max-width: 30rem; }
@@ -283,6 +292,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     </div>
   </header>
   <div class="menu" id="menu" hidden>
+    <div class="mbusy" id="mbusy"><button type="button" id="mlater">Do it later</button><div id="mswaps"></div></div>
+    <button type="button" id="mdeload"><span id="mdeloadt">Deload week</span><small id="mdeloads"></small></button>
     <button type="button" id="mrestart">Restart workout</button>
     <button type="button" id="mhome">All workouts</button>
   </div>
@@ -326,9 +337,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         </div>
       </div>
       <button class="dl" id="install" type="button" hidden><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 3v9.5m-4-4 4 4 4-4M4 16.5h12"/></svg><span>Download app</span></button>
+      <button class="dl" id="deload" type="button" hidden><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3.5 6.5h13M5.5 10h9M7.5 13.5h5"/></svg><span id="deloadt">Time for a deload week</span></button>
       <ol class="daygrid" id="daylist"></ol>
       <div class="homefoot">
         <button class="linkbtn" id="newweek" type="button" hidden>Start a new week</button>
+        <p class="food">Build muscle: eat 5&ndash;10% above maintenance and 1.6&ndash;2.2 g protein per kg a day.</p>
         <p class="savenote" id="savenote" hidden>Saved on this phone</p>
         <p class="credit">A custom program, built on ideas from Jeff Nippard&rsquo;s free videos and published research. Not his routine. Not affiliated.</p>
       </div>
@@ -356,7 +369,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   </div>
   <p class="sr" id="status" aria-live="polite"></p>
 </main>
-<script type="application/json" id="program">{"days":[{"name":"Upper","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"chest_press","n":4,"lo":8,"hi":10,"rest":180},{"t":"sets","ex":"lat_pulldown","n":4,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"chest_row","n":3,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"lateral_raise","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"bayesian_curl","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"overhead_ext","n":3,"lo":10,"hi":15,"rest":90}],"cover":"chest_press"},{"name":"Lower","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"hack_squat","n":4,"lo":8,"hi":10,"rest":180},{"t":"sets","ex":"leg_extension","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"leg_curl","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_adduction","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"calf_raise","n":4,"lo":10,"hi":15,"rest":90}],"cover":"hack_squat"},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike","line":"20–40 min easy bike","sec":1200,"open":true,"pulse":"115–140","cue":"Can’t talk in full sentences? Slow down."},{"t":"sets","ex":"cable_crunch","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":15,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600}],"cover":"bike"},{"name":"Push","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"incline_press","n":4,"lo":8,"hi":10,"rest":180},{"t":"sets","ex":"shoulder_press","n":3,"lo":8,"hi":10,"rest":120},{"t":"sets","ex":"pec_deck","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"lateral_raise","n":4,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"pushdown","n":3,"lo":10,"hi":15,"rest":90}],"cover":"incline_press"},{"name":"Pull","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"lat_pulldown","n":4,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"chest_row","n":4,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"bayesian_curl","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"preacher_curl","n":2,"lo":10,"hi":15,"rest":90}],"cover":"lat_pulldown"},{"name":"Legs","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"leg_curl","n":4,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_thrust","n":4,"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"leg_press","n":3,"lo":10,"hi":12,"rest":180},{"t":"sets","ex":"hip_abduction","n":3,"lo":15,"hi":20,"rest":90},{"t":"sets","ex":"hip_adduction","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"calf_raise","n":4,"lo":10,"hi":15,"rest":90}],"cover":"hip_thrust"},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike","line":"20–40 min easy bike","sec":1200,"open":true,"pulse":"115–140","cue":"Can’t talk in full sentences? Slow down."},{"t":"sets","ex":"cable_crunch","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":15,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600}],"cover":"knee_raise"}],"ex":{"bayesian_curl":{"name":"Bayesian cable curl","ready":true,"cue":"Arms behind torso, cable at hand height","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":true,"verbs":["Curl","Lower"],"kg0":10,"fail":true},"bike":{"name":"Bike","ready":true,"cue":"","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false},"cable_crunch":{"name":"Cable crunch","ready":true,"cue":"Round your lower back, squeeze abs","muscles":{"primary":["Abs"],"secondary":[]},"unilateral":false,"verbs":["Crunch","Return"],"kg0":20,"fail":true},"calf_raise":{"name":"Standing calf raise","ready":true,"cue":"Pause 1–2 s at the bottom. No bouncing.","muscles":{"primary":["Calves"],"secondary":[]},"unilateral":false,"verbs":["Rise","Sink"],"kg0":40,"fail":true},"chest_press":{"name":"Chest press","ready":true,"cue":"Let handles come back to deep stretch","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Press","Return"],"kg0":20,"fail":true},"chest_row":{"name":"Chest-supported row","ready":true,"cue":"Chest on the pad. Stretch fully forward.","muscles":{"primary":["Mid traps","Lats","Upper back"],"secondary":[]},"unilateral":false,"verbs":["Row","Return"],"kg0":20,"fail":true},"hack_squat":{"name":"Hack squat","ready":true,"cue":"Go as deep as the machine allows","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Stand","Lower"],"kg0":40,"short":true},"hip_abduction":{"name":"Seated hip abduction","ready":true,"cue":"Lean forward about 30 degrees","muscles":{"primary":["Side glutes","Upper glutes"],"secondary":[]},"unilateral":false,"verbs":["Open","Close"],"kg0":30,"fail":true},"hip_adduction":{"name":"Seated hip adduction","ready":true,"cue":"Open slowly against the weight.","muscles":{"primary":["Inner thighs"],"secondary":[]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":30,"fail":true},"hip_thrust":{"name":"Hip thrust","ready":true,"cue":"","muscles":{"primary":["Glutes"],"secondary":[]},"unilateral":false,"verbs":["Thrust","Lower"],"kg0":40,"fail":true},"incline_press":{"name":"Incline press","ready":true,"cue":"Touch high on upper chest; set safety stops","muscles":{"primary":["Upper chest"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":20,"fail":true},"knee_raise":{"name":"Knee raise","ready":true,"cue":"Curl your lower back up, not just legs","muscles":{"primary":["Abs","Hip flexors"],"secondary":[]},"unilateral":false,"verbs":["Raise","Lower"],"kg0":0,"fail":true},"lat_pulldown":{"name":"Lat pulldown","ready":true,"cue":"Stay vertical at the top","muscles":{"primary":["Lats"],"secondary":[]},"unilateral":false,"verbs":["Pull","Return"],"kg0":30,"fail":true},"lateral_raise":{"name":"Cable lateral raise","ready":true,"cue":"Cable at hand height","muscles":{"primary":["Side shoulders"],"secondary":[]},"unilateral":true,"verbs":["Raise","Lower"],"kg0":5,"fail":true},"leg_curl":{"name":"Seated leg curl","ready":true,"cue":"Lean forward until hamstrings feel stretched","muscles":{"primary":["Hamstrings"],"secondary":[]},"unilateral":false,"verbs":["Curl","Return"],"kg0":25,"fail":true},"leg_extension":{"name":"Leg extension","ready":true,"cue":"Seat back, lower over 3 seconds","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":30,"fail":true},"leg_press":{"name":"Leg press","ready":true,"cue":"Deep, without your lower back rounding","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false,"verbs":["Press","Return"],"kg0":60,"short":true},"overhead_ext":{"name":"Overhead extension","ready":true,"cue":"Arms overhead, feel the deep stretch","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":15,"fail":true},"pec_deck":{"name":"Pec deck","ready":true,"cue":"","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":20,"fail":true},"preacher_curl":{"name":"Machine preacher curl","ready":true,"cue":"Go all the way down","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":false,"verbs":["Curl","Lower"],"kg0":10,"fail":true},"pushdown":{"name":"Cable pushdown","ready":true,"cue":"Use a bar, not the rope","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Push","Return"],"kg0":15,"fail":true},"reverse_fly":{"name":"Reverse fly","ready":true,"cue":"Sweep out, not back","muscles":{"primary":["Rear shoulders"],"secondary":[]},"unilateral":false,"verbs":["Sweep","Return"],"kg0":10,"fail":true},"shoulder_press":{"name":"Shoulder press","ready":true,"cue":"Lower until arms pass below parallel","muscles":{"primary":["Front shoulders"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":15,"fail":true}}}</script>
+<script type="application/json" id="program">{"days":[{"name":"Upper","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"chest_press","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"lat_pulldown","n":4,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"chest_row","n":3,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"lateral_raise","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"bayesian_curl","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"overhead_ext","n":3,"lo":10,"hi":15,"rest":90}],"cover":"chest_press"},{"name":"Lower","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"hack_squat","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"leg_extension","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"leg_curl","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_adduction","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"calf_raise","n":4,"lo":10,"hi":15,"rest":90}],"cover":"hack_squat"},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike","line":"20–40 min easy bike","sec":1200,"open":true,"pulse":"115–140","cue":"Can’t talk in full sentences? Slow down."},{"t":"sets","ex":"cable_crunch","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":20,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600}],"cover":"bike"},{"name":"Push","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"incline_press","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"shoulder_press","n":3,"lo":8,"hi":10,"rest":120},{"t":"sets","ex":"pec_deck","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"lateral_raise","n":4,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"pushdown","n":3,"lo":10,"hi":15,"rest":90}],"cover":"incline_press"},{"name":"Pull","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"lat_pulldown","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"chest_row","n":4,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"bayesian_curl","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"preacher_curl","n":2,"lo":10,"hi":15,"rest":90}],"cover":"lat_pulldown"},{"name":"Legs","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"leg_curl","n":4,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_thrust","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"leg_press","n":3,"lo":10,"hi":12,"rest":180},{"t":"sets","ex":"hip_abduction","n":3,"lo":15,"hi":20,"rest":90},{"t":"sets","ex":"hip_adduction","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"calf_raise","n":4,"lo":10,"hi":15,"rest":90}],"cover":"hip_thrust"},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike","line":"20–40 min easy bike","sec":1200,"open":true,"pulse":"115–140","cue":"Can’t talk in full sentences? Slow down."},{"t":"sets","ex":"cable_crunch","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":20,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600}],"cover":"knee_raise"}],"ex":{"bayesian_curl":{"name":"Bayesian cable curl","ready":true,"cue":"Arms behind torso, cable at hand height","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":true,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"partials":true,"swap":["preacher_curl"]},"bike":{"name":"Bike","ready":true,"cue":"","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false},"cable_crunch":{"name":"Cable crunch","ready":true,"cue":"Round your lower back, squeeze abs","muscles":{"primary":["Abs"],"secondary":[]},"unilateral":false,"verbs":["Crunch","Return"],"kg0":20,"fail":true,"drop":true,"failAll":true},"calf_raise":{"name":"Standing calf raise","ready":true,"cue":"Pause 1–2 s at the bottom. No bouncing.","muscles":{"primary":["Calves"],"secondary":[]},"unilateral":false,"verbs":["Rise","Sink"],"kg0":40,"fail":true,"drop":true,"partials":true},"chest_press":{"name":"Chest press","ready":true,"cue":"Let handles come back to deep stretch","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Press","Return"],"kg0":20,"fail":true,"compound":true,"swap":["incline_press"]},"chest_row":{"name":"Chest-supported row","ready":true,"cue":"Chest on the pad. Stretch fully forward.","muscles":{"primary":["Mid traps","Lats","Upper back"],"secondary":[]},"unilateral":false,"verbs":["Row","Return"],"kg0":20,"fail":true,"compound":true},"hack_squat":{"name":"Hack squat","ready":true,"cue":"Go as deep as the machine allows","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Stand","Lower"],"kg0":40,"short":true,"compound":true,"swap":["leg_press"]},"hip_abduction":{"name":"Seated hip abduction","ready":true,"cue":"Lean forward about 30 degrees","muscles":{"primary":["Side glutes","Upper glutes"],"secondary":[]},"unilateral":false,"verbs":["Open","Close"],"kg0":30,"fail":true,"drop":true},"hip_adduction":{"name":"Seated hip adduction","ready":true,"cue":"Open slowly against the weight.","muscles":{"primary":["Inner thighs"],"secondary":[]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":30,"fail":true,"drop":true},"hip_thrust":{"name":"Hip thrust","ready":true,"cue":"","muscles":{"primary":["Glutes"],"secondary":[]},"unilateral":false,"verbs":["Thrust","Lower"],"kg0":40,"fail":true,"compound":true},"incline_press":{"name":"Incline press","ready":true,"cue":"Touch high on upper chest; set safety stops","muscles":{"primary":["Upper chest"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":20,"fail":true,"compound":true,"swap":["chest_press"]},"knee_raise":{"name":"Knee raise","ready":true,"cue":"Curl your lower back up, not just legs","muscles":{"primary":["Abs","Hip flexors"],"secondary":[]},"unilateral":false,"verbs":["Raise","Lower"],"kg0":0,"fail":true,"failAll":true,"harder":"straighten your legs more"},"lat_pulldown":{"name":"Lat pulldown","ready":true,"cue":"Stay vertical at the top","muscles":{"primary":["Lats"],"secondary":[]},"unilateral":false,"verbs":["Pull","Return"],"kg0":30,"fail":true,"compound":true},"lateral_raise":{"name":"Cable lateral raise","ready":true,"cue":"Cable at hand height","muscles":{"primary":["Side shoulders"],"secondary":[]},"unilateral":true,"verbs":["Raise","Lower"],"kg0":5,"fail":true,"drop":true,"partials":true},"leg_curl":{"name":"Seated leg curl","ready":true,"cue":"Lean forward until hamstrings feel stretched","muscles":{"primary":["Hamstrings"],"secondary":[]},"unilateral":false,"verbs":["Curl","Return"],"kg0":25,"fail":true,"drop":true,"partials":true},"leg_extension":{"name":"Leg extension","ready":true,"cue":"Seat back, lower over 3 seconds","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":30,"fail":true,"drop":true,"partials":true},"leg_press":{"name":"Leg press","ready":true,"cue":"Deep, without your lower back rounding","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false,"verbs":["Press","Return"],"kg0":60,"short":true,"compound":true,"swap":["hack_squat"]},"overhead_ext":{"name":"Overhead extension","ready":true,"cue":"Arms overhead, feel the deep stretch","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":15,"fail":true,"drop":true,"partials":true,"swap":["pushdown"]},"pec_deck":{"name":"Pec deck","ready":true,"cue":"","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":20,"fail":true,"drop":true,"partials":true},"preacher_curl":{"name":"Machine preacher curl","ready":true,"cue":"Go all the way down","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":false,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"partials":true,"swap":["bayesian_curl"]},"pushdown":{"name":"Cable pushdown","ready":true,"cue":"Use a bar, not the rope","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Push","Return"],"kg0":15,"fail":true,"drop":true,"swap":["overhead_ext"]},"reverse_fly":{"name":"Reverse fly","ready":true,"cue":"Sweep out, not back","muscles":{"primary":["Rear shoulders"],"secondary":[]},"unilateral":false,"verbs":["Sweep","Return"],"kg0":10,"fail":true,"drop":true},"shoulder_press":{"name":"Shoulder press","ready":true,"cue":"Lower until arms pass below parallel","muscles":{"primary":["Front shoulders"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":15,"fail":true,"compound":true}}}</script>
 <script>
 // Machine Coach figure engine - core helpers and the data loader.
 // Every engine file is a classic script that adds to the global namespace `MCE`, so the page works from
@@ -725,6 +738,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
 // Undo is always there, one step at a time, and "Restart workout" clears the day (itself undoable); the coaching text
 // (the rep's phase, "fast up, slow down", and the exercise's cue) is a card in the free sky beside the figure, never
 // over it (the stage reports where the figure is), and it follows the animation.
+// v9 "everything, on machines": warm-up sets before each compound (and one light set before an isolation for a muscle not yet
+// worked that day), a heavy top set and lighter back-off sets on the first compound of a lifting day, a drop set right after
+// the last set of the machine and cable isolations, abs to failure with a bodyweight progression (reps, then harder), Do it
+// later and Swap for a busy machine (the menu), the effort rule of every set in the coaching card, and a deload week (half the
+// sets, same weights) that the app suggests after 8 weeks or when several lifts stall.
 // Cold start: the program is inlined in the page and this file runs before three.js, so the horizon, the progress line,
 // the text and the buttons paint at once; the stage is created at DOMContentLoaded and the first figure fades in over
 // the same horizon. Without WebGL or three.js everything but the figure still works.
@@ -764,6 +782,13 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     stayShort: 'Leave 1\u20132 reps in the tank.',
     lastSet: 'Last set: go until you can\u2019t do another rep',
     lastShort: 'Last set: stop 0\u20131 reps short of failure',
+    topSet: 'Heavy: 1\u20132 reps in the tank (RPE 8\u20139)',
+    everySet: 'Every set: until you can\u2019t do one more',
+    warmRule: 'Easy: warm-up sets don\u2019t count',
+    dropRule: 'Go until you can\u2019t do another rep',
+    dropPartials: 'To failure, then half reps in the stretch',
+    deload: 'Deload: stop 3\u20134 reps short',
+    deloadWhat: 'Half the sets, same weights, stop 3\u20134 reps short',
     addToday: 'Add weight today',
     addNext: 'Next time: add weight',
     undone: 'Undone',
@@ -797,7 +822,9 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   const lsSet = (k, v) => { try { g.localStorage.setItem(k, JSON.stringify(v)); return true; } catch (_) { return false; } };
   // can this view keep anything at all (a strict sandbox throws on localStorage)?
   const lsOK = (() => { try { const k = 'machine-program:probe'; g.localStorage.setItem(k, '1'); g.localStorage.removeItem(k); return true; } catch (_) { return false; } })();
-  const blank = () => ({ v: 1, updated: 0, current: null, prog: {}, lastDone: null, last: {}, history: [], cycle: 0, week: 1 });
+  // (v9 added: dl, the deload week { w: its week, prev: the one before }; up, the harder variants an exercise moved on to)
+  const blank = () => ({ v: 1, updated: 0, current: null, prog: {}, lastDone: null, last: {}, history: [], cycle: 0, week: 1, dl: null, up: {} });
+  const ID = /^[a-z0-9_]{1,40}$/; // an exercise id
   // a number from a stored value: numbers and numeric strings only (null, '', true and [] are not 0)
   const num = (x) => (typeof x === 'number' ? x : typeof x === 'string' && x.trim() !== '' ? +x : NaN);
   const int = (x, a, b) => { const v = num(x); return Number.isFinite(v) ? clamp(Math.round(v), a, b) : null; };
@@ -807,35 +834,51 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   const kgs = (a) => (Array.isArray(a) ? a.map(kgOne).slice(0, 12) : []);
   const fmtKg = (v) => (Number.isInteger(v) ? String(v) : String(+v.toFixed(2)));
   // A stored document as the page trusts it: every field checked and clamped (it may come from another device, an older
-  // version or a hand edit), unknown fields dropped.
+  // version or a hand edit), unknown fields dropped. A v8 document has none of v9's fields: each gets its empty default.
   function sane(d) {
     const o = blank(); if (!d || typeof d !== 'object') return o;
     const nd = P ? P.days.length : 7, time = (t) => { const v = num(t); return Number.isFinite(v) && v > 0 ? v : 0; };
+    const flags = (x) => { const r = {}; if (x && typeof x === 'object') for (const i of Object.keys(x)) { const ii = int(i, 0, 40); if (ii != null && x[i]) r[ii] = 1; } return r; };
+    const drop = (a) => (Array.isArray(a) && int(a[0], 1, 200) ? [int(a[0], 1, 200), kgOne(a[1])] : null); // a drop set: [reps, kg]
     o.updated = time(d.updated);
     o.current = d.current == null ? null : int(d.current, 0, nd - 1);
     if (d.prog && typeof d.prog === 'object') for (const [k, p] of Object.entries(d.prog)) {
       const dd = int(k, 0, nd - 1); if (dd == null || !p || typeof p !== 'object') continue;
-      const q = { started: time(p.started), at: time(p.at), step: int(p.step, 0, 40) || 0, sets: {}, done: {}, kg: {} };
+      // warm: the warm-up sets done (by step); dd: a drop set due (the last set is logged, the drop set not yet); drop: the drop
+      // sets done; swap: the exercise a step was swapped for; order: the day's order once an exercise was moved to the end
+      const q = { started: time(p.started), at: time(p.at), step: int(p.step, 0, 40) || 0, sets: {}, done: {}, kg: {}, warm: flags(p.warm), dd: flags(p.dd), drop: {}, swap: {} };
       if (time(p.t0)) { q.t0 = time(p.t0); q.gap = time(p.gap); }
       if (p.sets && typeof p.sets === 'object') for (const [i, a] of Object.entries(p.sets)) { const ii = int(i, 0, 40); if (ii != null) q.sets[ii] = reps(a); }
       if (p.kg && typeof p.kg === 'object') for (const [i, a] of Object.entries(p.kg)) { const ii = int(i, 0, 40); if (ii != null) q.kg[ii] = kgs(a); }
       if (p.done && typeof p.done === 'object') for (const i of Object.keys(p.done)) { const ii = int(i, 0, 40); if (ii != null && p.done[i]) q.done[ii] = 1; }
+      if (p.drop && typeof p.drop === 'object') for (const [i, a] of Object.entries(p.drop)) { const ii = int(i, 0, 40), x = drop(a); if (ii != null && x) q.drop[ii] = x; }
+      if (p.swap && typeof p.swap === 'object') for (const [i, id] of Object.entries(p.swap)) { const ii = int(i, 0, 40); if (ii != null && typeof id === 'string' && ID.test(id)) q.swap[ii] = id; }
+      const n = P && P.days[dd] ? P.days[dd].steps.length : 0;
+      if (Array.isArray(p.order) && n && p.order.length === n) { const ord = p.order.map((x) => int(x, 0, n - 1)); if (ord.every((x) => x != null) && new Set(ord).size === n) q.order = ord; }
       if (Number.isFinite(num(p.bike))) q.bike = int(p.bike, 0, 600);
       o.prog[dd] = q;
     }
     if (d.lastDone && typeof d.lastDone === 'object') { const dd = int(d.lastDone.day, 0, nd - 1); if (dd != null) o.lastDone = { day: dd, at: time(d.lastDone.at) }; }
     o.cycle = time(d.cycle);
     o.week = int(d.week, 1, 9999) || 1; // which run through the program this is (see newWeek)
-    if (d.last && typeof d.last === 'object') for (const [id, L] of Object.entries(d.last)) if (/^[a-z0-9_]{1,40}$/.test(id) && L && typeof L === 'object') o.last[id] = { reps: reps(L.reps), kg: kgs(L.kg), at: time(L.at), top: !!L.top };
+    // ts: the first set was a top set; bt: every back-off set reached the top of its range
+    if (d.last && typeof d.last === 'object') for (const [id, L] of Object.entries(d.last)) if (ID.test(id) && L && typeof L === 'object') {
+      const x = o.last[id] = { reps: reps(L.reps), kg: kgs(L.kg), at: time(L.at), top: !!L.top };
+      if (L.ts) x.ts = 1; if (L.bt) x.bt = 1;
+    }
     if (Array.isArray(d.history)) o.history = d.history.filter((h) => h && typeof h === 'object').slice(0, 90).map((h) => {
       const e = { day: int(h.day, 0, nd - 1) || 0, at: time(h.at), sets: int(h.sets, 0, 999) || 0, exercises: int(h.exercises, 0, 99) || 0, ex: {}, kg: {} };
       if (int(h.dur, 1, 86400)) e.dur = int(h.dur, 1, 86400);
       if (int(h.week, 1, 9999)) e.week = int(h.week, 1, 9999);
-      if (h.ex && typeof h.ex === 'object') for (const [id, a] of Object.entries(h.ex)) if (/^[a-z0-9_]{1,40}$/.test(id)) e.ex[id] = reps(a);
-      if (h.kg && typeof h.kg === 'object') for (const [id, a] of Object.entries(h.kg)) if (/^[a-z0-9_]{1,40}$/.test(id)) e.kg[id] = kgs(a);
+      if (h.ex && typeof h.ex === 'object') for (const [id, a] of Object.entries(h.ex)) if (ID.test(id)) e.ex[id] = reps(a);
+      if (h.kg && typeof h.kg === 'object') for (const [id, a] of Object.entries(h.kg)) if (ID.test(id)) e.kg[id] = kgs(a);
+      if (h.dr && typeof h.dr === 'object') for (const [id, a] of Object.entries(h.dr)) { const x = drop(a); if (ID.test(id) && x) (e.dr = e.dr || {})[id] = x; }
       if (Number.isFinite(num(h.bike))) e.bike = int(h.bike, 0, 600);
+      if (h.dl) e.dl = 1; // done in a deload week
       return e;
     });
+    if (d.dl && typeof d.dl === 'object') { const w = int(d.dl.w, 1, 9999); if (w) o.dl = { w, prev: int(d.dl.prev, 0, 9999) || 0 }; }
+    if (d.up && typeof d.up === 'object') for (const [a, b] of Object.entries(d.up)) if (ID.test(a) && typeof b === 'string' && ID.test(b) && a !== b) o.up[a] = b;
     return o;
   }
   let S = blank(); // the saved document (in memory: the truth; written on user actions)
@@ -906,8 +949,13 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   };
 
   // ---------------------------------------------------------------- the program
-  // P.days[d] = { name, steps: [...] }; a step is { t: 'sets', ex, n, lo, hi, rest, first } or { t: 'timer', key, ex,
-  // name, line, sec, auto (the warm-up: moves on by itself), open (the recovery bike: counts on past sec) }
+  // P.days[d] = { name, steps: [...] }; a step is { t: 'sets', ex, n, lo, hi, rest, top } or { t: 'timer', key, ex,
+  // name, line, sec, auto (the warm-up: moves on by itself), open (the recovery bike: counts on past sec) }. top: [lo, hi], the
+  // rep range of a heavy first set; the step's own range is then its back-off sets'.
+  // P.ex[id]: the exercise; compound (warm-up sets before it), drop (a drop set after its last set), partials (half reps in
+  // the stretch at the end of the drop set), failAll (every set to failure), swap: [ids] (for a busy machine), harder (what
+  // a bodyweight exercise does once every set reaches the top: "straighten your legs more"), next: the id of its harder
+  // variant (it takes the step's place then). Adding an exercise as a swap or a variant is a change to this data only.
   let P = null;
   const ADHOC = { name: '', steps: [] };
   const dayOf = (d) => (d < 0 ? ADHOC : P.days[d]);
@@ -916,26 +964,53 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   const exOf = (id) => {
     const e = (P && P.ex[id]) || {};
     return { name: e.name || nameOf(id), cue: e.cue || '', muscles: e.muscles || { primary: [], secondary: [] }, unilateral: !!e.unilateral, ready: !!e.ready,
-      verbs: Array.isArray(e.verbs) && e.verbs.length === 2 ? e.verbs : null, kg0: Number.isFinite(e.kg0) ? e.kg0 : 20, fail: !!e.fail, short: !!e.short };
+      verbs: Array.isArray(e.verbs) && e.verbs.length === 2 ? e.verbs : null, kg0: Number.isFinite(e.kg0) ? e.kg0 : 20, fail: !!e.fail, short: !!e.short,
+      compound: !!e.compound, drop: !!e.drop, partials: !!e.partials, failAll: !!e.failAll, swap: Array.isArray(e.swap) ? e.swap.filter((x) => typeof x === 'string') : [],
+      harder: typeof e.harder === 'string' ? e.harder : '', next: typeof e.next === 'string' ? e.next : '' };
   };
+  const isReady = (id) => !!(P && id && P.ex[id] && P.ex[id].ready);
   const dayLabel = (d) => (d < 0 ? '' : 'Day ' + (d + 1) + MID + P.days[d].name);
   const FRESH = 20 * 3600e3; // progress untouched this long is an old session: the day opens fresh
   const fresh = (p) => !!p && Date.now() - (p.at || 0) < FRESH;
+  // the harder variant an exercise has moved on to (S.up), as far as the chain goes; a variant this version has no animation for is not used
+  const levelOf = (id) => { let x = id; for (let k = 0; k < 4 && S.up[x] && isReady(S.up[x]); k++) x = S.up[x]; return x; };
+  // the exercise a sets step is done with today: the one it was swapped for (a busy machine), else the program's (or its harder
+  // variant); its sets are logged to it
+  const exIdAt = (d, i) => {
+    const st = stepsOf(d)[i];
+    if (!st || st.t !== 'sets' || d < 0) return st ? st.ex : null;
+    const p = S.prog[d], sw = p && p.swap ? p.swap[i] : null;
+    return sw && isReady(sw) ? sw : levelOf(st.ex);
+  };
+  const stepName = (d, i) => { const st = stepsOf(d)[i]; return st.t === 'sets' ? exOf(exIdAt(d, i)).name : st.name; };
+  // the deload week: this week's targets are half the sets (same weights, further from failure); the program stays as it is
+  const deloadOn = () => !!(S.dl && S.dl.w === S.week);
+  const nOf = (d, i) => { const st = stepsOf(d)[i]; return deloadOn() && d >= 0 ? Math.max(1, Math.ceil(st.n / 2)) : st.n; };
+  const isTop = (st) => !!(st && Array.isArray(st.top) && st.top.length === 2);
+  // the rep range of set k (0 = the first): a top-set step's first set has its own
+  const rangeAt = (d, i, k) => { const st = stepsOf(d)[i]; return k === 0 && isTop(st) ? { lo: st.top[0], hi: st.top[1] } : { lo: st.lo, hi: st.hi }; };
+  // the day's order: the program's, or as it is after an exercise was moved to the end (Do it later)
+  const orderOf = (d) => { const n = stepsOf(d).length, p = d >= 0 ? S.prog[d] : null; return p && Array.isArray(p.order) && p.order.length === n ? p.order : [...Array(n).keys()]; };
   const setsOf = (d, i) => ((S.prog[d] && S.prog[d].sets[i]) || []);
   const kgsOf = (d, i) => ((S.prog[d] && S.prog[d].kg && S.prog[d].kg[i]) || []); // the weights of those sets (null: none recorded)
-  const isDone = (d, i) => { const st = stepsOf(d)[i]; return st.t === 'sets' ? setsOf(d, i).length >= st.n : !!(S.prog[d] && S.prog[d].done[i]); };
-  // the next step still open after `from`, going on from the start of the day when the end is reached; the automatic
-  // warm-up is never gone back to (the day ends when everything else is done). -1: nothing left.
-  const openAfter = (d, from) => {
-    const L = stepsOf(d);
-    for (let k = 1; k <= L.length; k++) { const i = (from + k + L.length) % L.length; if (i === from) break; if (!L[i].auto && !isDone(d, i)) return i; }
+  const dropDue = (d, i) => !!(S.prog[d] && S.prog[d].dd && S.prog[d].dd[i]);
+  const warmDone = (d, i) => !!(S.prog[d] && S.prog[d].warm && S.prog[d].warm[i]);
+  // a sets step is done once its sets are logged and its drop set (if one is due) is done or skipped
+  const isDone = (d, i) => { const st = stepsOf(d)[i]; return st.t === 'sets' ? setsOf(d, i).length >= nOf(d, i) && !dropDue(d, i) : !!(S.prog[d] && S.prog[d].done[i]); };
+  // the first step still open from position `pos` of the day's order on (going on from the start when the end is reached),
+  // `skip` excepted; the automatic warm-up is never gone back to. -1: nothing left.
+  const openFrom = (d, pos, skip) => {
+    const O = orderOf(d), L = stepsOf(d);
+    for (let k = 0; k < O.length; k++) { const i = O[(pos + k + O.length) % O.length]; if (i !== skip && !L[i].auto && !isDone(d, i)) return i; }
     return -1;
   };
-  const figOf = (st) => (st && st.ex && exOf(st.ex).ready ? st.ex : null);
+  // the next step still open after `from` in the day's order (the day ends when everything else is done). -1: nothing left.
+  const openAfter = (d, from) => openFrom(d, orderOf(d).indexOf(from) + 1, from);
+  const figAt = (d, i) => { const st = stepsOf(d)[i]; if (!st || !st.ex) return null; const id = exIdAt(d, i); return exOf(id).ready ? id : null; };
   function ensureProg(d) {
     let p = S.prog[d];
     if (!p) { const t = Date.now(); p = S.prog[d] = { started: t, at: t, step: ui.step, sets: {}, done: {}, kg: {} }; }
-    if (!p.kg) p.kg = {};
+    for (const k of ['kg', 'warm', 'dd', 'drop', 'swap']) if (!p[k]) p[k] = {};
     return p;
   }
 
@@ -999,6 +1074,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   const timerOf = (d, i) => ui.timers.get(tkey(d, i)) || null;
   const curTimer = () => timerOf(ui.day, ui.step);
   const ackOn = () => !!(ui.ack && now() < ui.ack.until);
+  const selMode = () => ui.mode === 'set' || ui.mode === 'drop'; // the reps and weight selectors are on screen
+  const tipMode = () => ui.mode === 'set' || ui.mode === 'warm' || ui.mode === 'drop'; // an exercise's own screen (a tap shows its tip)
 
   // ---------------------------------------------------------------- text
   const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -1008,59 +1085,162 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const p = (m.primary || []).map((x) => x.toLowerCase()), s = (m.secondary || []).map((x) => x.toLowerCase());
     return cap(joinAnd(p) + (s.length ? (p.length ? ', with ' : '') + joinAnd(s) : ''));
   }
-  const repsRange = (st, e) => st.lo + (st.hi !== st.lo ? ND + st.hi : '') + ' reps' + (e.unilateral ? ' each arm' : '');
+  const rangeText = (d, i, k) => { const r = rangeAt(d, i, k); return r.lo + (r.hi !== r.lo ? ND + r.hi : '') + ' reps' + (exOf(exIdAt(d, i)).unilateral ? ' each arm' : ''); };
   const repsWord = (n) => n + (n === 1 ? ' rep' : ' reps');
-  // Double progression: when every set of an exercise reached the top of its rep range last time, this time starts one weight step
-  // heavier and back at the bottom of the range (the sets after the first follow the set before them, as always). null: no step up
-  // (the top was not reached on every set, or the weight was not recorded).
+  // a weight as a machine takes it: whole kg below 10, 2.5 kg steps above (down: never rounded up, for an estimate)
+  const roundKg = (x, down) => { const s = x < 10 ? 1 : 2.5; return clamp((down ? Math.floor : Math.round)(+(x / s).toFixed(6)) * s, 0, KG_MAX); };
+  // Last time's sets of this step's exercise, read as this step's sets. One exercise can have a top set on one day and straight
+  // sets on another (lat pulldown: day 5 and day 1): after a top-set day, a straight-set step goes on from the back-off sets; a
+  // top-set step after a straight-set day has no top set to go on from (est: its weight is worked out from the best set).
+  function prevOf(d, i) {
+    const st = stepsOf(d)[i], L = st && st.t === 'sets' ? S.last[exIdAt(d, i)] : null;
+    if (!L || !L.reps || !L.reps.length) return null;
+    const kg = L.kg || [];
+    if (!isTop(st) && L.ts) return L.reps.length > 1 ? { reps: L.reps.slice(1), kg: kg.slice(1), top: !!L.bt, at: L.at } : null;
+    return { reps: L.reps, kg, top: !!L.top, ts: !!L.ts, bt: !!L.bt, at: L.at, est: isTop(st) && !L.ts };
+  }
+  // Double progression: when every set of an exercise reached the top of its rep range last time (a top-set step: its top set),
+  // this time starts one weight step heavier ({ kg }) and back at the bottom of the range; an exercise done with no weight gets
+  // harder instead ({ harder }: its "harder" line, e.g. straighten your legs more). null: no step (not in a deload week either).
   function bumpFor(d, i) {
-    const L = S.last[stepsOf(d)[i].ex];
-    if (!(L && L.top && L.kg && Number.isFinite(L.kg[0]) && L.kg[0] > 0)) return null; // (an exercise done with no weight is left alone)
-    const up = kgNext(L.kg[0], 1);
-    return up > L.kg[0] ? up : null;
+    const V = prevOf(d, i);
+    if (deloadOn() || !V || !V.top || V.est) return null;
+    const w = V.kg[0];
+    if (Number.isFinite(w) && w > 0) { const up = kgNext(w, 1); return up > w ? { kg: up } : null; }
+    if (V.kg.length && V.kg.every((x) => x === 0)) return { harder: true };
+    return null;
   }
   function defaultReps(d, i) {
-    const st = stepsOf(d)[i], k = setsOf(d, i).length, L = S.last[st.ex], v = L && L.reps && L.reps[k];
-    if (bumpFor(d, i) != null) return clamp(st.lo, 0, REPS_MAX); // heavier today: the bottom of the range to beat
-    return clamp(Number.isFinite(v) && v > 0 ? v : st.hi, 0, REPS_MAX);
+    const k = setsOf(d, i).length, R = rangeAt(d, i, k), V = prevOf(d, i);
+    if (deloadOn() || (k === 0 && bumpFor(d, i))) return clamp(R.lo, 0, REPS_MAX); // heavier (or harder) today, or a deload: the bottom of the range
+    if (k === 0 && V && V.est) return clamp(R.hi, 0, REPS_MAX); // a first top set: its weight is worked out for the top of its range
+    const v = V && V.reps[k];
+    return clamp(Number.isFinite(v) && v > 0 ? v : R.hi, 0, REPS_MAX);
   }
-  // the weight a set starts on: the one before it in this workout, else what was lifted on this set last time (the last
-  // one recorded when there were fewer sets), else the exercise's starting point
+  // the weight a set starts on: a top-set step's first back-off set a share of today's top set; else the set before it in this
+  // workout, else what was lifted on this set last time (the last one recorded when there were fewer sets), else the
+  // exercise's starting point
   function defaultKg(d, i) {
-    const st = stepsOf(d)[i], k = setsOf(d, i).length, cur = kgsOf(d, i), L = S.last[st.ex];
+    const st = stepsOf(d)[i], k = setsOf(d, i).length, cur = kgsOf(d, i), V = prevOf(d, i);
+    if (isTop(st) && k === 1 && cur[0] > 0) return backoffKg(d, i, cur[0]);
     if (k > 0 && Number.isFinite(cur[k - 1])) return cur[k - 1];
-    const up = k === 0 ? bumpFor(d, i) : null;
-    if (up != null) return clamp(up, 0, KG_MAX);
-    const lk = L && L.kg ? L.kg.filter((x) => Number.isFinite(x)) : [];
-    if (L && L.kg && Number.isFinite(L.kg[k])) return L.kg[k];
+    if (k === 0) { const up = bumpFor(d, i); if (up && up.kg != null) return clamp(up.kg, 0, KG_MAX); }
+    if (k === 0 && V && V.est) { const e = topFrom(V, rangeAt(d, i, 0).hi); if (e != null) return e; }
+    if (V && Number.isFinite(V.kg[k])) return V.kg[k];
+    const lk = V ? V.kg.filter((x) => Number.isFinite(x)) : [];
     if (lk.length) return lk[lk.length - 1];
-    return clamp(exOf(st.ex).kg0, 0, KG_MAX);
+    return clamp(exOf(exIdAt(d, i)).kg0, 0, KG_MAX);
   }
-  const kgKnown = (d, i) => { const L = S.last[stepsOf(d)[i].ex]; return !!(L && L.kg && L.kg.some((x) => Number.isFinite(x))) || kgsOf(d, i).some((x) => Number.isFinite(x)); };
-  // the rules of a set (the rules card, in context): they go in the coaching card, or above the controls when it has no room
-  // Effort (Jeff Nippard: most sets 1-2 reps from failure, the last set to failure; only free-weight squats and deadlifts stay short),
-  // said where it is news. Nothing here is a number of kilograms worked out for the lifter: every lifter's weights are their own.
+  // the first back-off set: last time's share of the top set (87.5 %, about 85-90 %, the first time), a step more when every
+  // back-off set reached the top of its range last time (the sets after it follow it, as always)
+  function backoffKg(d, i, top) {
+    const V = prevOf(d, i);
+    let r = 0.875;
+    if (V && V.ts && V.kg[0] > 0 && V.kg[1] > 0) r = clamp(V.kg[1] / V.kg[0], 0.7, 0.95);
+    let w = roundKg(top * r);
+    if (V && V.ts && V.bt && !deloadOn()) w = kgNext(w, 1);
+    return clamp(Math.min(w, top), 0, KG_MAX);
+  }
+  // a top set's weight from last time's straight sets: what their best set points to for `reps` reps (Epley), rounded down
+  function topFrom(V, reps) {
+    let best = 0;
+    V.reps.forEach((r, k) => { const w = V.kg[k]; if (w > 0 && r > 0) best = Math.max(best, w * (1 + r / 30)); });
+    return best ? roundKg(best / (1 + reps / 30), true) : null;
+  }
+  const kgKnown = (d, i) => { const V = prevOf(d, i); return !!(V && V.kg.some((x) => Number.isFinite(x))) || kgsOf(d, i).some((x) => Number.isFinite(x)); };
+  // ---- warm-up sets: before the first set of a compound, a ramp from that set's planned weight (about 50 % x 8, 75 % x 4,
+  // and 85 % x 2 before a heavy top set); before an isolation for a muscle not yet worked today, one light set (50 % x 10).
+  // Rounded to machine steps; never logged. A compound also warms the muscles that help its main ones (pressing the triceps, a
+  // shoulder press the side shoulders, pulling the biceps and rear shoulders, a squat or leg press the glutes and inner thighs, a
+  // hip thrust the hamstrings and side glutes).
+  const ALSO = { Chest: ['Upper chest', 'Triceps', 'Front shoulders'], 'Upper chest': ['Chest', 'Triceps', 'Front shoulders'], 'Front shoulders': ['Triceps', 'Side shoulders'],
+    Lats: ['Biceps', 'Rear shoulders', 'Upper back'], 'Upper back': ['Biceps', 'Rear shoulders', 'Lats'], 'Mid traps': ['Rear shoulders', 'Biceps'],
+    Quads: ['Glutes', 'Inner thighs'], Glutes: ['Hamstrings', 'Upper glutes', 'Side glutes', 'Inner thighs'] };
+  function workedToday(d, i) {
+    const w = new Set();
+    stepsOf(d).forEach((s, j) => {
+      if (j === i || s.t !== 'sets' || !setsOf(d, j).length) return;
+      const x = exOf(exIdAt(d, j));
+      for (const m of [...x.muscles.primary, ...x.muscles.secondary]) w.add(m);
+      if (x.compound) for (const m of x.muscles.primary) for (const a of ALSO[m] || []) w.add(a); // (what a compound's main muscles bring along)
+    });
+    return w;
+  }
+  // [[kg, reps], ...] for step i before its first set, or null (none: no weight to warm up with, or the muscle is warm already)
+  function warmSets(d, i) {
+    const st = stepsOf(d)[i];
+    if (ui.adhoc || VERIFY || d < 0 || !st || st.t !== 'sets' || setsOf(d, i).length) return null;
+    const e = exOf(exIdAt(d, i)), s = ui.sel, plan = s && s.day === d && s.step === i && s.k === 0 && !s.drop && Number.isFinite(s.kg) ? s.kg : defaultKg(d, i);
+    if (!(plan >= 4)) return null;
+    let ramp = null;
+    if (e.compound) ramp = isTop(st) && !deloadOn() ? [[0.5, 8], [0.75, 4], [0.85, 2]] : [[0.5, 8], [0.75, 4]];
+    else { const w = workedToday(d, i); if (!e.muscles.primary.every((m) => w.has(m))) ramp = [[0.5, 10]]; }
+    if (!ramp) return null;
+    const out = [];
+    for (const [f, r] of ramp) { const w = roundKg(plan * f); if (w > (out.length ? out[out.length - 1][0] : 0) && w < plan) out.push([w, r]); }
+    return out.length ? out : null;
+  }
+  const warmText = (W, e) => W.map(([w, r]) => fmtKg(w) + ' kg × ' + r).join(MID) + (e.unilateral ? ' each arm' : '');
+  // ---- the drop set: right after the last set, about half its weight (rounded to a machine step), as many reps as it gives
+  function dropKg(d, i) { const w = kgsOf(d, i), x = w[w.length - 1]; if (!(x > 1)) return 0; const h = roundKg(x / 2); return h < x ? h : roundKg(x / 2, true); }
+  function dropReps(d, i) { const a = setsOf(d, i); return clamp(a[a.length - 1] || stepsOf(d)[i].lo, 0, REPS_MAX); }
+  // The effort rule of the set on screen, by its kind (it goes in the coaching card, or above the controls when the card has no
+  // room): most sets stop 1-2 reps short and the last set goes to failure (Jeff Nippard; hack squat and leg press stop 0-1 short),
+  // a heavy top set at RPE 8-9, every ab set to failure, the drop set to failure, a deload week 3-4 reps short.
   function ruleFor(d, i) {
-    const st = stepsOf(d)[i], k = setsOf(d, i).length, L = S.last[st.ex];
-    if (k === st.n - 1) { const x = exOf(st.ex); if (x.fail) return T.lastSet; if (x.short) return T.lastShort; }
-    if (k === 0 && L && L.top) { const up = bumpFor(d, i); return up != null ? T.addToday + MID + fmtKg(up) + ' kg' : T.addToday; }
-    if (k === 0 && !kgKnown(d, i)) return T.pickWeight;
-    if (k === 0) return T.stayShort;
+    const st = stepsOf(d)[i], e = exOf(exIdAt(d, i)), k = setsOf(d, i).length;
+    if (ui.mode === 'warm') return T.warmRule;
+    if (ui.mode === 'drop') return e.partials ? T.dropPartials : T.dropRule;
+    if (deloadOn()) return T.deload;
+    if (e.failAll) return T.everySet;
+    if (k === 0 && isTop(st)) return T.topSet;
+    if (k === nOf(d, i) - 1) { if (e.fail) return T.lastSet; if (e.short) return T.lastShort; }
+    return T.stayShort;
+  }
+  // what changes today, above the controls on an exercise's first set: a step heavier (or harder), or no weight known yet. Nothing
+  // here is a number of kilograms worked out for the lifter beyond their own last time (and the shares of it above).
+  function progFor(d, i) {
+    if (ui.mode !== 'set' || setsOf(d, i).length || deloadOn()) return null;
+    const up = bumpFor(d, i), e = exOf(exIdAt(d, i));
+    if (up && up.kg != null) return T.addToday + MID + fmtKg(up.kg) + ' kg';
+    if (up && up.harder) return e.harder ? cap(e.harder) + ' today' : T.addToday;
+    if (e.kg0 > 0 && !kgKnown(d, i)) return T.pickWeight;
     return null;
   }
   // what was done on this set last time: "Last time 9 reps . 40 kg"
   function lastFor(d, i) {
-    const st = stepsOf(d)[i], k = setsOf(d, i).length, L = S.last[st.ex];
-    if (!(L && L.reps && L.reps[k])) return null;
-    return 'Last time ' + repsWord(L.reps[k]) + (L.kg && Number.isFinite(L.kg[k]) ? MID + fmtKg(L.kg[k]) + ' kg' : '');
+    const k = setsOf(d, i).length, V = prevOf(d, i);
+    if (ui.mode !== 'set' || !(V && V.reps[k])) return null;
+    const w = V.kg[k];
+    return 'Last time ' + repsWord(V.reps[k]) + (Number.isFinite(w) && w > 0 ? MID + fmtKg(w) + ' kg' : '');
   }
+  // what an exercise's sets leave for next time (S.last): reps, weights, and whether they reached the top of the range (a top-set
+  // step: its top set; bt: every back-off set). A deload week's sets never count as reaching the top.
+  function lastRecord(st, a, w, n, t, dl) {
+    const L = { reps: a.slice(), kg: w.slice(), at: t, top: false };
+    if (isTop(st)) L.ts = 1;
+    if (dl) return L;
+    if (isTop(st)) { L.top = a[0] >= st.top[1]; if (a.length >= n && a.length > 1 && a.slice(1).every((x) => x >= st.hi)) L.bt = 1; }
+    else L.top = a.length >= n && a.every((x) => x >= st.hi);
+    return L;
+  }
+  // after the last set of an exercise that reached the top: what next time brings ("Next time: add weight . 42.5 kg", or for a
+  // bodyweight exercise its harder variant or its "harder" line)
+  function nextMsg(id, L) {
+    if (!L || !L.top) return null;
+    const e = exOf(id), w = L.kg[0];
+    if (Number.isFinite(w) && w > 0) { const up = kgNext(w, 1); return T.addNext + (up > w ? MID + fmtKg(up) + ' kg' : ''); }
+    if (L.kg.length && L.kg.every((x) => x === 0)) { if (e.next && isReady(e.next)) return 'Next time: ' + nameOf(e.next); if (e.harder) return 'Next time: ' + e.harder; }
+    return T.addNext;
+  }
+  // the same message after the exercise's drop set (from the record its last set left today)
+  const msgFor = (d, i) => { const id = exIdAt(d, i), L = S.last[id], p = S.prog[d]; return !deloadOn() && L && p && L.at >= (p.started || 0) ? nextMsg(id, L) : null; };
   function restNext(r) {
-    const st = stepsOf(ui.day)[r.next];
-    if (r.next === r.after) return 'Next: Set ' + (setsOf(ui.day, r.next).length + 1) + ' of ' + st.n;
-    return 'Next: ' + (st.t === 'sets' ? exOf(st.ex).name : st.name);
+    if (r.next === r.after) return 'Next: Set ' + (setsOf(ui.day, r.next).length + 1) + ' of ' + nOf(ui.day, r.next);
+    return 'Next: ' + stepName(ui.day, r.next);
   }
   // what a logged set did, for the done line: "Set 2 done . 10 reps", or "Chest press done" after the exercise's last set
-  const doneText = (st, set, exDone) => (exDone ? exOf(st.ex).name + ' done' : 'Set ' + set.k + ' done' + MID + repsWord(set.n) + (set.kg != null ? MID + fmtKg(set.kg) + ' kg' : ''));
+  const doneText = (d, i, set, exDone) => (exDone ? stepName(d, i) + ' done' : 'Set ' + set.k + ' done' + MID + repsWord(set.n) + (set.kg > 0 ? MID + fmtKg(set.kg) + ' kg' : ''));
   // The title stays on one line when it can (shrinking at most to 26 px), otherwise it wraps at spaces, never at a hyphen.
   function fitName() {
     const el = E.name; el.style.fontSize = '';
@@ -1117,30 +1297,47 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function viewNow() {
     const d = ui.day, i = ui.step, t = now(), st = ui.mode === 'end' || ui.mode === 'boot' ? null : stepsOf(d)[i];
     const v = { kind: ui.mode, kicker: '', kTone: '', name: '', check: false, clock: '', line: '', lTone: '', ticks: null, mus: '', note: null, sel: false, primary: null, coach: null, hint: null };
-    if (st && ((ui.mode === 'timer' && st.t !== 'timer') || (ui.mode === 'set' && st.t !== 'sets'))) return v; // a change in the middle: the next draw has it right
+    if (st && ((ui.mode === 'timer' && st.t !== 'timer') || ((ui.mode === 'set' || ui.mode === 'warm' || ui.mode === 'drop') && st.t !== 'sets'))) return v; // a change in the middle: the next draw has it right
     const glowAt = (step) => (ui.glow && t < ui.glow.until && ui.glow.day === d && ui.glow.step === step ? ui.glow : null);
     if (ui.mode === 'set') {
-      const e = exOf(st.ex), k = setsOf(d, i).length, gw = glowAt(i);
+      const e = exOf(exIdAt(d, i)), k = setsOf(d, i).length, n = nOf(d, i), gw = glowAt(i);
       const go = !!(ui.go && t < ui.go.until && ui.go.day === d && ui.go.step === i && ui.go.k === k);
+      // the kind of set, where it is news: a deload week's sets, a heavy top set and the lighter back-off sets after it
+      v.kicker = deloadOn() ? 'Deload' : isTop(st) ? (k === 0 ? 'Top set' : 'Back-off set') : '';
       v.name = e.name;
-      v.line = go ? 'Set ' + (k + 1) + MID + 'go' : 'Set ' + Math.min(k + 1, st.n) + ' of ' + st.n + MID + repsRange(st, e);
+      v.line = go ? 'Set ' + (k + 1) + MID + 'go' : 'Set ' + Math.min(k + 1, n) + ' of ' + n + MID + rangeText(d, i, Math.min(k, n - 1));
       v.lTone = go ? 'go' : '';
-      v.ticks = { n: st.n, done: k, go, glow: gw ? gw.k : null, t0: gw ? gw.t0 : null };
+      v.ticks = { n, done: k, go, glow: gw ? gw.k : null, t0: gw ? gw.t0 : null };
       v.mus = musLine(e.muscles);
       v.sel = true;
       const r = selValue(), w = selKg();
       v.primary = { act: 'done', label: 'Done', icon: 'check', aria: 'Done: log set ' + (k + 1) + ' with ' + repsWord(r) + ' at ' + fmtKg(w) + ' kilograms' };
       const rule = ruleFor(d, i);
       v.coach = { verbs: e.verbs, cue: e.cue, rule: rule || '' };
-      v.hint = { rule, last: lastFor(d, i) };
+      v.hint = { rule, prog: progFor(d, i), last: lastFor(d, i) };
+    } else if (ui.mode === 'warm') {
+      // the warm-up sets before the first set: the ramp in one line, one button; nothing is logged
+      const e = exOf(exIdAt(d, i)), W = warmSets(d, i) || [];
+      v.kicker = 'Warm-up sets'; v.name = e.name; v.line = warmText(W, e); v.lTone = 'plan'; v.mus = musLine(e.muscles);
+      v.primary = { act: 'warm', label: 'Warm-up done', icon: 'check', aria: 'Warm-up done: on to set 1' };
+      const rule = ruleFor(d, i);
+      v.coach = { verbs: e.verbs, cue: e.cue, rule }; v.hint = { rule };
+    } else if (ui.mode === 'drop') {
+      // the drop set, right after the last set: about half the weight, to failure; logged as a drop (0 reps: not done)
+      const e = exOf(exIdAt(d, i));
+      v.kicker = 'Drop set'; v.name = e.name; v.line = 'No rest' + MID + 'half the weight' + (e.unilateral ? MID + 'each arm' : ''); v.mus = musLine(e.muscles);
+      v.sel = true;
+      v.primary = { act: 'drop', label: 'Done', icon: 'check', aria: 'Done: log the drop set with ' + repsWord(selValue()) + ' at ' + fmtKg(selKg()) + ' kilograms' };
+      const rule = ruleFor(d, i);
+      v.coach = { verbs: e.verbs, cue: e.cue, rule }; v.hint = { rule };
     } else if (ui.mode === 'rest') {
       // the rest: Rest (or the add-weight message for a moment), the countdown, what is next (with the exercise's ticks);
       // above the button what was just done
       const r = ui.rest, msg = r.msg && t < r.msgUntil, same = r.next === r.after, gw = glowAt(r.next);
       v.kicker = msg ? r.msg : 'Rest'; v.kTone = msg ? 'warm' : '';
       v.clock = restClock(); v.line = restNext(r);
-      if (same) v.ticks = { n: stepsOf(d)[r.next].n, done: setsOf(d, r.next).length, glow: gw ? gw.k : null, t0: gw ? gw.t0 : null };
-      if (r.set) v.note = { text: doneText(stepsOf(d)[r.after], r.set, !same), tone: 'done', icon: true };
+      if (same) v.ticks = { n: nOf(d, r.next), done: setsOf(d, r.next).length, glow: gw ? gw.k : null, t0: gw ? gw.t0 : null };
+      if (r.set) v.note = { text: doneText(d, r.after, r.set, r.set.drop || isDone(d, r.after)), tone: 'done', icon: true };
       v.primary = { act: 'skip', label: 'Skip rest' };
     } else if (ui.mode === 'timer') {
       const tm = curTimer(), nm = st.name.toLowerCase(), e = st.ex ? exOf(st.ex) : null;
@@ -1149,11 +1346,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       else { v.kicker = st.name; v.clock = timerClock(st, tm); v.primary = { act: 'finish', label: 'Done', icon: 'check', aria: 'Done: finish the ' + nm }; }
       if (e && e.ready && (st.cue || e.cue)) v.coach = { verbs: e.verbs, cue: st.cue || e.cue, rule: '', cycle: true, speed: st.pulse ? 'pulse ' + st.pulse : '' };
     } else if (ui.mode === 'done') {
-      if (st.t === 'sets') { const e = exOf(st.ex), a = setsOf(d, i); v.name = e.name; v.line = a.length + ' sets done' + MID + a.join(', ') + ' reps' + kgLine(kgsOf(d, i)); v.mus = musLine(e.muscles); }
+      if (st.t === 'sets') { const e = exOf(exIdAt(d, i)), a = setsOf(d, i); v.name = e.name; v.line = a.length + ' sets done' + MID + a.join(', ') + ' reps' + kgLine(kgsOf(d, i)); v.mus = musLine(e.muscles); }
       else { v.name = st.name; v.line = 'Done'; }
       // the button names where it goes: the next open step (the day's end when none is left)
-      const nx = openAfter(d, i), ns = nx >= 0 ? stepsOf(d)[nx] : null;
-      v.primary = ns ? { act: 'continue', label: 'Next: ' + (ns.t === 'sets' ? exOf(ns.ex).name : ns.name) } : { act: 'continue', label: 'Finish the day' };
+      const nx = openAfter(d, i);
+      v.primary = nx >= 0 ? { act: 'continue', label: 'Next: ' + stepName(d, nx) } : { act: 'continue', label: 'Finish the day' };
     } else if (ui.mode === 'end' && ui.end) {
       // the end of the day: "Day 1 done" with a check, how long it took, what it held, the next day as the button
       const x = ui.end, nd = (x.day + 1) % P.days.length;
@@ -1165,9 +1362,9 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       v.primary = { act: 'next', label: 'Next: ' + dayLabel(nd), icon: 'next', aria: 'Next: ' + dayLabel(nd).replace(MID, ', ') };
     }
     // a done line carried over to this step for a while ("Warm-up done"), or a word about what just happened ("Undone")
-    if (ui.note && t < ui.note.until && (ui.mode === 'set' || ui.mode === 'timer' || ui.mode === 'done')) v.note = Object.assign({ tone: 'done', icon: true }, ui.note);
-    // a message for a moment where the kicker is free (e.g. "Next time: add weight" on the stretching screen)
-    if (ui.flash && t < ui.flash.until && !v.kicker && (ui.mode === 'timer' || ui.mode === 'set')) { v.kicker = ui.flash.text; v.kTone = 'warm'; }
+    if (ui.note && t < ui.note.until && (ui.mode === 'set' || ui.mode === 'warm' || ui.mode === 'timer' || ui.mode === 'done')) v.note = Object.assign({ tone: 'done', icon: true }, ui.note);
+    // a message for a moment in the kicker (e.g. "Next time: add weight" on the stretching screen; over a set's kind for that moment)
+    if (ui.flash && t < ui.flash.until && (ui.mode === 'set' || (ui.mode === 'timer' && !v.kicker))) { v.kicker = ui.flash.text; v.kTone = 'warm'; }
     return v;
   }
   // the moment after Done (or a timer that ran out): the screen as it was, with the set's tick lit and the done line;
@@ -1188,18 +1385,21 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     setName(v.name, v.check); setText(E.clock, v.clock);
     setLine(v.line, v.ticks, v.lTone); setText(E.mus, v.mus);
     app.dataset.mode = ui.mode;
-    if (ui.mode !== 'set' && kpOpen()) closeKeypad();
+    if (!selMode() && kpOpen()) closeKeypad();
     wake.set(ui.mode !== 'end' && !dialogOpen()); // the screen stays awake while a day is on
     app.dataset.view = v.kind;
+    app.classList.toggle('kicked', !!v.kicker && (v.kind === 'set' || v.kind === 'drop')); // a set's kind takes the muscles line's room
     const key = v.kind + '|' + v.name + '|' + v.line;
     if (key !== lastView) { lastView = key; fitName(); }
     const hadFocus = E.act.contains(doc.activeElement) ? doc.activeElement : null;
     // the coaching card first: what it has no room for goes above the controls instead
     const cs = paintCoach(v.coach);
     let note = v.note;
-    if (!note && v.coach && v.coach.cue && !cs.cue && ui.mode === 'set' && now() < ui.tipUntil) note = { text: v.coach.cue, tone: 'tip' }; // a tap on the figure: the tip
+    if (!note && v.coach && v.coach.cue && !cs.cue && tipMode() && now() < ui.tipUntil) note = { text: v.coach.cue, tone: 'tip' }; // a tap on the figure: the tip
+    // then what changes today (heavier, harder), the set's rule when the card has no room for it, what was done last time
     if (!note && v.hint) {
-      if (v.hint.rule && !cs.rule) note = { text: v.hint.rule, tone: 'guide' };
+      if (v.hint.prog) note = { text: v.hint.prog, tone: 'guide' };
+      else if (v.hint.rule && !cs.rule) note = { text: v.hint.rule, tone: 'guide' };
       else if (v.hint.last) note = { text: v.hint.last, tone: 'soft' };
     }
     paintNote(note); paintSel(v.sel); paintPrimary(v.primary); paintBack(); paintSess();
@@ -1209,6 +1409,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     renderTop(); renderTip();
     stageEl.setAttribute('aria-label', stageLabel());
     dimFor();
+    if (menuOpen()) paintMenu();
   }
   function paintNote(n) {
     const el = E.note;
@@ -1335,7 +1536,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     return shown;
   }
   function stageLabel() {
-    const st = ui.mode === 'end' ? null : stepsOf(ui.day)[ui.step], id = figOf(st);
+    const id = ui.mode === 'end' ? null : figAt(ui.day, ui.step);
     if (!id || figHidden) return 'Horizon';
     const e = exOf(id);
     return e.name + ' animation' + (e.muscles.primary.length ? ', working ' + e.muscles.primary.join(', ').toLowerCase() : '');
@@ -1345,37 +1546,40 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function timerClock(st, tm) { const el = elapsedOf(tm); return st.open ? mmss(el) : mmss(Math.ceil(Math.max(0, st.sec - el))); }
 
   // ---------------------------------------------------------------- the top band: progress segments and the day
-  let segDay = null;
+  // The segments follow the day's order (an exercise moved to the end has its segment at the end).
+  let segKey = '';
+  const segOf = (i) => $('segs').querySelector('.seg[data-i="' + i + '"]');
   function renderTop() {
     const d = ui.day, segs = $('segs');
     $('daylabel').textContent = ui.adhoc ? nameOf(stepsOf(-1)[0].ex) : dayLabel(d);
     $('daybtn').setAttribute('aria-label', (ui.adhoc ? '' : dayLabel(d) + '. ') + 'Choose a day');
-    if (segDay !== d || segs.childElementCount !== stepsOf(d).length) {
-      segDay = d; segs.textContent = '';
-      stepsOf(d).forEach((st, i) => {
+    const O = ui.mode === 'end' && ui.end && ui.end.prog.order ? ui.end.prog.order : orderOf(d), key = d + '|' + O.join(',');
+    if (segKey !== key || segs.childElementCount !== O.length) {
+      segKey = key; segs.textContent = '';
+      for (const i of O) {
         const b = doc.createElement('button');
         b.type = 'button'; b.className = 'seg'; b.dataset.i = i;
         b.innerHTML = '<i></i>';
         b.addEventListener('click', () => jumpTo(i));
         segs.appendChild(b);
-      });
+      }
     }
     const L = stepsOf(d), cur = ui.mode === 'end' ? -1 : ui.step;
-    [...segs.children].forEach((b, i) => {
-      const st = L[i], f = segFill(d, i);
+    [...segs.children].forEach((b, pos) => {
+      const i = +b.dataset.i, st = L[i], f = segFill(d, i);
       b.style.setProperty('--f', f.toFixed(4));
       b.setAttribute('aria-current', i === cur ? 'step' : 'false');
-      const done = f >= 1, nm = st.t === 'sets' ? exOf(st.ex).name : st.name;
-      const n = st.t === 'sets' ? Math.round(f * st.n) + ' of ' + st.n + ' sets' : done ? 'done' : '';
-      b.setAttribute('aria-label', 'Step ' + (i + 1) + ' of ' + L.length + ': ' + nm + (n ? ', ' + n : ''));
+      const done = f >= 1, nm = stepName(d, i), n = nOf(d, i);
+      const sn = st.t === 'sets' ? Math.round(f * n) + ' of ' + n + ' sets' : done ? 'done' : '';
+      b.setAttribute('aria-label', 'Step ' + (pos + 1) + ' of ' + L.length + ': ' + nm + (sn ? ', ' + sn : ''));
     });
   }
   // a segment's fill: its sets logged, its timer's progress, 1 once done; on the end screen what the finished day really
   // holds (a warm-up that was skipped stays empty)
   function segFill(d, i) {
     const st = stepsOf(d)[i];
-    if (ui.mode === 'end' && ui.end) { const p = ui.end.prog; return st.t === 'sets' ? Math.min(1, ((p.sets && p.sets[i]) || []).length / st.n) : p.done && p.done[i] ? 1 : 0; }
-    if (st.t === 'sets') return Math.min(1, setsOf(d, i).length / st.n);
+    if (ui.mode === 'end' && ui.end) { const p = ui.end.prog; return st.t === 'sets' ? Math.min(1, ((p.sets && p.sets[i]) || []).length / nOf(d, i)) : p.done && p.done[i] ? 1 : 0; }
+    if (st.t === 'sets') return Math.min(1, setsOf(d, i).length / nOf(d, i));
     if (isDone(d, i)) return 1;
     const tm = timerOf(d, i);
     return tm ? Math.min(1, elapsedOf(tm) / st.sec) : 0;
@@ -1393,15 +1597,25 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const n = stepsOf(d).length, want = o.step != null ? o.step : p ? p.step : 0;
     goStep(clamp(want | 0, 0, n - 1), { cut: true });
   }
+  // what step i shows: done (revisited), its timer, its drop set (due right after its last set), its warm-up sets (before its
+  // first set, when it has them and they are not done), or its next set
+  function modeOf(d, i) {
+    const st = stepsOf(d)[i];
+    if (isDone(d, i)) return 'done';
+    if (st.t !== 'sets') return 'timer';
+    if (dropDue(d, i)) return 'drop';
+    if (!setsOf(d, i).length && !warmDone(d, i) && warmSets(d, i)) return 'warm';
+    return 'set';
+  }
   // o.go: arrived from a rest or a finished timer: the set gets its short highlight ("Set 3 . go")
   function goStep(i, o) {
     o = o || {};
-    const d = ui.day, st = stepsOf(d)[i];
+    const d = ui.day;
     ui.step = i; ui.tipUntil = 0;
     if (S.prog[d]) S.prog[d].step = i;
-    ui.mode = isDone(d, i) ? 'done' : st.t === 'sets' ? 'set' : 'timer';
+    ui.mode = modeOf(d, i);
     ui.go = o.go && ui.mode === 'set' ? { day: d, step: i, k: setsOf(d, i).length, until: now() + GO_MS } : null;
-    showFigure(figOf(st), o.cut);
+    showFigure(figAt(d, i), o.cut);
     render(); if (!o.quiet) announceStep(o.pre); prefetch(); kickLoop();
   }
   // a tap on a progress segment: that step, as far as it has got; the end screen's segments stay put (the day is done:
@@ -1421,7 +1635,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // ember check, the set's tick lit, the done line above the button; the rest (or what comes next) follows the moment.
   function logSet(n, kg, how) {
     if (ui.mode !== 'set' || ackOn()) return;
-    const d = ui.day, i = ui.step, st = stepsOf(d)[i];
+    const d = ui.day, i = ui.step, st = stepsOf(d)[i], id = exIdAt(d, i), e = exOf(id), N = nOf(d, i);
     n = clamp(Math.round(n), 0, REPS_MAX); kg = kgOne(kg); if (kg == null) kg = 0;
     const before = viewNow(); // the set as it is on screen: it stays for the moment of the check
     const u = snapshot('set ' + (setsOf(d, i).length + 1));
@@ -1432,35 +1646,85 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (u) u.sel = { day: d, step: i, k: a.length - 1, v: n, kg }; // Undo puts these numbers back on the selectors
     lastLog = { how: how || 'done', v: n, kg, t: Math.round(now()) };
     ui.sel = null; saveSel(); // the next set starts on its own default
-    const set = { k: a.length, n, kg }, t0 = now(), exDone = a.length >= st.n, line = doneText(st, set, exDone);
+    const set = { k: a.length, n, kg }, t0 = now(), exDone = a.length >= N, line = doneText(d, i, set, exDone);
     ui.glow = { day: d, step: i, k: a.length - 1, t0, until: t0 + GLOW_MS };
-    Object.assign(before, { kind: 'set', lTone: '', line: 'Set ' + a.length + ' of ' + st.n + MID + repsRange(st, exOf(st.ex)), ticks: { n: st.n, done: a.length, glow: a.length - 1, t0 } });
-    const said = 'Set ' + set.k + ' done, ' + repsWord(n) + ', ' + fmtKg(kg) + ' kilograms.';
-    let msg = null;
+    Object.assign(before, { kind: 'set', lTone: '', line: 'Set ' + a.length + ' of ' + N + MID + rangeText(d, i, a.length - 1), ticks: { n: N, done: a.length, glow: a.length - 1, t0 } });
+    const said = 'Set ' + set.k + ' done, ' + repsWord(n) + (kg > 0 ? ', ' + fmtKg(kg) + ' kilograms.' : '.');
     haptic(14);
-    if (exDone) { // the exercise is done: remember its reps and weights for next time
-      const top = a.every((x) => x >= st.hi);
-      S.last[st.ex] = { reps: a.slice(), kg: w.slice(), at: Date.now(), top };
-      if (top) { const up = Number.isFinite(w[0]) && w[0] > 0 ? kgNext(w[0], 1) : null; msg = up != null && up > w[0] ? T.addNext + MID + fmtKg(up) + ' kg' : T.addNext; }
-      const nx = openAfter(d, i); // the next open step, earlier ones included; none: the day is done
-      if (nx < 0) {
-        finishDay(msg, line); ackView(before, { text: line, tone: 'done', icon: true }, ACK_MS);
-        render(); Save.persist(); announce(said + ' ' + endSpeech()); return;
-      }
-      p.step = nx;
-      // a timed step next (the recovery day's stretching) is its own rest: straight there, the message and the done line shown there
-      if (stepsOf(d)[nx].t !== 'sets') {
-        if (msg) ui.flash = { text: msg, until: now() + ACK_MS + 4500 };
-        ui.note = { text: line, until: now() + ACK_MS + NOTE_MS };
-        ackView(before, { text: line, tone: 'done', icon: true }, ACK_MS, () => goStep(nx, { cut: true, quiet: true }));
-        render(); Save.persist(); announce(said + (msg ? ' ' + msg + '.' : '') + ' Next: ' + stepsOf(d)[nx].name + '.'); return;
-      }
-      startRest(i, nx, msg, set);
-    } else startRest(i, i, null, set);
-    ackView(before, { text: line, tone: 'done', icon: true }, ACK_MS);
+    if (!exDone) {
+      startRest(i, i, null, set);
+      ackView(before, { text: line, tone: 'done', icon: true }, ACK_MS);
+      render(); Save.persist();
+      announce(said + ' Rest ' + Math.round(ui.rest.dur * SPEED / 60000) + ' minutes. ' + restNext(ui.rest) + '.');
+      return;
+    }
+    // the exercise's last set: its reps and weights are kept for next time (a deload week's only when there is nothing yet)
+    const dl = deloadOn();
+    let msg = null;
+    if (!dl || !S.last[id]) {
+      const L = S.last[id] = lastRecord(st, a, w, N, Date.now(), dl);
+      msg = dl ? null : nextMsg(id, L);
+      // a bodyweight exercise done to the top of its range on every set moves on to its harder variant next time (when this
+      // version has one); today's sets stay with the exercise they were done on
+      if (!dl && !ui.adhoc && L.top && e.next && isReady(e.next) && L.kg.length && L.kg.every((x) => x === 0)) { p.swap[i] = id; S.up[id] = e.next; }
+    }
+    // a machine or cable isolation: its drop set comes right away, with no rest before it (none in a deload week)
+    if (e.drop && !dl && !ui.adhoc) {
+      p.dd[i] = 1;
+      ackView(before, { text: line, tone: 'done', icon: true }, ACK_MS, () => goStep(i, { quiet: true }));
+      render(); Save.persist(); announce(said + ' Drop set now: about half the weight, no rest.');
+      return;
+    }
+    exerciseOver(i, before, set, msg, line, said);
+  }
+  // the exercise of step i is over (its last set, or its drop set): a rest and the next open step (earlier ones included), the
+  // next timed step at once (the recovery day's stretching: its own rest), or the end of the day. msg: what next time brings
+  function exerciseOver(i, before, set, msg, line, said) {
+    const d = ui.day, p = ensureProg(d), nx = openAfter(d, i), ack = { text: line, tone: 'done', icon: true };
+    if (nx < 0) {
+      finishDay(msg, line); ackView(before, ack, ACK_MS);
+      render(); Save.persist(); announce(said + ' ' + endSpeech()); return;
+    }
+    p.step = nx;
+    if (stepsOf(d)[nx].t !== 'sets') {
+      if (msg) ui.flash = { text: msg, until: now() + ACK_MS + 4500 };
+      ui.note = { text: line, until: now() + ACK_MS + NOTE_MS };
+      ackView(before, ack, ACK_MS, () => goStep(nx, { cut: true, quiet: true }));
+      render(); Save.persist(); announce(said + (msg ? ' ' + msg + '.' : '') + ' Next: ' + stepsOf(d)[nx].name + '.'); return;
+    }
+    startRest(i, nx, msg, set);
+    ackView(before, ack, ACK_MS);
     render(); Save.persist();
-    const r = ui.rest;
-    announce(said + ' Rest ' + Math.round(r.dur * SPEED / 60000) + ' minutes. ' + restNext(r) + '.' + (msg ? ' ' + msg + '.' : ''));
+    announce(said + ' Rest ' + Math.round(ui.rest.dur * SPEED / 60000) + ' minutes. ' + restNext(ui.rest) + '.' + (msg ? ' ' + msg + '.' : ''));
+  }
+  // Done on the drop set: kept as the step's drop (never a working set, so progression and "Next time" never see it); 0 reps
+  // means it was not done
+  function logDrop(n, kg) {
+    if (ui.mode !== 'drop' || ackOn()) return;
+    const d = ui.day, i = ui.step;
+    n = clamp(Math.round(n), 0, REPS_MAX); kg = kgOne(kg); if (kg == null) kg = 0;
+    const before = viewNow();
+    const u = snapshot('drop set');
+    const p = ensureProg(d);
+    delete p.dd[i];
+    if (n > 0) p.drop[i] = [n, kg]; else delete p.drop[i];
+    touchProg(p); p.step = i; S.current = d;
+    if (u) u.sel = { day: d, step: i, k: setsOf(d, i).length, v: n, kg, drop: 1 };
+    lastLog = { how: 'drop', v: n, kg, t: Math.round(now()) };
+    ui.sel = null; saveSel();
+    const line = n > 0 ? 'Drop set done' + MID + repsWord(n) + (kg > 0 ? MID + fmtKg(kg) + ' kg' : '') : 'Drop set skipped';
+    haptic(14);
+    exerciseOver(i, before, { k: setsOf(d, i).length, n, kg, drop: 1 }, msgFor(d, i), line, line + '.');
+  }
+  // Warm-up done: the warm-up sets are over (nothing is logged); the step's first set follows, with its "go"
+  function warmUpDone() {
+    if (ui.mode !== 'warm' || ackOn()) return;
+    const d = ui.day, i = ui.step, before = viewNow();
+    snapshot('warm-up sets');
+    const p = ensureProg(d); p.warm[i] = 1; touchProg(p); p.step = i; S.current = d;
+    ackView(before, { text: 'Warm-up done', tone: 'done', icon: true }, ACK_MS, () => goStep(i, { go: true, quiet: true }));
+    render(); Save.persist(); haptic(14);
+    announce('Warm-up done. Set 1 next.');
   }
   // rest after a set
   function startRest(after, next, msg, set, restored) {
@@ -1515,7 +1779,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (nx < 0) finishDay(null, line);
     else {
       p.step = nx;
-      if (!auto) ui.note = { text: line, until: now() + ACK_MS + NOTE_MS };
+      if (!auto && modeOf(d, nx) !== 'warm') ui.note = { text: line, until: now() + ACK_MS + NOTE_MS }; // (the warm-up sets have a Warm-up done of their own)
       then = () => goStep(nx, { cut: true, go: true });
     }
     ackView(before, { text: line, tone: 'done', icon: true }, auto ? AUTO_ACK_MS : ACK_MS, then);
@@ -1524,25 +1788,28 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     announce(st.name + ' done.' + (ui.mode === 'end' ? ' ' + endSpeech() : ''));
   }
   // the day is finished: into the history (the last 90 days) with the time it took, the last finished day, the end screen;
-  // note: the done line of the last action
+  // note: the done line of the last action. Each exercise's sets go under the exercise they were done on (a swap's under the
+  // swap), drop sets apart from them (dr); a deload week's day is marked (dl) and leaves the progression as it was.
   function finishDay(msg, note) {
-    const d = ui.day, p = S.prog[d] || { sets: {}, done: {} }, L = stepsOf(d), t = Date.now();
+    const d = ui.day, p = S.prog[d] || { sets: {}, done: {} }, L = stepsOf(d), t = Date.now(), dl = deloadOn();
     const entry = { day: d, at: t, week: S.week, sets: 0, exercises: 0, ex: {}, kg: {} };
     L.forEach((st, i) => {
       const a = (p.sets && p.sets[i]) || [];
       if (st.t !== 'sets' || !a.length) return;
-      const w = ((p.kg && p.kg[i]) || []).slice(0, a.length); while (w.length < a.length) w.push(null);
-      entry.sets += a.length; entry.exercises++; entry.ex[st.ex] = a.slice(); entry.kg[st.ex] = w;
-      const Lr = S.last[st.ex];
-      if (!Lr || Lr.at < (p.started || 0)) S.last[st.ex] = { reps: a.slice(), kg: w.slice(), at: t, top: a.length >= st.n && a.every((x) => x >= st.hi) };
+      const id = exIdAt(d, i), w = ((p.kg && p.kg[i]) || []).slice(0, a.length); while (w.length < a.length) w.push(null);
+      entry.sets += a.length; entry.exercises++; entry.ex[id] = a.slice(); entry.kg[id] = w;
+      if (p.drop && p.drop[i]) (entry.dr = entry.dr || {})[id] = p.drop[i].slice();
+      const Lr = S.last[id];
+      if ((!Lr || Lr.at < (p.started || 0)) && (!dl || !Lr)) S.last[id] = lastRecord(st, a, w, nOf(d, i), t, dl);
     });
     if (p.bike) entry.bike = p.bike;
     if (p.t0) entry.dur = Math.max(1, Math.round(sessSecs(p, t)));
+    if (dl) entry.dl = 1;
     if (!ui.adhoc) {
       S.history.unshift(entry); if (S.history.length > 90) S.history.length = 90;
       S.lastDone = { day: d, at: t }; S.current = null;
     }
-    const prog = clone({ sets: p.sets || {}, done: p.done || {} });
+    const prog = clone({ sets: p.sets || {}, done: p.done || {}, order: p.order || null });
     delete S.prog[d];
     ui.timers.clear(); saveTimers(); cancelRest(); cancelGesture(); ui.go = null; ui.note = null;
     ui.end = { day: d, entry, prog, msg, msgUntil: msg ? now() + ACK_MS + 4500 : 0, note: note || null };
@@ -1555,16 +1822,23 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function continueEnd() { const nd = (ui.end.day + 1) % P.days.length; ui.end = null; openDay(nd, { step: 0 }); }
 
   // Undo: every step that changes the workout (a set, a timer started or finished, a rest skipped, a step moved on from, the
-  // workout restarted) first puts the record as it was on a stack; Undo takes the last one off and puts it back, as often as
-  // it is pressed. The stack belongs to the day on screen (another day starts an empty one) and its last few steps survive a
-  // reload. A set undone puts its numbers back on the selectors; a rest skipped comes back with the time it had left.
+  // workout restarted, warm-up sets done, a drop set, an exercise moved to the end or swapped) first puts the record as it was
+  // on a stack; Undo takes the last one off and puts it back, as often as it is pressed. The stack belongs to the day on screen
+  // (another day starts an empty one) and its last few steps survive a reload. A set undone puts its numbers back on the
+  // selectors; a rest skipped comes back with the time it had left.
   let hist = [];
+  // every exercise a day's steps can log to: the program's, their harder variants and their swaps
+  function idsOf(d) {
+    const s = new Set();
+    stepsOf(d).forEach((st, i) => { if (st.t === 'sets') for (const id of [st.ex, levelOf(st.ex), exIdAt(d, i), ...exOf(st.ex).swap, ...exOf(exIdAt(d, i)).swap]) if (id && ID.test(id)) s.add(id); });
+    return s;
+  }
   function snapshot(label) {
     if (ui.adhoc) return null;
     const d = ui.day, p = S.prog[d], last = {};
-    for (const st of stepsOf(d)) if (st.t === 'sets' && !(st.ex in last)) last[st.ex] = S.last[st.ex] ? clone(S.last[st.ex]) : null;
+    for (const id of idsOf(d)) last[id] = S.last[id] ? clone(S.last[id]) : null;
     const r = ui.rest && ui.mode === 'rest' ? { after: ui.rest.after, next: ui.rest.next, set: ui.rest.set, dur: ui.rest.dur, left: Math.max(0, ui.rest.dur - (now() - ui.rest.t0)) } : null;
-    const u = { label, at: Date.now(), day: d, step: ui.step, prog: p ? clone(p) : null, current: S.current, lastDone: S.lastDone ? clone(S.lastDone) : null, last,
+    const u = { label, at: Date.now(), day: d, step: ui.step, prog: p ? clone(p) : null, current: S.current, lastDone: S.lastDone ? clone(S.lastDone) : null, last, up: clone(S.up),
       hAt: S.history.length ? S.history[0].at : 0, timers: [...ui.timers].map(([k, tm]) => ({ key: k, startedAt: Date.now() - elapsedOf(tm) * 1000 / SPEED })), rest: r, sel: null };
     hist.push(u); if (hist.length > HIST_MAX) hist.shift();
     saveHist();
@@ -1576,6 +1850,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (u.prog) S.prog[u.day] = u.prog; else delete S.prog[u.day];
     S.current = u.current; S.lastDone = u.lastDone; if (u.cycleFrom != null) { S.cycle = u.cycleFrom; if (u.weekFrom != null) S.week = u.weekFrom; }
     for (const [id, L] of Object.entries(u.last)) { if (L) S.last[id] = L; else delete S.last[id]; }
+    if (u.up) S.up = u.up;
     while (S.history.length && S.history[0].at > u.hAt) S.history.shift(); // a day that was finished is not any more
     ui.rimFade = ui.mode === 'rest' || ui.mode === 'end' ? { t0: now(), p: 1 } : null;
     ui.timers = new Map(u.timers.map((x) => [x.key, { t0: now() - (Date.now() - x.startedAt) }])); saveTimers();
@@ -1585,7 +1860,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     try {
       if (u.rest && L[u.rest.after] && L[u.rest.next]) { // a rest that was skipped is back, with what it had left
         ui.mode = 'set'; ui.step = u.rest.after; // (a rest follows a set: the state fits the step before the figure is shown and the screen drawn)
-        showFigure(figOf(L[u.rest.after]), true);
+        showFigure(figAt(u.day, u.rest.after), true);
         startRest(u.rest.after, u.rest.next, null, u.rest.set, { dur: u.rest.dur, left: Math.max(300, u.rest.left), msgLeft: 0 });
       } else goStep(u.step, { cut: true, quiet: true });
     } finally { saveHist(); Save.persist(); } // (whatever the screen does, what was undone is what is kept)
@@ -1603,16 +1878,16 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function restoreHist() {
     const list = (lsGet(LS_UI) || {}).hist; hist = [];
     if (!Array.isArray(list)) return;
-    const nd = P.days.length, ids = new Set(stepsOf(ui.day).filter((s) => s.t === 'sets').map((s) => s.ex));
+    const nd = P.days.length, ids = idsOf(ui.day);
     for (const e of list) {
       if (!e || typeof e !== 'object' || int(e.day, 0, nd - 1) !== ui.day || !(Date.now() - num(e.at) < FRESH) || typeof e.label !== 'string') continue;
-      const doc = sane({ prog: e.prog ? { [e.day]: e.prog } : {}, current: e.current, lastDone: e.lastDone }), last = {};
+      const doc = sane({ prog: e.prog ? { [e.day]: e.prog } : {}, current: e.current, lastDone: e.lastDone, up: e.up }), last = {};
       const timers = (Array.isArray(e.timers) ? e.timers : []).filter((x) => x && typeof x.key === 'string' && /^\d+:\d+$/.test(x.key) && Number.isFinite(num(x.startedAt)) && x.key.split(':')[0] === String(ui.day)).map((x) => ({ key: x.key, startedAt: num(x.startedAt) }));
       const step = int(e.step, 0, stepsOf(ui.day).length - 1); if (step == null) continue;
       if (e.last && typeof e.last === 'object') for (const id of ids) { const L = e.last[id]; last[id] = L && typeof L === 'object' ? sane({ last: { [id]: L } }).last[id] || null : null; }
-      const r = e.rest && typeof e.rest === 'object' && [e.rest.after, e.rest.next].every((x) => int(x, 0, 40) != null) ? { after: int(e.rest.after, 0, 40), next: int(e.rest.next, 0, 40), set: e.rest.set && Number.isFinite(num(e.rest.set.k)) ? { k: int(e.rest.set.k, 1, 40), n: int(e.rest.set.n, 0, REPS_MAX), kg: kgOne(e.rest.set.kg) } : null, dur: clamp(num(e.rest.dur) || 120000, 1000, 600000), left: clamp(num(e.rest.left) || 0, 0, 600000) } : null;
-      const s = e.sel && typeof e.sel === 'object' && [e.sel.day, e.sel.step, e.sel.k, e.sel.v].every(Number.isInteger) ? { day: e.sel.day, step: e.sel.step, k: e.sel.k, v: clamp(e.sel.v, 0, REPS_MAX), kg: kgOne(e.sel.kg) } : null;
-      hist.push({ label: e.label.slice(0, 60), at: num(e.at), day: ui.day, step, prog: doc.prog[ui.day] || null, current: doc.current, lastDone: doc.lastDone, last, hAt: num(e.hAt) || 0, cycleFrom: Number.isFinite(num(e.cycleFrom)) ? Math.max(0, num(e.cycleFrom)) : undefined, weekFrom: int(e.weekFrom, 1, 9999) || undefined, timers, rest: r, sel: s });
+      const r = e.rest && typeof e.rest === 'object' && [e.rest.after, e.rest.next].every((x) => int(x, 0, 40) != null) ? { after: int(e.rest.after, 0, 40), next: int(e.rest.next, 0, 40), set: e.rest.set && Number.isFinite(num(e.rest.set.k)) ? { k: int(e.rest.set.k, 1, 40), n: int(e.rest.set.n, 0, REPS_MAX), kg: kgOne(e.rest.set.kg), drop: e.rest.set.drop ? 1 : 0 } : null, dur: clamp(num(e.rest.dur) || 120000, 1000, 600000), left: clamp(num(e.rest.left) || 0, 0, 600000) } : null;
+      const s = e.sel && typeof e.sel === 'object' && [e.sel.day, e.sel.step, e.sel.k, e.sel.v].every(Number.isInteger) ? { day: e.sel.day, step: e.sel.step, k: e.sel.k, v: clamp(e.sel.v, 0, REPS_MAX), kg: kgOne(e.sel.kg), drop: e.sel.drop ? 1 : 0 } : null;
+      hist.push({ label: e.label.slice(0, 60), at: num(e.at), day: ui.day, step, prog: doc.prog[ui.day] || null, current: doc.current, lastDone: doc.lastDone, last, up: e.up && typeof e.up === 'object' ? doc.up : undefined, hAt: num(e.hAt) || 0, cycleFrom: Number.isFinite(num(e.cycleFrom)) ? Math.max(0, num(e.cycleFrom)) : undefined, weekFrom: int(e.weekFrom, 1, 9999) || undefined, timers, rest: r, sel: s });
     }
   }
   // Restart workout: the day's record goes (its sets, its clock, its timers) and the day starts again from its first step. The
@@ -1630,26 +1905,110 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     saveHist(); Save.persist(); haptic(10);
     announce('Workout restarted. ' + stepSpeech());
   }
-  const canRestart = () => { const p = S.prog[ui.day]; return !!((p && (p.t0 || Object.values(p.sets).some((a) => a.length) || Object.keys(p.done).length)) || ui.timers.size || ui.rest); };
+  const canRestart = () => { const p = S.prog[ui.day]; return !!((p && (p.t0 || Object.values(p.sets).some((a) => a.length) || Object.keys(p.done).length || Object.keys(p.warm || {}).length || Object.keys(p.swap || {}).length || p.order)) || ui.timers.size || ui.rest); };
+
+  // ---------------------------------------------------------------- a busy machine: do it later, or swap it
+  // From the menu, for the exercise on screen (during a rest: the one coming up next). Do it later moves it to the end of the
+  // day's order (another open step must be left to do first; the day still ends when every step is done). Swap puts another
+  // exercise in its place for today (only before its first set): the step keeps its sets, reps and rest, and its sets are
+  // logged to the exercise done. Both are steps Undo takes back.
+  function busyStep() {
+    if (ui.adhoc || dialogOpen()) return -1;
+    if (ui.mode === 'rest') return ui.rest ? ui.rest.next : -1;
+    return ui.mode === 'set' || ui.mode === 'warm' || ui.mode === 'timer' ? ui.step : -1;
+  }
+  function canLater(d, i) {
+    const st = i >= 0 ? stepsOf(d)[i] : null;
+    if (!st || st.auto || isDone(d, i) || dropDue(d, i) || timerOf(d, i)) return false;
+    return openFrom(d, 0, i) >= 0;
+  }
+  // the exercises step i can be swapped for: the program's exercise (and its harder variant) and their swaps, without the one in
+  // use, any another step of the day does, and any this version has no animation for
+  function swapsFor(d, i) {
+    const st = i >= 0 ? stepsOf(d)[i] : null;
+    if (!st || st.t !== 'sets' || setsOf(d, i).length || dropDue(d, i)) return [];
+    const cur = exIdAt(d, i), base = levelOf(st.ex), out = [];
+    const used = new Set(stepsOf(d).map((s, j) => (j !== i && s.t === 'sets' ? exIdAt(d, j) : null)));
+    for (const id of [st.ex, base, ...exOf(st.ex).swap, ...exOf(base).swap, ...exOf(cur).swap]) if (id !== cur && isReady(id) && !used.has(id) && !out.includes(id)) out.push(id);
+    return out;
+  }
+  const lc = (s) => (/^Bayesian/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1));
+  function doLater() {
+    const d = ui.day, i = busyStep();
+    if (!canLater(d, i)) return;
+    const resting = ui.mode === 'rest', name = stepName(d, i), O = orderOf(d).slice(), pos = O.indexOf(i);
+    snapshot('do ' + lc(name) + ' later');
+    const p = ensureProg(d);
+    O.splice(pos, 1); O.push(i); p.order = O; touchProg(p); S.current = d;
+    const nx = openFrom(d, pos, i), said = name + ' moved to the end';
+    p.step = nx;
+    if (resting) { ui.rest.next = nx; ui.rest.msg = said; ui.rest.msgUntil = now() + 3000; saveRest(); render(); prefetch(); }
+    else { ui.note = { text: said, until: now() + 3000 }; goStep(nx, { cut: true, quiet: true }); }
+    Save.persist(); haptic(10);
+    announce(said + '. ' + (resting ? restNext(ui.rest) + '.' : stepSpeech()));
+  }
+  function doSwap(id) {
+    const d = ui.day, i = busyStep();
+    if (!swapsFor(d, i).includes(id)) return;
+    const resting = ui.mode === 'rest', st = stepsOf(d)[i], said = 'Swapped for ' + lc(nameOf(id));
+    snapshot('swap for ' + lc(nameOf(id)));
+    const p = ensureProg(d);
+    if (id === levelOf(st.ex)) delete p.swap[i]; else p.swap[i] = id;
+    delete p.warm[i]; touchProg(p); S.current = d;
+    if (ui.sel && ui.sel.day === d && ui.sel.step === i) { ui.sel = null; saveSel(); }
+    if (resting) { ui.rest.msg = said; ui.rest.msgUntil = now() + 3000; saveRest(); render(); prefetch(); }
+    else { p.step = i; ui.note = { text: said, until: now() + 3000 }; goStep(i, { cut: true, quiet: true }); }
+    Save.persist(); haptic(10);
+    announce(said + '. ' + (resting ? restNext(ui.rest) + '.' : stepSpeech()));
+  }
+
+  // ---------------------------------------------------------------- the deload week
+  // A lighter week now and then (general practice; Jeff Nippard's own programs mostly do without): half the sets, the same
+  // weights, every set 3-4 reps short of failure, no drop sets; the program stays as it is and the progression goes on from
+  // where it was after it. The menu turns it on and off; the overview suggests it after 8 weeks of training since the last one
+  // (or the start), or when 3 or more lifts have not gone up over their last 3 workouts.
+  function setDeload(on) {
+    if (!!on === deloadOn()) return;
+    if (on) S.dl = { w: S.week, prev: S.dl ? S.dl.w : 0 };
+    else S.dl = S.dl && S.dl.prev ? { w: S.dl.prev, prev: 0 } : null;
+    Save.persist();
+    if (dialogOpen()) fillDays();
+    else if (ui.mode === 'set' || ui.mode === 'warm' || ui.mode === 'drop' || ui.mode === 'done') goStep(ui.step, { quiet: true });
+    else render();
+    announce(on ? 'Deload week: ' + T.deloadWhat.toLowerCase() + '.' : 'Deload week ended.');
+  }
+  // lifts that have not gone up (a heavier weight, or more reps at the same weight) over their last 3 workouts on the same day
+  function stalledLifts() {
+    const by = {};
+    for (const h of S.history) if (!h.dl) for (const [id, a] of Object.entries(h.ex || {})) if (a.length) (by[h.day + ':' + id] = by[h.day + ':' + id] || []).push({ a, w: (h.kg && h.kg[id]) || [] });
+    const top = (x) => { const w = x.w.filter((v) => Number.isFinite(v)); return w.length ? Math.max(...w) : 0; };
+    const reps = (x) => { const m = top(x); return x.a.reduce((s, r, k) => s + (!m || x.w[k] === m ? r : 0), 0); };
+    const beats = (x, y) => top(x) > top(y) || (top(x) === top(y) && reps(x) > reps(y));
+    let n = 0;
+    for (const s of Object.values(by)) if (s.length >= 3 && !beats(s[0], s[2]) && !beats(s[1], s[2])) n++;
+    return n;
+  }
+  const deloadDue = () => !!P && !deloadOn() && (S.week - 1 - (S.dl ? S.dl.w : 0) >= 8 || stalledLifts() >= 3);
 
   // ---------------------------------------------------------------- the reps and weight selectors
   // "-  10 reps  +" and "-  40 kg  +" above Done: each number is the set's default (reps: what was done on this set last time,
-  // else the top of the range; weight: see defaultKg) until the viewer changes it with - / +, (reps) a drag up or down on the
-  // stage, the wheel over it or Up / Down; kept on this device for the set on screen (a reload in the middle of a set keeps
-  // the numbers). The weight moves by 2.5 kg (1 kg below 10) and repeats, faster the longer its button is held.
-  const selNow = () => { const s = ui.sel, d = ui.day, i = ui.step; return s && s.day === d && s.step === i && s.k === setsOf(d, i).length ? s : null; };
-  const isSets = () => ui.mode !== 'end' && ui.mode !== 'boot' && !!stepsOf(ui.day)[ui.step] && stepsOf(ui.day)[ui.step].t === 'sets';
-  function selValue() { if (!isSets()) return 0; const s = selNow(); return s ? s.v : defaultReps(ui.day, ui.step); }
-  function selKg() { if (!isSets()) return 0; const s = selNow(); return s && Number.isFinite(s.kg) ? s.kg : defaultKg(ui.day, ui.step); }
+  // else the top of the range; weight: see defaultKg; on a drop set the last set's reps and half its weight) until the viewer
+  // changes it with - / +, (reps) a drag up or down on the stage, the wheel over it or Up / Down; kept on this device for the
+  // set on screen (a reload in the middle of a set keeps the numbers). The weight moves by 2.5 kg (1 kg below 10) and repeats,
+  // faster the longer its button is held.
+  const selNow = () => { const s = ui.sel, d = ui.day, i = ui.step; return s && s.day === d && s.step === i && s.k === setsOf(d, i).length && !!s.drop === (ui.mode === 'drop') ? s : null; };
+  const isSets = () => selMode() && !!stepsOf(ui.day)[ui.step] && stepsOf(ui.day)[ui.step].t === 'sets';
+  function selValue() { if (!isSets()) return 0; const s = selNow(); return s ? s.v : ui.mode === 'drop' ? dropReps(ui.day, ui.step) : defaultReps(ui.day, ui.step); }
+  function selKg() { if (!isSets()) return 0; const s = selNow(); return s && Number.isFinite(s.kg) ? s.kg : ui.mode === 'drop' ? dropKg(ui.day, ui.step) : defaultKg(ui.day, ui.step); }
   // v: the reps, kg: the weight; null leaves that one as it is
   function setSel(v, kg) {
-    if (ui.mode !== 'set' || ackOn()) return false;
-    const d = ui.day, i = ui.step, k = setsOf(d, i).length;
+    if (!selMode() || ackOn()) return false;
+    const d = ui.day, i = ui.step, k = setsOf(d, i).length, drop = ui.mode === 'drop';
     const nv = v == null ? selValue() : clamp(Math.round(v), 0, REPS_MAX), nk = kg == null ? selKg() : clamp(kgOne(kg) == null ? 0 : kgOne(kg), 0, KG_MAX);
     if (nv === selValue() && nk === selKg()) return false;
-    ui.sel = { day: d, step: i, k, v: nv, kg: nk };
+    ui.sel = { day: d, step: i, k, v: nv, kg: nk, drop: drop ? 1 : 0 };
     paintSel(true); bump(v == null ? E.kg : E.reps); haptic(6);
-    E.primary.setAttribute('aria-label', 'Done: log set ' + (k + 1) + ' with ' + repsWord(nv) + ' at ' + fmtKg(nk) + ' kilograms');
+    E.primary.setAttribute('aria-label', 'Done: log ' + (drop ? 'the drop set' : 'set ' + (k + 1)) + ' with ' + repsWord(nv) + ' at ' + fmtKg(nk) + ' kilograms');
     return true;
   }
   function saveSel() {
@@ -1660,7 +2019,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   function restoreSel() {
     const s = (lsGet(LS_UI) || {}).sel;
-    if (s && typeof s === 'object' && [s.day, s.step, s.k, s.v].every(Number.isInteger)) ui.sel = { day: s.day, step: s.step, k: s.k, v: clamp(s.v, 0, REPS_MAX), kg: kgOne(s.kg) };
+    if (s && typeof s === 'object' && [s.day, s.step, s.k, s.v].every(Number.isInteger)) ui.sel = { day: s.day, step: s.step, k: s.k, v: clamp(s.v, 0, REPS_MAX), kg: kgOne(s.kg), drop: s.drop ? 1 : 0 };
   }
   // the numeral answers every change: it grows and settles (with reduced motion it turns amber for a moment)
   function bump(el) {
@@ -1681,7 +2040,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     return clamp(Math.round(x / base) * base, 0, KG_MAX);
   }
   function stepKg(dir, mult, how) {
-    if (ui.mode !== 'set' || ackOn()) return false;
+    if (!selMode() || ackOn()) return false;
     const cur = selKg(), nx = kgNext(cur, dir, mult);
     if (nx === cur) return false;
     setSel(null, nx); saveSel();
@@ -1715,7 +2074,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (kpText === '') v.setAttribute('data-ph', ''); else v.removeAttribute('data-ph');
   }
   function openKeypad() {
-    if (ui.mode !== 'set' || ackOn() || dialogOpen() || kpOpen()) return;
+    if (!selMode() || ackOn() || dialogOpen() || kpOpen()) return;
     kpText = ''; paintKeypad(); kp.hidden = false;
     try { $('kpset').focus({ preventScroll: true }); } catch (_) { /* fine */ }
   }
@@ -1818,10 +2177,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // the next steps' figures build ahead (neighbours first), so the next exercise cuts in at once
   function prefetch() {
     if (!stage || ui.mode === 'end') return;
-    const L = stepsOf(ui.day), ids = [];
-    for (let k = ui.step + 1; k < L.length && ids.length < 3; k++) { const id = figOf(L[k]); if (id && !ids.includes(id)) ids.push(id); }
-    const cur = figOf(L[ui.step]); if (cur) ids.unshift(cur);
-    const back = figOf(L[ui.step - 1]); if (back && !ids.includes(back)) ids.push(back);
+    const d = ui.day, O = orderOf(d), at = O.indexOf(ui.step), ids = [], add = (id) => { if (id && !ids.includes(id)) ids.push(id); };
+    add(figAt(d, ui.step));
+    if (ui.mode === 'rest' && ui.rest) add(figAt(d, ui.rest.next)); // (the next exercise may come from anywhere in the order)
+    for (let k = at + 1; k < O.length && ids.length < 4; k++) add(figAt(d, O[k]));
+    if (at > 0) add(figAt(d, O[at - 1]));
     stage.prefetch(ids.filter((x) => x !== (stage.cur && stage.cur.id)));
     if (exOf('bike').ready && !ids.includes('bike')) stage.prefetch(['bike'], { idle: true }); // every day starts on the bike
   }
@@ -1874,7 +2234,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       rim(Math.min(1, el / st.sec), el >= st.sec ? { head: false } : null);
       need = true;
       if (!ack) setText(E.clock, timerClock(st, tm));
-      const seg = $('segs').children[ui.step]; if (seg) seg.style.setProperty('--f', segFill(ui.day, ui.step).toFixed(4));
+      const seg = segOf(ui.step); if (seg) seg.style.setProperty('--f', segFill(ui.day, ui.step).toFixed(4));
     } else if (ui.mode === 'end') {
       const x = ui.end, k = Math.min(1, (t - (x.t0 || (x.t0 = t))) / 900);
       rim(1, { head: false, k: 0.2 + 0.65 * k });
@@ -1932,13 +2292,13 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (!(left > 300 && left <= r.dur + 1000) || !L[r.after] || !L[r.next] || ui.step !== r.next) return;
     if (!r.set || !Number.isFinite(num(r.set.k)) || setsOf(ui.day, r.after).length < r.set.k) return; // the set it follows is not in the document (undone elsewhere)
     ui.mode = 'set'; ui.step = r.after; // (a rest follows a set)
-    showFigure(figOf(L[r.after]), true);
+    showFigure(figAt(ui.day, r.after), true);
     // (its timers are left as they run now: the stored ones were timed on the previous page's clock)
     startRest(r.after, r.next, r.msg, r.set, { dur: r.dur, left, msgLeft: r.msgLeft || 0 });
   }
 
   // ---------------------------------------------------------------- small feedback: tip, haptics, speech
-  function showTip() { const st = stepsOf(ui.day)[ui.step]; if (!exOf(st.ex).cue) return; ui.tipUntil = now() + 4500; render(); kickLoop(); }
+  function showTip() { if (!exOf(exIdAt(ui.day, ui.step)).cue) return; ui.tipUntil = now() + 4500; render(); kickLoop(); }
   // The one-time tip "Drag sideways to turn", top right (where the reset icon appears once the figure is turned): shown
   // while a figure is on screen until the viewer turns one or finishes a day (remembered on this device).
   const uiPrefs = () => lsGet(LS_UI) || {};
@@ -1958,9 +2318,12 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function stepSpeech() {
     const d = ui.day, st = ui.mode === 'end' ? null : stepsOf(d)[ui.step];
     if (!st) return '';
-    if (ui.mode === 'set') { const e = exOf(st.ex), k = setsOf(d, ui.step).length; return e.name + ', set ' + (k + 1) + ' of ' + st.n + ', ' + st.lo + ' to ' + st.hi + ' reps' + (e.unilateral ? ' each arm' : '') + ', ' + selValue() + ' reps and ' + fmtKg(selKg()) + ' kilograms selected.'; }
+    const e = st.t === 'sets' ? exOf(exIdAt(d, ui.step)) : null, k = setsOf(d, ui.step).length, sel = selValue() + ' reps and ' + fmtKg(selKg()) + ' kilograms selected.';
+    if (ui.mode === 'set') { const R = rangeAt(d, ui.step, k); return e.name + ', ' + (isTop(st) && !deloadOn() ? (k ? 'back-off set, ' : 'top set, ') : '') + 'set ' + (k + 1) + ' of ' + nOf(d, ui.step) + ', ' + R.lo + ' to ' + R.hi + ' reps' + (e.unilateral ? ' each arm' : '') + ', ' + sel; }
+    if (ui.mode === 'warm') return e.name + ', warm-up sets: ' + warmText(warmSets(d, ui.step) || [], e).split(MID).join(', ').replace(/×/g, 'times') + '.';
+    if (ui.mode === 'drop') return e.name + ', drop set: no rest, about half the weight, ' + sel;
     if (ui.mode === 'timer') return st.name + ', ' + dash(st.line).replace(ND, ' to ') + '.';
-    if (ui.mode === 'done') return (st.t === 'sets' ? exOf(st.ex).name : st.name) + ', done.';
+    if (ui.mode === 'done') return stepName(d, ui.step) + ', done.';
     return '';
   }
   function announceStep(pre) {
@@ -2001,21 +2364,21 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (G.kind === 'pending') {
       if (dx * dx + dy * dy < DECIDE * DECIDE) return;
       const vertical = Math.abs(dy) > Math.abs(dx);
-      if (vertical && ui.mode === 'set' && !ackOn()) { G.kind = 'adjust'; G.base = selValue(); G.sel = ui.sel; E.reps.classList.add('big'); app.classList.add('adjusting'); }
+      if (vertical && selMode() && !ackOn()) { G.kind = 'adjust'; G.base = selValue(); G.sel = ui.sel; E.reps.classList.add('big'); app.classList.add('adjusting'); }
       else if (!vertical && turnable()) { G.kind = 'turn'; stage.orbitStart(); markTurn(); stage.orbitBy(dx * 0.42, 0); return; }
       else { G.kind = 'none'; return; }
     }
     if (G.kind === 'turn') stage.orbitBy(ix * 0.42, 0);
     else if (G.kind === 'adjust') {
-      if (ui.mode !== 'set' || ackOn()) { endAdjust(G, false); G.kind = 'none'; return; }
+      if (!selMode() || ackOn()) { endAdjust(G, false); G.kind = 'none'; return; }
       const m = Math.sign(dy) * Math.max(0, Math.abs(dy) - DECIDE);
       setSel(G.base - Math.round(m / REP_PX));
     }
   });
   function endAdjust(g0, revert) {
     E.reps.classList.remove('big'); app.classList.remove('adjusting');
-    if (revert) { ui.sel = g0.sel || null; paintSel(ui.mode === 'set' && !ackOn()); }
-    if (ui.mode === 'set') { saveSel(); if (selValue() !== g0.base) announce(repsWord(selValue())); }
+    if (revert) { ui.sel = g0.sel || null; paintSel(selMode() && !ackOn()); }
+    if (selMode()) { saveSel(); if (selValue() !== g0.base) announce(repsWord(selValue())); }
   }
   // the end of a press: e = the pointer event (pointerup), or null with cancel = true (anything that is not a release
   // inside the frame); revert: the drag's number goes back to what it was (a second finger, pointercancel)
@@ -2054,7 +2417,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     else singleTap();
   }
   // a single tap on the stage never logs, skips or starts anything: during a set it shows the exercise's tip
-  function singleTap() { if (!dialogOpen() && ui.mode === 'set' && !ackOn()) showTip(); }
+  function singleTap() { if (!dialogOpen() && tipMode() && !ackOn()) showTip(); }
 
   // ---------------------------------------------------------------- the buttons and the keys
   // The primary button does what its state says (the mode is checked as well, so a stale press does nothing); a new
@@ -2065,6 +2428,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const a = E.primary.dataset.act;
     dropNote(); // a new action: the previous step's done line and its Undo are over
     if (a === 'done' && ui.mode === 'set') logSet(selValue(), selKg(), 'done');
+    else if (a === 'warm' && ui.mode === 'warm') warmUpDone();
+    else if (a === 'drop' && ui.mode === 'drop') logDrop(selValue(), selKg());
     else if (a === 'skip' && ui.mode === 'rest') endRest(false);
     else if (a === 'start' && ui.mode === 'timer' && !curTimer()) timerStart();
     else if (a === 'finish' && ui.mode === 'timer' && curTimer()) finishTimer(false);
@@ -2083,7 +2448,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   $('resetview').addEventListener('click', () => { if (stage) stage.resetView(); });
   // the wheel over the rep selector: a rep per notch (up = more; a trackpad's small deltas add up, 50 px a rep)
   E.sel.addEventListener('wheel', (e) => {
-    if (ui.mode !== 'set') return;
+    if (!selMode()) return;
     e.preventDefault();
     const dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 400 : 1);
     if (!dy) return;
@@ -2104,7 +2469,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (dialogOpen() || sheetOpen() || menuOpen()) return; // (the arrow keys belong to what is open)
     const t = e.target && e.target.nodeType === 1 ? e.target : null;
     if (t && (t.isContentEditable || t.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])'))) return;
-    if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && ui.mode === 'set') {
+    if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && selMode()) {
       e.preventDefault(); wake.on();
       stepSel(e.key === 'ArrowUp' ? 1 : -1, 'key');
       return;
@@ -2149,7 +2514,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       // how far: the sets logged of the sets in the day (the bar also counts the timed steps, each a whole step)
       let sets = 0, all = 0, f = 0;
       L.forEach((st, i) => {
-        if (st.t === 'sets') { const n = Math.min(st.n, setsOf(k, i).length); sets += n; all += st.n; f += n / st.n; } else if (isDone(k, i)) f += 1;
+        if (st.t === 'sets') { const N = nOf(k, i), n = Math.min(N, setsOf(k, i).length); sets += n; all += N; f += n / N; } else if (isDone(k, i)) f += 1;
       });
       return { state: 'active', text: 'Resume' + (sets ? MID + sets + ' of ' + all + ' sets' : ''), frac: f / L.length };
     }
@@ -2160,13 +2525,25 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   function renderWeek() {
     const n = weekDone(), N = P.days.length, w = $('week');
-    w.textContent = 'Week ' + S.week + MID + (n >= N ? 'complete' : n ? n + ' of ' + N + ' days done' : 'choose a day');
+    w.textContent = 'Week ' + S.week + (deloadOn() ? MID + 'deload' : '') + MID + (n >= N ? 'complete' : n ? n + ' of ' + N + ' days done' : 'choose a day');
     if (n >= N) w.setAttribute('data-full', ''); else w.removeAttribute('data-full');
     const nw = $('newweek'); nw.hidden = !n; nw.removeAttribute('data-arm'); nw.textContent = 'Start a new week'; clearTimeout(nw._t);
+    // the deload week: suggested here when it is due (after 8 weeks, or when several lifts stall), and ended here while it is on
+    const dl = $('deload'), on = deloadOn(), due = !on && deloadDue();
+    dl.hidden = !on && !due; dl.dataset.on = on ? '1' : '';
+    $('deloadt').textContent = on ? 'End the deload week' : 'Time for a deload week';
+    dl.setAttribute('aria-label', on ? 'End the deload week' : 'Start a deload week: ' + T.deloadWhat.toLowerCase());
   }
   function openDays() {
     if (ui.adhoc || !P) return;
     cancelGesture(false); closeMenu(false); expireWeek();
+    fillDays();
+    if (dlg.hidden) dlgReturn = doc.activeElement;
+    dlg.hidden = false; app.classList.add('dlg'); dlg.scrollTop = 0; syncRender(); wake.set(false); // opaque: nothing renders behind it
+    try { $('daystitle').focus({ preventScroll: true }); } catch (_) { /* fine */ } // (screen readers land on the heading; no ring on a tile)
+  }
+  // the overview's squares, the week and what goes with it
+  function fillDays() {
     const list = $('daylist'); list.textContent = '';
     P.days.forEach((dd, k) => {
       const li = doc.createElement('li'), b = doc.createElement('button'), s = dayStand(k);
@@ -2187,9 +2564,6 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       li.appendChild(b); list.appendChild(li);
     });
     renderWeek(); renderSaveNote(); Install.refresh();
-    if (dlg.hidden) dlgReturn = doc.activeElement;
-    dlg.hidden = false; app.classList.add('dlg'); dlg.scrollTop = 0; syncRender(); wake.set(false); // opaque: nothing renders behind it
-    try { $('daystitle').focus({ preventScroll: true }); } catch (_) { /* fine */ } // (screen readers land on the heading; no ring on a tile)
   }
   function closeDays() {
     if (dlg.hidden) return;
@@ -2214,6 +2588,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (!nw.hasAttribute('data-arm')) { nw.setAttribute('data-arm', ''); nw.textContent = 'Clear this week’s ticks? Tap again'; clearTimeout(nw._t); nw._t = setTimeout(() => { nw.removeAttribute('data-arm'); nw.textContent = 'Start a new week'; }, 4000); return; }
     newWeek(Date.now()); Save.persist(); openDays(); announce('Week ' + S.week + '. Every day is open again.');
   });
+  $('deload').addEventListener('click', () => { wake.on(); setDeload(!deloadOn()); });
   $('daybtn').addEventListener('click', openDays);
   $('daysclose').addEventListener('click', closeDays);
   dlg.addEventListener('click', (e) => { if (e.target === dlg) closeDays(); });
@@ -2286,10 +2661,35 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // ---------------------------------------------------------------- the workout menu (the three dots)
   const menu = $('menu'), more = $('morebtn');
   const menuOpen = () => !menu.hidden;
+  // a busy machine first (Do it later, the swaps; only while they can be done), then the deload week, Restart workout, All workouts
+  const menuBtns = () => [...menu.querySelectorAll('button:not([aria-disabled="true"])')].filter((b) => b.offsetParent !== null);
+  let menuKey = '';
   function openMenu() {
-    $('mrestart').setAttribute('aria-disabled', !ui.adhoc && ui.mode !== 'end' && canRestart() ? 'false' : 'true');
+    paintMenu();
     menu.hidden = false; more.setAttribute('aria-expanded', 'true');
-    try { menu.querySelector('button:not([aria-disabled="true"])').focus({ preventScroll: true }); } catch (_) { /* fine */ }
+    try { menuBtns()[0].focus({ preventScroll: true }); } catch (_) { /* fine */ }
+  }
+  // the items as the screen is now (render() calls it while the menu is open: a rest that ran out changes what it acts on)
+  function paintMenu() {
+    const d = ui.day, i = busyStep(), later = $('mlater'), sw = $('mswaps'), on = deloadOn();
+    const key = [i, canLater(d, i), ui.mode === 'rest' && ui.rest ? ui.rest.next : '', swapsFor(d, i).join(','), on, ui.adhoc, ui.mode, canRestart()].join('|');
+    if (key === menuKey && !menu.hidden) return;
+    menuKey = key;
+    const had = menu.contains(doc.activeElement);
+    later.hidden = !canLater(d, i);
+    if (!later.hidden) later.textContent = ui.mode === 'rest' && ui.rest.next !== ui.rest.after ? 'Do ' + lc(stepName(d, i)) + ' later' : 'Do it later';
+    sw.textContent = '';
+    for (const id of swapsFor(d, i)) {
+      const b = doc.createElement('button'); b.type = 'button'; b.dataset.ex = id; b.textContent = 'Swap: ' + nameOf(id);
+      b.addEventListener('click', () => { closeMenu(true); doSwap(id); });
+      sw.append(b);
+    }
+    $('mbusy').hidden = later.hidden && !sw.childElementCount;
+    $('mdeloadt').textContent = on ? 'End the deload week' : 'Deload week';
+    $('mdeloads').textContent = on ? '' : (deloadDue() ? 'Due: ' : '') + T.deloadWhat;
+    $('mdeload').setAttribute('aria-disabled', ui.adhoc ? 'true' : 'false');
+    $('mrestart').setAttribute('aria-disabled', !ui.adhoc && ui.mode !== 'end' && canRestart() ? 'false' : 'true');
+    if (had && !menu.contains(doc.activeElement)) { try { menuBtns()[0].focus({ preventScroll: true }); } catch (_) { /* fine */ } }
   }
   function closeMenu(focus) {
     if (menu.hidden) return;
@@ -2299,13 +2699,15 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   more.addEventListener('click', () => { wake.on(); if (dialogOpen()) return; if (menuOpen()) closeMenu(true); else openMenu(); });
   menu.addEventListener('keydown', (e) => {
     if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp' && e.key !== 'Tab') return;
-    const f = [...menu.querySelectorAll('button:not([aria-disabled="true"])')]; if (!f.length) return;
+    const f = menuBtns(); if (!f.length) return;
     const i = f.indexOf(doc.activeElement);
     if (e.key === 'Tab') { closeMenu(false); return; } // (Tab leaves it)
     e.preventDefault(); f[(i + (e.key === 'ArrowDown' ? 1 : -1) + f.length) % f.length].focus();
   });
   $('mrestart').addEventListener('click', () => { if ($('mrestart').getAttribute('aria-disabled') === 'true') return; closeMenu(true); restartDay(); });
   $('mhome').addEventListener('click', () => { closeMenu(false); openDays(); });
+  $('mlater').addEventListener('click', () => { closeMenu(true); doLater(); });
+  $('mdeload').addEventListener('click', () => { if ($('mdeload').getAttribute('aria-disabled') === 'true') return; closeMenu(true); setDeload(!deloadOn()); });
   doc.addEventListener('pointerdown', (e) => { if (menuOpen() && !menu.contains(e.target) && !more.contains(e.target)) closeMenu(false); }, true);
 
   // ---------------------------------------------------------------- layout: the composition the stage uses
@@ -2515,10 +2917,12 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       const tm = ui.mode === 'end' ? null : curTimer(), t = now(), b = E.primary;
       return {
         day: ui.day, step: ui.step, mode: ui.mode, screen: app.dataset.view || null, adhoc: ui.adhoc, engine, booting, speed: SPEED,
-        id: figOf(ui.mode === 'end' ? null : stepsOf(ui.day)[ui.step]), stageId: stage && stage.cur ? stage.cur.id : null,
+        id: ui.mode === 'end' ? null : figAt(ui.day, ui.step), ex: ui.mode === 'end' ? null : exIdAt(ui.day, ui.step), stageId: stage && stage.cur ? stage.cur.id : null,
         playing: !!(stage && stage.isPlaying()), suspended: !!(stage && stage.suspended), loading: loadingNow, figHidden,
         sets: ui.mode === 'end' ? null : setsOf(ui.day, ui.step), kgs: ui.mode === 'end' ? null : kgsOf(ui.day, ui.step), defaultReps: ui.mode === 'set' ? defaultReps(ui.day, ui.step) : null,
-        reps: ui.mode === 'set' ? selValue() : null, kg: ui.mode === 'set' ? selKg() : null, sel: !E.sel.hidden,
+        reps: selMode() ? selValue() : null, kg: selMode() ? selKg() : null, sel: !E.sel.hidden,
+        ramp: ui.mode === 'warm' ? warmSets(ui.day, ui.step) : null, order: ui.adhoc ? null : orderOf(ui.day).slice(), deload: deloadOn(), deloadDue: !!P && deloadDue(),
+        busy: { step: busyStep(), later: canLater(ui.day, busyStep()), swaps: swapsFor(ui.day, busyStep()) },
         sess: { text: E.sess.textContent, idle: E.sess.hasAttribute('data-idle') }, hist: hist.map((h) => h.label),
         back: { disabled: E.back.getAttribute('aria-disabled') === 'true', label: E.back.getAttribute('aria-label') },
         coach: E.coach.hidden ? null : { top: parseFloat(E.coach.style.top), h: E.coach.offsetHeight, off: E.coach.hasAttribute('data-off'), phase: { k: E.cphase.dataset.k, verb: E.cverb.textContent, speed: E.cspeed.textContent, hidden: E.cphase.hidden }, rule: E.crule.hidden ? '' : E.crule.textContent, cue: E.ccue.hidden ? '' : E.ccue.textContent },
