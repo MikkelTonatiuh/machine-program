@@ -161,7 +161,8 @@ Three small tools keep the files in step (Node 18+; the first needs `playwright`
   file, when a swap or harder variant names one that is not ready, or when an entry is not used by any step, swap or variant.
 
 Adding an exercise as a swap or as a harder variant is a change to data only: put its animation in `exercises/<id>.json`, add
-its entry to `ex` in the program inside `index.html` (`"ready": true`; `compound`, `drop`, `partials` and `failAll` as for
-the exercises like it), then name it in the other exercise's entry: `"swap": ["seated_calf_raise"]` on `calf_raise` (and
-`"swap": ["calf_raise"]` on the new one, to swap back), or `"next": "leg_raise"` on `knee_raise` (a bodyweight exercise moves on
-to its `next` once every set reaches the top of the range; until then `harder` says what to change). Run the two tools.
+its entry to `ex` in the program inside `index.html` (`"ready": true`; `compound`, `drop`, `partials` and `failAll` as for the
+exercises like it; an exercise with no weight has `"kg0": 0` and its own rep range, `"reps": [10, 15]`), then name it in the
+other exercise's entry: `"swap": ["seated_calf_raise"]` on `calf_raise` (and `"swap": ["calf_raise"]` on the new one, to swap
+back), or `"next": "leg_raise"` on `knee_raise` (a bodyweight exercise moves on to its `next` once every set reaches the top of
+the range; until then `harder` says what to change). Run the two tools.

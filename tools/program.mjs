@@ -68,6 +68,12 @@ for (let grew = true; grew;) {
 for (const [id, e] of Object.entries(P.ex)) {
   if (!used.has(id)) problems.push('"' + id + '" has an entry but no step, swap or harder variant uses it');
   if (e.swap !== undefined && !(Array.isArray(e.swap) && e.swap.every((x) => typeof x === 'string' && x !== id))) problems.push('"' + id + '": swap must be a list of other exercises');
+  if (e.reps !== undefined && !(Array.isArray(e.reps) && e.reps.length === 2 && e.reps[0] >= 1 && e.reps[1] >= e.reps[0])) problems.push('"' + id + '": reps must be [lo, hi]');
+  // a no-weight exercise (kg0 0) is straight sets in its own range wherever it is done (a swap into a top-set step, a harder version)
+  if (e.kg0 === 0) {
+    if (!Array.isArray(e.reps)) problems.push('"' + id + '" has no weight (kg0 0): it needs its own rep range (reps: [lo, hi])');
+    if (e.drop || e.compound) problems.push('"' + id + '" has no weight (kg0 0): no drop set and no warm-up ramp (drop, compound)');
+  }
   if (e.ready && !existsSync(join(ROOT, 'exercises', id + '.json'))) problems.push('"' + id + '" is ready but exercises/' + id + '.json is missing');
 }
 
