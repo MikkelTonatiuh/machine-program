@@ -258,6 +258,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .app:not(.side) .note { margin-bottom: 5px; }
   .app:not(.side) .note[data-tone="guide"], .app:not(.side) .note[data-tone="soft"], .app:not(.side) .note[data-tone="tip"] { font-size: 15.5px; line-height: 1.22; }
   .app:not(.side) .sel { margin-bottom: 8px; }
+  .app.kicked:not(.side) .kicker { margin-bottom: 0; } /* (a set's kind above the name: the same height as without it) */
+  .app.kicked:not(.side) .line { margin-top: 5px; }
 }
 @media (max-height: 419px) { .app.side .mus { display: none; } }
 .app.longnote:not(.side) .mus { display: none; }
@@ -1149,7 +1151,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   const kgKnown = (d, i) => { const V = prevOf(d, i); return !!(V && V.kg.some((x) => Number.isFinite(x))) || kgsOf(d, i).some((x) => Number.isFinite(x)); };
   // ---- warm-up sets: before the first set of a compound, a ramp from that set's planned weight (about 50 % x 8, 75 % x 4,
-  // and 85 % x 2 before a heavy top set); before an isolation for a muscle not yet worked today, one light set (50 % x 10).
+  // and 85 % x 2 before a heavy top set; 75 % x 4 alone when its muscles are warm already); before an isolation for a muscle
+  // not yet worked today, one light set (50 % x 10).
   // Rounded to machine steps; never logged. A compound also warms the muscles that help its main ones (pressing the triceps, a
   // shoulder press the side shoulders, pulling the biceps and rear shoulders, a squat or leg press the glutes and inner thighs, a
   // hip thrust the hamstrings and side glutes).
@@ -1172,9 +1175,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (ui.adhoc || VERIFY || d < 0 || !st || st.t !== 'sets' || setsOf(d, i).length) return null;
     const e = exOf(exIdAt(d, i)), s = ui.sel, plan = s && s.day === d && s.step === i && s.k === 0 && !s.drop && Number.isFinite(s.kg) ? s.kg : defaultKg(d, i);
     if (!(plan >= 4)) return null;
+    // (a compound whose main muscles an earlier exercise has worked today needs no full ramp: one set to feel the weight)
     let ramp = null;
-    if (e.compound) ramp = isTop(st) && !deloadOn() ? [[0.5, 8], [0.75, 4], [0.85, 2]] : [[0.5, 8], [0.75, 4]];
-    else { const w = workedToday(d, i); if (!e.muscles.primary.every((m) => w.has(m))) ramp = [[0.5, 10]]; }
+    const warm = e.muscles.primary.every((m) => workedToday(d, i).has(m));
+    if (e.compound) ramp = isTop(st) && !deloadOn() ? [[0.5, 8], [0.75, 4], [0.85, 2]] : warm ? [[0.75, 4]] : [[0.5, 8], [0.75, 4]];
+    else if (!warm) ramp = [[0.5, 10]];
     if (!ramp) return null;
     const out = [];
     for (const [f, r] of ramp) { const w = roundKg(plan * f); if (w > (out.length ? out[out.length - 1][0] : 0) && w < plan) out.push([w, r]); }
@@ -1923,7 +1928,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     return openFrom(d, 0, i) >= 0;
   }
   // the exercises step i can be swapped for: the program's exercise (and its harder variant) and their swaps, without the one in
-  // use, any another step of the day does, and any this version has no animation for
+  // use, the ones the day's other steps use, and any this version has no animation for
   function swapsFor(d, i) {
     const st = i >= 0 ? stepsOf(d)[i] : null;
     if (!st || st.t !== 'sets' || setsOf(d, i).length || dropDue(d, i)) return [];

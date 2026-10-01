@@ -12,7 +12,8 @@ Around the list, the app adds what is not a working set (the counts below leave 
 - **Top set** on a step marked "top set" (the first compound of a lifting day): one heavy set first, 1–2 reps short of
   failure; the sets after it are about 85–90% of its weight.
 - **Warm-up sets** before the first set of each compound: about 50% × 8 and 75% × 4 of the first set's weight (and 85% × 2
-  before a top set); one light set (about 50% × 10) before an isolation for a muscle the day has not worked yet.
+  before a top set; 75% × 4 alone when an earlier exercise has worked its muscles); one light set (about 50% × 10) before an
+  isolation for a muscle the day has not worked yet.
 - **Drop set** right after the last set of an exercise marked "+ drop set": about half the weight, to failure.
 - **Swap** for a busy machine: the exercise named after "swap" takes the step's place for the day (same sets, reps and rest).
 - **Deload week**, when you choose it (the app suggests it after 8 weeks or when several lifts stall): half the sets, same
