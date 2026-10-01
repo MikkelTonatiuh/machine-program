@@ -2688,11 +2688,13 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     later.hidden = !canLater(d, i);
     if (!later.hidden) later.textContent = ui.mode === 'rest' && ui.rest.next !== ui.rest.after ? 'Do ' + lc(stepName(d, i)) + ' later' : 'Do it later';
     sw.textContent = '';
-    for (const id of swapsFor(d, i)) {
+    const swaps = swapsFor(d, i);
+    for (const id of swaps) {
       const b = doc.createElement('button'); b.type = 'button'; b.dataset.ex = id; b.textContent = 'Swap: ' + nameOf(id);
       b.addEventListener('click', () => { closeMenu(true); doSwap(id); });
       sw.append(b);
     }
+    if (stage && swaps.length) stage.prefetch(swaps.filter((x) => !(stage.cur && stage.cur.id === x))); // (a swap cuts in at once)
     $('mbusy').hidden = later.hidden && !sw.childElementCount;
     $('mdeloadt').textContent = on ? 'End the deload week' : 'Deload week';
     $('mdeloads').textContent = on ? '' : deloadDue() ? 'Due now: ' + T.deloadWhat.charAt(0).toLowerCase() + T.deloadWhat.slice(1) : T.deloadWhat;
