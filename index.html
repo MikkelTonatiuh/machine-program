@@ -1113,8 +1113,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     return null;
   }
   function defaultReps(d, i) {
-    const k = setsOf(d, i).length, R = rangeAt(d, i, k), V = prevOf(d, i);
-    if (deloadOn() || (k === 0 && bumpFor(d, i))) return clamp(R.lo, 0, REPS_MAX); // heavier (or harder) today, or a deload: the bottom of the range
+    const st = stepsOf(d)[i], k = setsOf(d, i).length, R = rangeAt(d, i, k), V = prevOf(d, i);
+    // heavier (or harder) today, or a deload: every set from the bottom of its range (a top set's back-off sets: when they moved up)
+    const up = isTop(st) && k > 0 ? !!(V && V.ts && V.bt) : !!bumpFor(d, i);
+    if (deloadOn() || up) return clamp(R.lo, 0, REPS_MAX);
     if (k === 0 && V && V.est) return clamp(R.hi, 0, REPS_MAX); // a first top set: its weight is worked out for the top of its range
     const v = V && V.reps[k];
     return clamp(Number.isFinite(v) && v > 0 ? v : R.hi, 0, REPS_MAX);
@@ -1976,10 +1978,12 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (!!on === deloadOn()) return;
     if (on) S.dl = { w: S.week, prev: S.dl ? S.dl.w : 0 };
     else S.dl = S.dl && S.dl.prev ? { w: S.dl.prev, prev: 0 } : null;
+    // a rest before a set the deload week no longer has (half the sets are done already) leads to the next open step instead
+    if (ui.mode === 'rest' && ui.rest && isDone(ui.day, ui.rest.next)) { const nx = openAfter(ui.day, ui.rest.after); if (nx >= 0) { ui.rest.next = nx; if (S.prog[ui.day]) S.prog[ui.day].step = nx; saveRest(); } }
     Save.persist();
     if (dialogOpen()) fillDays();
     else if (ui.mode === 'set' || ui.mode === 'warm' || ui.mode === 'drop' || ui.mode === 'done') goStep(ui.step, { quiet: true });
-    else render();
+    else { render(); prefetch(); }
     announce(on ? 'Deload week: ' + T.deloadWhat.toLowerCase() + '.' : 'Deload week ended.');
   }
   // lifts that have not gone up (a heavier weight, or more reps at the same weight) over their last 3 workouts on the same day
@@ -2691,7 +2695,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     }
     $('mbusy').hidden = later.hidden && !sw.childElementCount;
     $('mdeloadt').textContent = on ? 'End the deload week' : 'Deload week';
-    $('mdeloads').textContent = on ? '' : (deloadDue() ? 'Due: ' : '') + T.deloadWhat;
+    $('mdeloads').textContent = on ? '' : deloadDue() ? 'Due now: ' + T.deloadWhat.charAt(0).toLowerCase() + T.deloadWhat.slice(1) : T.deloadWhat;
     $('mdeload').setAttribute('aria-disabled', ui.adhoc ? 'true' : 'false');
     $('mrestart').setAttribute('aria-disabled', !ui.adhoc && ui.mode !== 'end' && canRestart() ? 'false' : 'true');
     if (had && !menu.contains(doc.activeElement)) { try { menuBtns()[0].focus({ preventScroll: true }); } catch (_) { /* fine */ } }
