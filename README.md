@@ -27,8 +27,9 @@ Open it, and download it to your phone (the **Download app** button is on its fi
   (8–12 reps) that start at about 87.5% of what you lifted on the top set.
 - After the last set of a machine or cable isolation comes a **drop set**: no rest, about half the weight, as many reps as you
   can. It is kept apart from the working sets (set the reps to 0 to skip it).
-- Abs: every set to failure. The knee raise has no weight; once every set reaches 20 reps it says
-  "Next time: straighten your legs more".
+- Abs: every set to failure. Exercises with no weight go up by reps. Once every set reaches the top, the knee raise makes way
+  for the leg raise ("Next time: Leg raise"; Swap brings the knee raise back), and the 45° back extension says "Next time: lower
+  slowly over 3 s", then "hold a plate to your chest".
 - The text that tells you how to do the rep is a card right above the figure: the phase the figure is in (Press fast,
   Return slow 2–3 s), the set's rule (how close to failure: each kind of set has its own) and one short cue. It never
   covers the figure. Turn the figure and it steps aside. On the bike it gives the pulse to hold instead.
@@ -99,9 +100,19 @@ The app says little: each line is there because it changes what you do. Where th
   failure ([2023](https://www.youtube.com/watch?v=ftpH4-xFGQI); [Pedrosa 2022](https://doi.org/10.1080/17461391.2021.1927199),
   [Kassiano 2023](https://pubmed.ncbi.nlm.nih.gov/37015016/); about equal to full reps in
   [Wolf 2025](https://doi.org/10.7717/peerj.18904)).
-- **Abs.** A weighted cable crunch, 3 × 10–12, and a leg raise, 3 × 10–20, with bent knees until straight legs are possible: progress
-  by reps, then by straighter legs ([Jeff's "Get Abs In 60 Days", 2024](https://www.youtube.com/watch?v=Tn-XvYG9x7w)). He takes the
-  last set to failure; this program takes every ab set to failure, and the crunch's last set ends with a drop set.
+- **Abs.** A weighted crunch (cable on day 3, machine on day 7), 3 × 10–12, and a leg raise, 3 × 10–20, with bent knees (the knee
+  raise) until straight legs are possible (the leg raise), then slower, then with ankle weights: progress by reps, then by a harder
+  version ([Jeff's "Get Abs In 60 Days", 2024](https://www.youtube.com/watch?v=Tn-XvYG9x7w)). He takes the last set to failure; this
+  program takes every ab set to failure, and the crunch's last set ends with a drop set.
+- **The exercises added last.** The 45° back extension, which works the glutes, hamstrings and lower back: Jeff ranks it S tier for
+  the glutes and adds reps, then a plate held to the chest
+  ([2025](https://www.youtube.com/watch?v=3ryh7PNhz3E)); it worked the glutes as hard as a Romanian deadlift and the hamstrings
+  71–174% harder ([Andersen 2021](https://doi.org/10.52082/jssm.2021.181)). The seated calf raise on day 6 (day 2 keeps the
+  standing one): with the knee bent it trains mostly the soleus, which grew as much as with standing calf raises while the
+  gastrocnemius hardly grew ([Kinoshita 2023](https://doi.org/10.3389/fphys.2023.1272106)). The rope hammer curl: the neutral grip
+  works the brachialis and the brachioradialis (Jeff ranks hammer curls A tier,
+  [2024](https://www.youtube.com/watch?v=GNO4OtYoCYk); [Boland 2008](https://doi.org/10.1016/j.jhsa.2008.07.019)). The machine crunch
+  is the cable crunch's loaded spinal curl on a machine.
 - **Busy machines.** A swap is another machine for the same muscles (as in [Jeff's 25 exercises, 2026](https://www.youtube.com/watch?v=S6rqpxVGKZ4)).
   Doing an exercise later in the workout changes how much it grows little ([Nunes 2021](https://doi.org/10.1080/17461391.2020.1733672)).
 - **Deload week.** General practice, not a rule of Jeff's programs: about one easier week every 4–8 weeks, with fewer sets and
@@ -114,7 +125,9 @@ The app says little: each line is there because it changes what you do. Where th
   [Morton 2018](https://pmc.ncbi.nlm.nih.gov/articles/PMC5867436/)).
 - **Cues.** One short line from Jeff's tier-list and technique videos. Where he has no public cue (pec deck, hip thrust) the app
   shows none. The hip adduction line ("Open slowly against the weight") is not Jeff's: it comes from the program file this app
-  was built from, which says "slow eccentric" for that exercise.
+  was built from, which says "slow eccentric" for that exercise. The cues of the leg raise, back extension, machine crunch and
+  hammer curl come from the technique notes their animations were built from (ExRx and the sources above); the seated calf raise
+  takes the standing one's.
 
 Jeff's videos were read from transcripts, mostly on mirror sites rather than YouTube itself, so check anything you plan to rely on
 against the source. Nothing here comes from his paid programs.

@@ -371,7 +371,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   </div>
   <p class="sr" id="status" aria-live="polite"></p>
 </main>
-<script type="application/json" id="program">{"days":[{"name":"Upper","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"chest_press","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"lat_pulldown","n":4,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"chest_row","n":3,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"lateral_raise","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"bayesian_curl","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"overhead_ext","n":3,"lo":10,"hi":15,"rest":90}],"cover":"chest_press"},{"name":"Lower","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"hack_squat","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"leg_extension","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"leg_curl","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_adduction","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"calf_raise","n":4,"lo":10,"hi":15,"rest":90}],"cover":"hack_squat"},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike","line":"20–40 min easy bike","sec":1200,"open":true,"pulse":"115–140","cue":"Can’t talk in full sentences? Slow down."},{"t":"sets","ex":"cable_crunch","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":20,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600}],"cover":"bike"},{"name":"Push","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"incline_press","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"shoulder_press","n":3,"lo":8,"hi":10,"rest":120},{"t":"sets","ex":"pec_deck","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"lateral_raise","n":4,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"pushdown","n":3,"lo":10,"hi":15,"rest":90}],"cover":"incline_press"},{"name":"Pull","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"lat_pulldown","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"chest_row","n":4,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"bayesian_curl","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"preacher_curl","n":2,"lo":10,"hi":15,"rest":90}],"cover":"lat_pulldown"},{"name":"Legs","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"leg_curl","n":4,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_thrust","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"leg_press","n":3,"lo":10,"hi":12,"rest":180},{"t":"sets","ex":"hip_abduction","n":3,"lo":15,"hi":20,"rest":90},{"t":"sets","ex":"hip_adduction","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"calf_raise","n":4,"lo":10,"hi":15,"rest":90}],"cover":"hip_thrust"},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike","line":"20–40 min easy bike","sec":1200,"open":true,"pulse":"115–140","cue":"Can’t talk in full sentences? Slow down."},{"t":"sets","ex":"cable_crunch","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":20,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600}],"cover":"knee_raise"}],"ex":{"bayesian_curl":{"name":"Bayesian cable curl","ready":true,"cue":"Arms behind torso, cable at hand height","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":true,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"partials":true,"swap":["preacher_curl"]},"bike":{"name":"Bike","ready":true,"cue":"","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false},"cable_crunch":{"name":"Cable crunch","ready":true,"cue":"Round your lower back, squeeze abs","muscles":{"primary":["Abs"],"secondary":[]},"unilateral":false,"verbs":["Crunch","Return"],"kg0":20,"fail":true,"drop":true,"failAll":true},"calf_raise":{"name":"Standing calf raise","ready":true,"cue":"Pause 1–2 s at the bottom. No bouncing.","muscles":{"primary":["Calves"],"secondary":[]},"unilateral":false,"verbs":["Rise","Sink"],"kg0":40,"fail":true,"drop":true,"partials":true},"chest_press":{"name":"Chest press","ready":true,"cue":"Let handles come back to deep stretch","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Press","Return"],"kg0":20,"fail":true,"compound":true,"swap":["incline_press"]},"chest_row":{"name":"Chest-supported row","ready":true,"cue":"Chest on the pad. Stretch fully forward.","muscles":{"primary":["Mid traps","Lats","Upper back"],"secondary":[]},"unilateral":false,"verbs":["Row","Return"],"kg0":20,"fail":true,"compound":true},"hack_squat":{"name":"Hack squat","ready":true,"cue":"Go as deep as the machine allows","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Stand","Lower"],"kg0":40,"short":true,"compound":true,"swap":["leg_press"]},"hip_abduction":{"name":"Seated hip abduction","ready":true,"cue":"Lean forward about 30 degrees","muscles":{"primary":["Side glutes","Upper glutes"],"secondary":[]},"unilateral":false,"verbs":["Open","Close"],"kg0":30,"fail":true,"drop":true},"hip_adduction":{"name":"Seated hip adduction","ready":true,"cue":"Open slowly against the weight.","muscles":{"primary":["Inner thighs"],"secondary":[]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":30,"fail":true,"drop":true},"hip_thrust":{"name":"Hip thrust","ready":true,"cue":"","muscles":{"primary":["Glutes"],"secondary":[]},"unilateral":false,"verbs":["Thrust","Lower"],"kg0":40,"fail":true,"compound":true},"incline_press":{"name":"Incline press","ready":true,"cue":"Touch high on upper chest; set safety stops","muscles":{"primary":["Upper chest"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":20,"fail":true,"compound":true,"swap":["chest_press"]},"knee_raise":{"name":"Knee raise","ready":true,"cue":"Curl your lower back up, not just legs","muscles":{"primary":["Abs","Hip flexors"],"secondary":[]},"unilateral":false,"verbs":["Raise","Lower"],"kg0":0,"fail":true,"failAll":true,"harder":"straighten your legs more"},"lat_pulldown":{"name":"Lat pulldown","ready":true,"cue":"Stay vertical at the top","muscles":{"primary":["Lats"],"secondary":[]},"unilateral":false,"verbs":["Pull","Return"],"kg0":30,"fail":true,"compound":true},"lateral_raise":{"name":"Cable lateral raise","ready":true,"cue":"Cable at hand height","muscles":{"primary":["Side shoulders"],"secondary":[]},"unilateral":true,"verbs":["Raise","Lower"],"kg0":5,"fail":true,"drop":true,"partials":true},"leg_curl":{"name":"Seated leg curl","ready":true,"cue":"Lean forward until hamstrings feel stretched","muscles":{"primary":["Hamstrings"],"secondary":[]},"unilateral":false,"verbs":["Curl","Return"],"kg0":25,"fail":true,"drop":true,"partials":true},"leg_extension":{"name":"Leg extension","ready":true,"cue":"Seat back, lower over 3 seconds","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":30,"fail":true,"drop":true,"partials":true},"leg_press":{"name":"Leg press","ready":true,"cue":"Deep, without your lower back rounding","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false,"verbs":["Press","Return"],"kg0":60,"short":true,"compound":true,"swap":["hack_squat"]},"overhead_ext":{"name":"Overhead extension","ready":true,"cue":"Arms overhead, feel the deep stretch","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":15,"fail":true,"drop":true,"partials":true,"swap":["pushdown"]},"pec_deck":{"name":"Pec deck","ready":true,"cue":"","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":20,"fail":true,"drop":true,"partials":true},"preacher_curl":{"name":"Machine preacher curl","ready":true,"cue":"Go all the way down","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":false,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"partials":true,"swap":["bayesian_curl"]},"pushdown":{"name":"Cable pushdown","ready":true,"cue":"Use a bar, not the rope","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Push","Return"],"kg0":15,"fail":true,"drop":true,"swap":["overhead_ext"]},"reverse_fly":{"name":"Reverse fly","ready":true,"cue":"Sweep out, not back","muscles":{"primary":["Rear shoulders"],"secondary":[]},"unilateral":false,"verbs":["Sweep","Return"],"kg0":10,"fail":true,"drop":true},"shoulder_press":{"name":"Shoulder press","ready":true,"cue":"Lower until arms pass below parallel","muscles":{"primary":["Front shoulders"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":15,"fail":true,"compound":true}}}</script>
+<script type="application/json" id="program">{"days":[{"name":"Upper","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"chest_press","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"lat_pulldown","n":4,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"chest_row","n":3,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"lateral_raise","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"bayesian_curl","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"overhead_ext","n":3,"lo":10,"hi":15,"rest":90}],"cover":"chest_press"},{"name":"Lower","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"hack_squat","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"leg_extension","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"leg_curl","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_adduction","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"calf_raise","n":4,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"back_extension","n":3,"lo":10,"hi":15,"rest":120}],"cover":"hack_squat","order":[0,1,2,3,6,4,5]},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike","line":"20–40 min easy bike","sec":1200,"open":true,"pulse":"115–140","cue":"Can’t talk in full sentences? Slow down."},{"t":"sets","ex":"cable_crunch","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":20,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600}],"cover":"bike"},{"name":"Push","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"incline_press","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"shoulder_press","n":3,"lo":8,"hi":10,"rest":120},{"t":"sets","ex":"pec_deck","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"lateral_raise","n":4,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"pushdown","n":3,"lo":10,"hi":15,"rest":90}],"cover":"incline_press"},{"name":"Pull","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"lat_pulldown","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"chest_row","n":4,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"bayesian_curl","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"preacher_curl","n":2,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"hammer_curl","n":2,"lo":10,"hi":15,"rest":90}],"cover":"lat_pulldown","order":[0,1,2,3,4,6,5]},{"name":"Legs","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"leg_curl","n":4,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_thrust","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"leg_press","n":3,"lo":10,"hi":12,"rest":180},{"t":"sets","ex":"hip_abduction","n":3,"lo":15,"hi":20,"rest":90},{"t":"sets","ex":"hip_adduction","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"seated_calf_raise","n":4,"lo":10,"hi":15,"rest":90}],"cover":"hip_thrust"},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike","line":"20–40 min easy bike","sec":1200,"open":true,"pulse":"115–140","cue":"Can’t talk in full sentences? Slow down."},{"t":"sets","ex":"machine_crunch","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":20,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600}],"cover":"knee_raise"}],"ex":{"back_extension":{"name":"45° back extension","ready":true,"cue":"Hinge at the hips, then squeeze your glutes","muscles":{"primary":["Glutes","Hamstrings"],"secondary":["Lower back"]},"unilateral":false,"verbs":["Rise","Lower"],"kg0":0,"fail":true,"harder":["lower slowly over 3 s","hold a plate to your chest"],"swap":["hip_thrust"]},"bayesian_curl":{"name":"Bayesian cable curl","ready":true,"cue":"Arms behind torso, cable at hand height","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":true,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"partials":true,"swap":["preacher_curl","hammer_curl"]},"bike":{"name":"Bike","ready":true,"cue":"","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false},"cable_crunch":{"name":"Cable crunch","ready":true,"cue":"Round your lower back, squeeze abs","muscles":{"primary":["Abs"],"secondary":[]},"unilateral":false,"verbs":["Crunch","Return"],"kg0":20,"fail":true,"drop":true,"failAll":true,"swap":["machine_crunch"]},"calf_raise":{"name":"Standing calf raise","ready":true,"cue":"Pause 1–2 s at the bottom. No bouncing.","muscles":{"primary":["Calves"],"secondary":[]},"unilateral":false,"verbs":["Rise","Sink"],"kg0":40,"fail":true,"drop":true,"partials":true,"swap":["seated_calf_raise"]},"chest_press":{"name":"Chest press","ready":true,"cue":"Let handles come back to deep stretch","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Press","Return"],"kg0":20,"fail":true,"compound":true,"swap":["incline_press"]},"chest_row":{"name":"Chest-supported row","ready":true,"cue":"Chest on the pad. Stretch fully forward.","muscles":{"primary":["Mid traps","Lats","Upper back"],"secondary":[]},"unilateral":false,"verbs":["Row","Return"],"kg0":20,"fail":true,"compound":true},"hack_squat":{"name":"Hack squat","ready":true,"cue":"Go as deep as the machine allows","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Stand","Lower"],"kg0":40,"short":true,"compound":true,"swap":["leg_press"]},"hammer_curl":{"name":"Rope hammer curl","ready":true,"cue":"Elbows pinned, palms facing in","muscles":{"primary":["Brachialis","Forearms"],"secondary":["Biceps"]},"unilateral":false,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"swap":["bayesian_curl","preacher_curl"]},"hip_abduction":{"name":"Seated hip abduction","ready":true,"cue":"Lean forward about 30 degrees","muscles":{"primary":["Side glutes","Upper glutes"],"secondary":[]},"unilateral":false,"verbs":["Open","Close"],"kg0":30,"fail":true,"drop":true},"hip_adduction":{"name":"Seated hip adduction","ready":true,"cue":"Open slowly against the weight.","muscles":{"primary":["Inner thighs"],"secondary":[]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":30,"fail":true,"drop":true},"hip_thrust":{"name":"Hip thrust","ready":true,"cue":"","muscles":{"primary":["Glutes"],"secondary":[]},"unilateral":false,"verbs":["Thrust","Lower"],"kg0":40,"fail":true,"compound":true,"swap":["back_extension"]},"incline_press":{"name":"Incline press","ready":true,"cue":"Touch high on upper chest; set safety stops","muscles":{"primary":["Upper chest"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":20,"fail":true,"compound":true,"swap":["chest_press"]},"knee_raise":{"name":"Knee raise","ready":true,"cue":"Curl your lower back up, not just legs","muscles":{"primary":["Abs","Hip flexors"],"secondary":[]},"unilateral":false,"verbs":["Raise","Lower"],"kg0":0,"fail":true,"failAll":true,"harder":"straighten your legs more","next":"leg_raise"},"lat_pulldown":{"name":"Lat pulldown","ready":true,"cue":"Stay vertical at the top","muscles":{"primary":["Lats"],"secondary":[]},"unilateral":false,"verbs":["Pull","Return"],"kg0":30,"fail":true,"compound":true},"lateral_raise":{"name":"Cable lateral raise","ready":true,"cue":"Cable at hand height","muscles":{"primary":["Side shoulders"],"secondary":[]},"unilateral":true,"verbs":["Raise","Lower"],"kg0":5,"fail":true,"drop":true,"partials":true},"leg_curl":{"name":"Seated leg curl","ready":true,"cue":"Lean forward until hamstrings feel stretched","muscles":{"primary":["Hamstrings"],"secondary":[]},"unilateral":false,"verbs":["Curl","Return"],"kg0":25,"fail":true,"drop":true,"partials":true},"leg_extension":{"name":"Leg extension","ready":true,"cue":"Seat back, lower over 3 seconds","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":30,"fail":true,"drop":true,"partials":true},"leg_press":{"name":"Leg press","ready":true,"cue":"Deep, without your lower back rounding","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false,"verbs":["Press","Return"],"kg0":60,"short":true,"compound":true,"swap":["hack_squat"]},"leg_raise":{"name":"Leg raise","ready":true,"cue":"Straight legs to hip height, lower slowly","muscles":{"primary":["Abs"],"secondary":["Hip flexors"]},"unilateral":false,"verbs":["Raise","Lower"],"kg0":0,"fail":true,"failAll":true,"harder":["lower slowly over 3 s","add ankle weights"],"swap":["knee_raise"]},"machine_crunch":{"name":"Machine crunch","ready":true,"cue":"Curl your ribs toward your pelvis","muscles":{"primary":["Abs"],"secondary":["Obliques"]},"unilateral":false,"verbs":["Crunch","Return"],"kg0":20,"fail":true,"drop":true,"failAll":true,"swap":["cable_crunch"]},"overhead_ext":{"name":"Overhead extension","ready":true,"cue":"Arms overhead, feel the deep stretch","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":15,"fail":true,"drop":true,"partials":true,"swap":["pushdown"]},"pec_deck":{"name":"Pec deck","ready":true,"cue":"","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":20,"fail":true,"drop":true,"partials":true},"preacher_curl":{"name":"Machine preacher curl","ready":true,"cue":"Go all the way down","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":false,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"partials":true,"swap":["bayesian_curl","hammer_curl"]},"pushdown":{"name":"Cable pushdown","ready":true,"cue":"Use a bar, not the rope","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Push","Return"],"kg0":15,"fail":true,"drop":true,"swap":["overhead_ext"]},"reverse_fly":{"name":"Reverse fly","ready":true,"cue":"Sweep out, not back","muscles":{"primary":["Rear shoulders"],"secondary":[]},"unilateral":false,"verbs":["Sweep","Return"],"kg0":10,"fail":true,"drop":true},"seated_calf_raise":{"name":"Seated calf raise","ready":true,"cue":"Pause 1–2 s at the bottom. No bouncing.","muscles":{"primary":["Calves"],"secondary":[]},"unilateral":false,"verbs":["Rise","Sink"],"kg0":20,"fail":true,"drop":true,"partials":true,"swap":["calf_raise"]},"shoulder_press":{"name":"Shoulder press","ready":true,"cue":"Lower until arms pass below parallel","muscles":{"primary":["Front shoulders"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":15,"fail":true,"compound":true}}}</script>
 <script>
 // Machine Coach figure engine - core helpers and the data loader.
 // Every engine file is a classic script that adds to the global namespace `MCE`, so the page works from
@@ -824,8 +824,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   const lsSet = (k, v) => { try { g.localStorage.setItem(k, JSON.stringify(v)); return true; } catch (_) { return false; } };
   // can this view keep anything at all (a strict sandbox throws on localStorage)?
   const lsOK = (() => { try { const k = 'machine-program:probe'; g.localStorage.setItem(k, '1'); g.localStorage.removeItem(k); return true; } catch (_) { return false; } })();
-  // (v9 added: dl, the deload week { w: its week, prev: the one before }; up, the harder variants an exercise moved on to)
-  const blank = () => ({ v: 1, updated: 0, current: null, prog: {}, lastDone: null, last: {}, history: [], cycle: 0, week: 1, dl: null, up: {} });
+  // (v9 added: dl, the deload week { w: its week, prev: the one before }; up, the harder variants an exercise moved on to;
+  // hard, how many of its "harder" steps a bodyweight exercise has taken; pv, the program version the document was saved for)
+  const PV = 9;
+  const blank = () => ({ v: 1, pv: PV, updated: 0, current: null, prog: {}, lastDone: null, last: {}, history: [], cycle: 0, week: 1, dl: null, up: {}, hard: {} });
   const ID = /^[a-z0-9_]{1,40}$/; // an exercise id
   // a number from a stored value: numbers and numeric strings only (null, '', true and [] are not 0)
   const num = (x) => (typeof x === 'number' ? x : typeof x === 'string' && x.trim() !== '' ? +x : NaN);
@@ -881,7 +883,31 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     });
     if (d.dl && typeof d.dl === 'object') { const w = int(d.dl.w, 1, 9999); if (w) o.dl = { w, prev: int(d.dl.prev, 0, 9999) || 0 }; }
     if (d.up && typeof d.up === 'object') for (const [a, b] of Object.entries(d.up)) if (ID.test(a) && typeof b === 'string' && ID.test(b) && a !== b) o.up[a] = b;
+    if (d.hard && typeof d.hard === 'object') for (const [a, n] of Object.entries(d.hard)) { const k = int(n, 1, 99); if (ID.test(a) && k) o.hard[a] = k; }
+    o.pv = int(d.pv, 1, 99) || 8; // (no version: saved by v8)
     return o;
+  }
+  // A v8 document's day in progress: a step whose exercise is another one now (day 6's calf raise and day 7's crunch were
+  // replaced; a knee raise that reached the top in v8 moves on to the leg raise) and that has sets logged keeps the exercise
+  // they were done on, for that session (as a swap). New steps were added at the end of their day, so every other step's sets
+  // stay where they were.
+  const REPLACED = { 5: { 6: 'calf_raise' }, 6: { 1: 'cable_crunch' } };
+  function pinOld(d, p) {
+    if (!p || !p.sets || !P.days[d]) return;
+    const r = REPLACED[d] || {};
+    P.days[d].steps.forEach((st, i) => {
+      if (st.t !== 'sets' || !(p.sets[i] || []).length || (p.swap && p.swap[i])) return;
+      const was = r[i] || (levelOf(st.ex) !== st.ex ? st.ex : null);
+      if (was) (p.swap = p.swap || {})[i] = was;
+    });
+  }
+  // the same when an exercise moves on to its harder variant: every day in progress that logged sets on it keeps it for that
+  // session (the variant takes its place from the next one)
+  function pinLogged(id) {
+    for (const [k, p] of Object.entries(S.prog)) {
+      const d = +k; if (!(d >= 0) || !P.days[d] || !p || !p.sets) continue;
+      stepsOf(d).forEach((st, j) => { if (st.t === 'sets' && (p.sets[j] || []).length && !(p.swap && p.swap[j]) && exIdAt(d, j) === id) (p.swap = p.swap || {})[j] = id; });
+    }
   }
   let S = blank(); // the saved document (in memory: the truth; written on user actions)
   let acted = false; // the viewer has changed something in this visit
@@ -968,14 +994,27 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     return { name: e.name || nameOf(id), cue: e.cue || '', muscles: e.muscles || { primary: [], secondary: [] }, unilateral: !!e.unilateral, ready: !!e.ready,
       verbs: Array.isArray(e.verbs) && e.verbs.length === 2 ? e.verbs : null, kg0: Number.isFinite(e.kg0) ? e.kg0 : 20, fail: !!e.fail, short: !!e.short,
       compound: !!e.compound, drop: !!e.drop, partials: !!e.partials, failAll: !!e.failAll, swap: Array.isArray(e.swap) ? e.swap.filter((x) => typeof x === 'string') : [],
-      harder: typeof e.harder === 'string' ? e.harder : '', next: typeof e.next === 'string' ? e.next : '' };
+      harder: typeof e.harder === 'string' || Array.isArray(e.harder) ? e.harder : '', next: typeof e.next === 'string' ? e.next : '' };
   };
   const isReady = (id) => !!(P && id && P.ex[id] && P.ex[id].ready);
   const dayLabel = (d) => (d < 0 ? '' : 'Day ' + (d + 1) + MID + P.days[d].name);
   const FRESH = 20 * 3600e3; // progress untouched this long is an old session: the day opens fresh
   const fresh = (p) => !!p && Date.now() - (p.at || 0) < FRESH;
-  // the harder variant an exercise has moved on to (S.up), as far as the chain goes; a variant this version has no animation for is not used
-  const levelOf = (id) => { let x = id; for (let k = 0; k < 4 && S.up[x] && isReady(S.up[x]); k++) x = S.up[x]; return x; };
+  // a bodyweight exercise's sets that all reached the top of the range
+  const bwTop = (L) => !!(L && L.top && L.kg && L.kg.length && L.kg.every((x) => x === 0));
+  // the harder variant an exercise has moved on to (S.up; or its "next" once its last time reached the top with no weight, as a
+  // v8 knee raise may have), as far as the chain goes; a variant this version has no animation for is not used
+  const levelOf = (id) => {
+    let x = id;
+    for (let k = 0; k < 4; k++) {
+      const e = P && P.ex[x], n = S.up[x] || (e && e.next && bwTop(S.last[x]) ? e.next : null);
+      if (!n || n === x || !isReady(n)) break;
+      x = n;
+    }
+    return x;
+  };
+  // a bodyweight exercise's "harder" steps, in order (one line, or a list: the next one each time every set reaches the top)
+  const hardList = (e) => (Array.isArray(e.harder) ? e.harder : e.harder ? [e.harder] : []);
   // the exercise a sets step is done with today: the one it was swapped for (a busy machine), else the program's (or its harder
   // variant); its sets are logged to it
   const exIdAt = (d, i) => {
@@ -991,8 +1030,13 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   const isTop = (st) => !!(st && Array.isArray(st.top) && st.top.length === 2);
   // the rep range of set k (0 = the first): a top-set step's first set has its own
   const rangeAt = (d, i, k) => { const st = stepsOf(d)[i]; return k === 0 && isTop(st) ? { lo: st.top[0], hi: st.top[1] } : { lo: st.lo, hi: st.hi }; };
-  // the day's order: the program's, or as it is after an exercise was moved to the end (Do it later)
-  const orderOf = (d) => { const n = stepsOf(d).length, p = d >= 0 ? S.prog[d] : null; return p && Array.isArray(p.order) && p.order.length === n ? p.order : [...Array(n).keys()]; };
+  // the day's order: as it is after an exercise was moved to the end (Do it later), else the program's (a step added later is
+  // appended to its day's steps, so saved sets keep their step, and the day's order puts it in its place), else the steps'
+  const orderOf = (d) => {
+    const n = stepsOf(d).length, p = d >= 0 ? S.prog[d] : null, o = dayOf(d).order;
+    if (p && Array.isArray(p.order) && p.order.length === n) return p.order;
+    return Array.isArray(o) && o.length === n ? o : [...Array(n).keys()];
+  };
   const setsOf = (d, i) => ((S.prog[d] && S.prog[d].sets[i]) || []);
   const kgsOf = (d, i) => ((S.prog[d] && S.prog[d].kg && S.prog[d].kg[i]) || []); // the weights of those sets (null: none recorded)
   const dropDue = (d, i) => !!(S.prog[d] && S.prog[d].dd && S.prog[d].dd[i]);
@@ -1109,7 +1153,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (deloadOn() || !V || !V.top || V.est) return null;
     const w = V.kg[0];
     if (Number.isFinite(w) && w > 0) { const up = kgNext(w, 1); return up > w ? { kg: up } : null; }
-    if (V.kg.length && V.kg.every((x) => x === 0)) return { harder: true };
+    if (bwTop(V)) return { harder: true };
     return null;
   }
   function defaultReps(d, i) {
@@ -1159,15 +1203,16 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // shoulder press the side shoulders, pulling the biceps and rear shoulders, a squat or leg press the glutes and inner thighs, a
   // hip thrust the hamstrings and side glutes).
   const ALSO = { Chest: ['Upper chest', 'Triceps', 'Front shoulders'], 'Upper chest': ['Chest', 'Triceps', 'Front shoulders'], 'Front shoulders': ['Triceps', 'Side shoulders'],
-    Lats: ['Biceps', 'Rear shoulders', 'Upper back'], 'Upper back': ['Biceps', 'Rear shoulders', 'Lats'], 'Mid traps': ['Rear shoulders', 'Biceps'],
+    Lats: ['Biceps', 'Brachialis', 'Forearms', 'Rear shoulders', 'Upper back'], 'Upper back': ['Biceps', 'Brachialis', 'Forearms', 'Rear shoulders', 'Lats'], 'Mid traps': ['Rear shoulders', 'Biceps', 'Brachialis', 'Forearms'],
     Quads: ['Glutes', 'Inner thighs'], Glutes: ['Hamstrings', 'Upper glutes', 'Side glutes', 'Inner thighs'] };
+  const NEAR = { Biceps: ['Brachialis', 'Forearms'], Brachialis: ['Biceps', 'Forearms'] };
   function workedToday(d, i) {
     const w = new Set();
     stepsOf(d).forEach((s, j) => {
       if (j === i || s.t !== 'sets' || !setsOf(d, j).length) return;
       const x = exOf(exIdAt(d, j));
       for (const m of [...x.muscles.primary, ...x.muscles.secondary]) w.add(m);
-      if (x.compound) for (const m of x.muscles.primary) for (const a of ALSO[m] || []) w.add(a); // (what a compound's main muscles bring along)
+      for (const m of x.muscles.primary) for (const a of [...(NEAR[m] || []), ...(x.compound ? ALSO[m] || [] : [])]) w.add(a); // (what its main muscles bring along)
     });
     return w;
   }
@@ -1210,7 +1255,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (ui.mode !== 'set' || setsOf(d, i).length || deloadOn()) return null;
     const up = bumpFor(d, i), e = exOf(exIdAt(d, i));
     if (up && up.kg != null) return T.addToday + MID + fmtKg(up.kg) + ' kg';
-    if (up && up.harder) return e.harder ? cap(e.harder) + ' today' : T.addToday;
+    if (up && up.harder) { const H = hardList(e), id = exIdAt(d, i); return H.length ? cap(H[clamp((S.hard[id] || 1) - 1, 0, H.length - 1)]) + ' today' : T.addToday; }
     if (e.kg0 > 0 && !kgKnown(d, i)) return T.pickWeight;
     return null;
   }
@@ -1233,15 +1278,15 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   // after the last set of an exercise that reached the top: what next time brings ("Next time: add weight . 42.5 kg", or for a
   // bodyweight exercise its harder variant or its "harder" line)
-  function nextMsg(id, L) {
+  function nextMsg(id, L, stage) {
     if (!L || !L.top) return null;
     const e = exOf(id), w = L.kg[0];
     if (Number.isFinite(w) && w > 0) { const up = kgNext(w, 1); return T.addNext + (up > w ? MID + fmtKg(up) + ' kg' : ''); }
-    if (L.kg.length && L.kg.every((x) => x === 0)) { if (e.next && isReady(e.next)) return 'Next time: ' + nameOf(e.next); if (e.harder) return 'Next time: ' + e.harder; }
+    if (bwTop(L)) { const H = hardList(e); if (e.next && isReady(e.next)) return 'Next time: ' + nameOf(e.next); if (H.length) return 'Next time: ' + H[Math.min(stage || 0, H.length - 1)]; }
     return T.addNext;
   }
   // the same message after the exercise's drop set (from the record its last set left today)
-  const msgFor = (d, i) => { const id = exIdAt(d, i), L = S.last[id], p = S.prog[d]; return !deloadOn() && L && p && L.at >= (p.started || 0) ? nextMsg(id, L) : null; };
+  const msgFor = (d, i) => { const id = exIdAt(d, i), L = S.last[id], p = S.prog[d]; return !deloadOn() && L && p && L.at >= (p.started || 0) ? nextMsg(id, L, Math.max(0, (S.hard[id] || 0) - 1)) : null; };
   function restNext(r) {
     if (r.next === r.after) return 'Next: Set ' + (setsOf(ui.day, r.next).length + 1) + ' of ' + nOf(ui.day, r.next);
     return 'Next: ' + stepName(ui.day, r.next);
@@ -1669,11 +1714,15 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const dl = deloadOn();
     let msg = null;
     if (!dl || !S.last[id]) {
-      const L = S.last[id] = lastRecord(st, a, w, N, Date.now(), dl);
-      msg = dl ? null : nextMsg(id, L);
+      const L = lastRecord(st, a, w, N, Date.now(), dl), stage = S.hard[id] || 0;
       // a bodyweight exercise done to the top of its range on every set moves on to its harder variant next time (when this
-      // version has one); today's sets stay with the exercise they were done on
-      if (!dl && !ui.adhoc && L.top && e.next && isReady(e.next) && L.kg.length && L.kg.every((x) => x === 0)) { p.swap[i] = id; S.up[id] = e.next; }
+      // version has one; the sets logged on it so far stay with it: pinned before the record says it reached the top), or
+      // takes its next harder step
+      const up = !dl && !ui.adhoc && bwTop(L);
+      if (up && e.next && isReady(e.next)) pinLogged(id);
+      S.last[id] = L;
+      msg = dl ? null : nextMsg(id, L, stage);
+      if (up) { if (e.next && isReady(e.next)) S.up[id] = e.next; else if (hardList(e).length) S.hard[id] = Math.min(99, stage + 1); }
     }
     // a machine or cable isolation: its drop set comes right away, with no rest before it (none in a deload week)
     if (e.drop && !dl && !ui.adhoc) {
@@ -1845,7 +1894,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const d = ui.day, p = S.prog[d], last = {};
     for (const id of idsOf(d)) last[id] = S.last[id] ? clone(S.last[id]) : null;
     const r = ui.rest && ui.mode === 'rest' ? { after: ui.rest.after, next: ui.rest.next, set: ui.rest.set, dur: ui.rest.dur, left: Math.max(0, ui.rest.dur - (now() - ui.rest.t0)) } : null;
-    const u = { label, at: Date.now(), day: d, step: ui.step, prog: p ? clone(p) : null, current: S.current, lastDone: S.lastDone ? clone(S.lastDone) : null, last, up: clone(S.up),
+    const u = { label, at: Date.now(), day: d, step: ui.step, prog: p ? clone(p) : null, current: S.current, lastDone: S.lastDone ? clone(S.lastDone) : null, last, up: clone(S.up), hard: clone(S.hard), pv: PV,
       hAt: S.history.length ? S.history[0].at : 0, timers: [...ui.timers].map(([k, tm]) => ({ key: k, startedAt: Date.now() - elapsedOf(tm) * 1000 / SPEED })), rest: r, sel: null };
     hist.push(u); if (hist.length > HIST_MAX) hist.shift();
     saveHist();
@@ -1858,6 +1907,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     S.current = u.current; S.lastDone = u.lastDone; if (u.cycleFrom != null) { S.cycle = u.cycleFrom; if (u.weekFrom != null) S.week = u.weekFrom; }
     for (const [id, L] of Object.entries(u.last)) { if (L) S.last[id] = L; else delete S.last[id]; }
     if (u.up) S.up = u.up;
+    if (u.hard) S.hard = u.hard;
     while (S.history.length && S.history[0].at > u.hAt) S.history.shift(); // a day that was finished is not any more
     ui.rimFade = ui.mode === 'rest' || ui.mode === 'end' ? { t0: now(), p: 1 } : null;
     ui.timers = new Map(u.timers.map((x) => [x.key, { t0: now() - (Date.now() - x.startedAt) }])); saveTimers();
@@ -1888,13 +1938,14 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const nd = P.days.length, ids = idsOf(ui.day);
     for (const e of list) {
       if (!e || typeof e !== 'object' || int(e.day, 0, nd - 1) !== ui.day || !(Date.now() - num(e.at) < FRESH) || typeof e.label !== 'string') continue;
-      const doc = sane({ prog: e.prog ? { [e.day]: e.prog } : {}, current: e.current, lastDone: e.lastDone, up: e.up }), last = {};
+      const doc = sane({ prog: e.prog ? { [e.day]: e.prog } : {}, current: e.current, lastDone: e.lastDone, up: e.up, hard: e.hard }), last = {};
+      if (!(num(e.pv) >= PV)) pinOld(ui.day, doc.prog[ui.day]); // (a step stored by v8)
       const timers = (Array.isArray(e.timers) ? e.timers : []).filter((x) => x && typeof x.key === 'string' && /^\d+:\d+$/.test(x.key) && Number.isFinite(num(x.startedAt)) && x.key.split(':')[0] === String(ui.day)).map((x) => ({ key: x.key, startedAt: num(x.startedAt) }));
       const step = int(e.step, 0, stepsOf(ui.day).length - 1); if (step == null) continue;
       if (e.last && typeof e.last === 'object') for (const id of ids) { const L = e.last[id]; last[id] = L && typeof L === 'object' ? sane({ last: { [id]: L } }).last[id] || null : null; }
       const r = e.rest && typeof e.rest === 'object' && [e.rest.after, e.rest.next].every((x) => int(x, 0, 40) != null) ? { after: int(e.rest.after, 0, 40), next: int(e.rest.next, 0, 40), set: e.rest.set && Number.isFinite(num(e.rest.set.k)) ? { k: int(e.rest.set.k, 1, 40), n: int(e.rest.set.n, 0, REPS_MAX), kg: kgOne(e.rest.set.kg), drop: e.rest.set.drop ? 1 : 0 } : null, dur: clamp(num(e.rest.dur) || 120000, 1000, 600000), left: clamp(num(e.rest.left) || 0, 0, 600000) } : null;
       const s = e.sel && typeof e.sel === 'object' && [e.sel.day, e.sel.step, e.sel.k, e.sel.v].every(Number.isInteger) ? { day: e.sel.day, step: e.sel.step, k: e.sel.k, v: clamp(e.sel.v, 0, REPS_MAX), kg: kgOne(e.sel.kg), drop: e.sel.drop ? 1 : 0 } : null;
-      hist.push({ label: e.label.slice(0, 60), at: num(e.at), day: ui.day, step, prog: doc.prog[ui.day] || null, current: doc.current, lastDone: doc.lastDone, last, up: e.up && typeof e.up === 'object' ? doc.up : undefined, hAt: num(e.hAt) || 0, cycleFrom: Number.isFinite(num(e.cycleFrom)) ? Math.max(0, num(e.cycleFrom)) : undefined, weekFrom: int(e.weekFrom, 1, 9999) || undefined, timers, rest: r, sel: s });
+      hist.push({ label: e.label.slice(0, 60), at: num(e.at), day: ui.day, step, prog: doc.prog[ui.day] || null, current: doc.current, lastDone: doc.lastDone, last, up: e.up && typeof e.up === 'object' ? doc.up : undefined, hard: e.hard && typeof e.hard === 'object' ? doc.hard : undefined, pv: PV, hAt: num(e.hAt) || 0, cycleFrom: Number.isFinite(num(e.cycleFrom)) ? Math.max(0, num(e.cycleFrom)) : undefined, weekFrom: int(e.weekFrom, 1, 9999) || undefined, timers, rest: r, sel: s });
     }
   }
   // Restart workout: the day's record goes (its sets, its clock, its timers) and the day starts again from its first step. The
@@ -2845,7 +2896,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   function boot(idx) {
     P = idx;
-    if (!VERIFY) { S = sane(lsGet(LS_LOG)); restoreSel(); expireWeek(); }
+    if (!VERIFY) {
+      S = sane(lsGet(LS_LOG));
+      if (S.pv < PV) { for (const [d, p] of Object.entries(S.prog)) pinOld(+d, p); S.pv = PV; } // (written with the next action)
+      restoreSel(); expireWeek();
+    }
     const t = startTarget();
     openDay(t.day, { step: t.step });
     if (!VERIFY) { restoreTimers(); restoreRest(); restoreHist(); closeGap(); }

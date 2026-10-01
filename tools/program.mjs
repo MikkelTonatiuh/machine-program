@@ -6,7 +6,9 @@
 //
 // The check: every step names an exercise that has an entry; every entry is used by a step, a swap or a harder variant (or is a
 // day's cover); every ready exercise has its animation file in exercises/; every swap and harder variant names a ready exercise;
-// every day's cover is an exercise; every set step has its sets, a rep range and a rest (a top set: its own range, and sets after it). Run it after ANY change to the program, before committing: a change to the exercises or their order then shows up as a
+// every day's cover is an exercise; every set step has its sets, a rep range and a rest (a top set: its own range, and sets after it);
+// a day's order (when it has one: steps added later are appended, so saved progress keeps its step) lists every step once, the
+// automatic warm-up first. The list follows each day's order. Run it after ANY change to the program, before committing: a change to the exercises or their order then shows up as a
 // change in PROGRAM.md, in the diff, where it can be read.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -23,7 +25,9 @@ const range = (lo, hi) => lo + (hi !== lo ? '–' + hi : '');
 // "4 × 8–10", or with a heavy top set first "top set 6–8, then 3 × 8–12"; "each arm", "every set to failure", "+ drop set"
 const reps = (st, e) => (Array.isArray(st.top) ? 'top set ' + range(st.top[0], st.top[1]) + ', then ' + (st.n - 1) : st.n) + ' × ' + range(st.lo, st.hi)
   + (e.unilateral ? ' each arm' : '') + (e.failAll ? ', every set to failure' : '') + (e.drop ? ' + drop set' : '');
-const swaps = (e) => (e.swap && e.swap.length ? '; swap: ' + e.swap.map((id) => (P.ex[id] ? P.ex[id].name : id)).join(', ') : '');
+const swaps = (e) => (e.swap && e.swap.length ? '; swap: ' + e.swap.map((id) => (P.ex[id] ? P.ex[id].name : id)).join(', ') : '')
+  + (e.next && P.ex[e.next] ? '; next: ' + P.ex[e.next].name : '');
+const orderOf = (d) => (Array.isArray(d.order) ? d.order : d.steps.map((_, i) => i));
 
 // ---- the checks
 const problems = [];
@@ -41,6 +45,11 @@ P.days.forEach((d, k) => {
       if (st.top !== undefined && !(Array.isArray(st.top) && st.top.length === 2 && st.top[0] >= 1 && st.top[1] >= st.top[0] && st.n >= 2)) problems.push(where + ': the top set is wrong (top: [lo, hi], and sets after it)');
     } else if (st.t !== 'timer') problems.push(where + ': unknown step type "' + st.t + '"');
   });
+  if (d.order !== undefined) {
+    const n = d.steps.length, o = d.order;
+    if (!(Array.isArray(o) && o.length === n && new Set(o).size === n && o.every((i) => Number.isInteger(i) && i >= 0 && i < n))) problems.push(day + ': the order must list every step once');
+    else if (d.steps.some((s, i) => s.auto && o[0] !== i)) problems.push(day + ': the automatic warm-up must come first in the order');
+  }
   if (!P.ex[d.cover]) problems.push(day + ': the cover "' + d.cover + '" is not an exercise');
   else used.add(d.cover);
 });
@@ -66,9 +75,10 @@ for (const [id, e] of Object.entries(P.ex)) {
 const out = [];
 P.days.forEach((d, k) => {
   out.push('### Day ' + (k + 1) + ' · ' + d.name, '');
-  d.steps.forEach((st, i) => {
-    if (st.t === 'sets') { const e = P.ex[st.ex]; out.push((i + 1) + '. ' + e.name + ': ' + reps(st, e) + ', rest ' + rest(st.rest) + swaps(e)); }
-    else out.push((i + 1) + '. ' + st.name + ': ' + st.line + (st.pulse ? ', pulse ' + st.pulse + ' bpm' : ''));
+  orderOf(d).forEach((i, k) => {
+    const st = d.steps[i];
+    if (st.t === 'sets') { const e = P.ex[st.ex]; out.push((k + 1) + '. ' + e.name + ': ' + reps(st, e) + ', rest ' + rest(st.rest) + swaps(e)); }
+    else out.push((k + 1) + '. ' + st.name + ': ' + st.line + (st.pulse ? ', pulse ' + st.pulse + ' bpm' : ''));
   });
   out.push('');
 });
@@ -98,14 +108,16 @@ Around the list, the app adds what is not a working set (the counts below leave 
 - **Swap** for a busy machine: the exercise named after "swap" takes the step's place for the day (same sets, reps and rest).
 - **Deload week**, when you choose it (the app suggests it after 8 weeks or when several lifts stall): half the sets, same
   weights, every set 3–4 reps short of failure.
+- **No weight** (knee raise, leg raise, 45° back extension): reps first; once every set reaches the top, the knee raise moves on
+  to the leg raise ("next"), and the others get harder (slower, then with a weight).
 
 `;
 const TAIL = `
 ## Left out on purpose
 
 - Bulgarian split squat, cable lat pullover and machine dip: the research found each one repeats what the program already trains.
-- 45° back extension and cable shrug: the research recommends both (the program has no direct lower-back or upper-trap sets),
-  but they have no animation yet, so they are not in the program.
+- Cable shrug: the research recommends it (the program has no direct upper-trap sets), but it has no animation yet, so it is not
+  in the program.
 - Supersets: the app logs one exercise at a time and cannot pair two.
 `;
 const block = START + '\n' + LIST + '\n' + END;
