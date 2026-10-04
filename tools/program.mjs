@@ -6,9 +6,11 @@
 //
 // The check: every step names an exercise that has an entry; every entry is used by a step, a swap or a harder variant (or is a
 // day's cover); every ready exercise has its animation file in exercises/; every swap and harder variant names a ready exercise;
-// every day's cover is an exercise; every set step has its sets, a rep range and a rest (a top set: its own range, and sets after it);
-// a day's order (when it has one: steps added later are appended, so saved progress keeps its step) lists every step once, the
-// automatic warm-up first. The list follows each day's order. Run it after ANY change to the program, before committing: a change to the exercises or their order then shows up as a
+// every day's cover is an exercise; every set step has its sets, a rep range and a rest (a top set: its own range, and sets after it;
+// restTop, the rest after it, when given); a timer's phases add up to its time; a day's order (when it has one: steps added later
+// are appended, so saved progress keeps its step) lists every step once, the automatic warm-up first. A step taken out of the
+// program ("off") keeps its place in the steps (saved progress keeps its step numbers) and is not listed. The list follows each
+// day's order. Run it after ANY change to the program, before committing: a change to the exercises or their order then shows up as a
 // change in PROGRAM.md, in the diff, where it can be read.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -21,13 +23,23 @@ if (!m) throw new Error('index.html: no inline program');
 const P = JSON.parse(m[1]);
 
 const rest = (s) => (s % 60 === 0 ? s / 60 + ' min' : s + ' s');
+const restOf = (st, e) => (st.restTop ? 'rest ' + rest(st.restTop) + ' after the top set, then ' + rest(st.rest) : 'rest ' + rest(st.rest) + (e && e.unilateral ? ' after both arms' : ''));
+// a timed step in phases: its line (a warm-up), or the intervals in short: "8 min easy (...), 4 × 4 min hard (...) with 3 min easy (...) between, 5 min easy (...)"
+const phasesText = (st) => {
+  const L = st.phases, base = (p) => p.name.replace(/ \d+ of \d+$/, '').toLowerCase(), pt = (p) => (p.pulse ? ' (' + p.pulse + ')' : ''), one = (p) => mins(p.sec) + ' ' + base(p) + pt(p);
+  const hard = L.filter((p) => p.hard);
+  if (!hard.length) return st.line + (st.pulse ? ', pulse ' + st.pulse + ' bpm' : '');
+  const a = L.indexOf(hard[0]), b = L.lastIndexOf(hard[hard.length - 1]), between = L.slice(a, b + 1).filter((p) => !p.hard);
+  return [...L.slice(0, a).map(one), hard.length + ' × ' + mins(hard[0].sec) + ' hard' + pt(hard[0]) + (between.length ? ' with ' + one(between[0]) + ' between' : ''), ...L.slice(b + 1).map(one)].join(', ');
+};
+const mins = (s) => (s % 60 === 0 ? s / 60 + ' min' : (s / 60).toFixed(1).replace(/\.0$/, '') + ' min');
 const range = (lo, hi) => lo + (hi !== lo ? '–' + hi : '');
 // "4 × 8–10", or with a heavy top set first "top set 6–8, then 3 × 8–12"; "each arm", "every set to failure", "+ drop set"
 const reps = (st, e) => (Array.isArray(st.top) ? 'top set ' + range(st.top[0], st.top[1]) + ', then ' + (st.n - 1) : st.n) + ' × ' + range(st.lo, st.hi)
   + (e.unilateral ? ' each arm' : '') + (e.failAll ? ', every set to failure' : '') + (e.drop ? ' + drop set' : '');
 const swaps = (e) => (e.swap && e.swap.length ? '; swap: ' + e.swap.map((id) => (P.ex[id] ? P.ex[id].name : id)).join(', ') : '')
   + (e.next && P.ex[e.next] ? '; next: ' + P.ex[e.next].name : '');
-const orderOf = (d) => (Array.isArray(d.order) ? d.order : d.steps.map((_, i) => i));
+const orderOf = (d) => (Array.isArray(d.order) ? d.order : d.steps.map((_, i) => i)).filter((i) => !d.steps[i].off);
 
 // ---- the checks
 const problems = [];
@@ -37,13 +49,17 @@ P.days.forEach((d, k) => {
   if (!d.steps.length) problems.push(day + ': no steps');
   d.steps.forEach((st, i) => {
     const where = day + ', step ' + (i + 1);
-    if (st.ex) { used.add(st.ex); if (!P.ex[st.ex]) problems.push(where + ': "' + st.ex + '" has no entry in the exercises'); }
+    if (st.ex && !st.off) used.add(st.ex);
+    if (st.ex && !P.ex[st.ex]) problems.push(where + ': "' + st.ex + '" has no entry in the exercises');
     if (st.t === 'sets') {
       if (!(st.n >= 1)) problems.push(where + ': no sets');
       if (!(st.lo >= 1 && st.hi >= st.lo)) problems.push(where + ': the rep range is wrong');
       if (!(st.rest > 0)) problems.push(where + ': no rest');
       if (st.top !== undefined && !(Array.isArray(st.top) && st.top.length === 2 && st.top[0] >= 1 && st.top[1] >= st.top[0] && st.n >= 2)) problems.push(where + ': the top set is wrong (top: [lo, hi], and sets after it)');
-    } else if (st.t !== 'timer') problems.push(where + ': unknown step type "' + st.t + '"');
+      if (st.restTop !== undefined && !(st.restTop > 0 && Array.isArray(st.top))) problems.push(where + ': restTop is the rest after a top set');
+    } else if (st.t === 'timer') {
+      if (st.phases !== undefined && !(Array.isArray(st.phases) && st.phases.length && st.phases.every((p) => p.sec > 0 && typeof p.name === 'string') && st.phases.reduce((a, p) => a + p.sec, 0) === st.sec)) problems.push(where + ': the phases must have a time and a name each, and add up to the step\'s time');
+    } else problems.push(where + ': unknown step type "' + st.t + '"');
   });
   if (d.order !== undefined) {
     const n = d.steps.length, o = d.order;
@@ -83,12 +99,13 @@ P.days.forEach((d, k) => {
   out.push('### Day ' + (k + 1) + ' · ' + d.name, '');
   orderOf(d).forEach((i, k) => {
     const st = d.steps[i];
-    if (st.t === 'sets') { const e = P.ex[st.ex]; out.push((k + 1) + '. ' + e.name + ': ' + reps(st, e) + ', rest ' + rest(st.rest) + swaps(e)); }
-    else out.push((k + 1) + '. ' + st.name + ': ' + st.line + (st.pulse ? ', pulse ' + st.pulse + ' bpm' : ''));
+    if (st.t === 'sets') { const e = P.ex[st.ex]; out.push((k + 1) + '. ' + e.name + ': ' + reps(st, e) + ', ' + restOf(st, e) + swaps(e)); }
+    else if (st.phases) out.push((k + 1) + '. ' + st.name + ': ' + phasesText(st));
+    else out.push((k + 1) + '. ' + st.name + (st.optional ? ' (optional)' : '') + ': ' + st.line + (st.pulse ? ', pulse ' + st.pulse + ' bpm' : ''));
   });
   out.push('');
 });
-const sets = P.days.map((d) => d.steps.filter((s) => s.t === 'sets').reduce((a, s) => a + s.n, 0));
+const sets = P.days.map((d) => d.steps.filter((s) => s.t === 'sets' && !s.off).reduce((a, s) => a + s.n, 0));
 out.push('Working sets a day: ' + sets.map((n, k) => 'day ' + (k + 1) + ': ' + n).join(', ') + '. In a week: ' + sets.reduce((a, b) => a + b, 0) + '.', '');
 const LIST = out.join('\n');
 
@@ -109,10 +126,12 @@ Around the list, the app adds what is not a working set (the counts below leave 
   failure; the sets after it are about 85–90% of its weight.
 - **Warm-up sets** before the first set of each compound: about 50% × 8 and 75% × 4 of the first set's weight (and 85% × 2
   before a top set; 75% × 4 alone when an earlier exercise has worked its muscles); one light set (about 50% × 10) before an
-  isolation for a muscle the day has not worked yet.
-- **Drop set** right after the last set of an exercise marked "+ drop set": about half the weight, to failure.
-- **Swap** for a busy machine: the exercise named after "swap" takes the step's place for the day (same sets, reps and rest).
-- **Deload week**, when you choose it (the app suggests it after 8 weeks or when several lifts stall): half the sets, same
+  isolation for a muscle the day has not worked yet. Whole kg (or lb).
+- **Drop set** right after the last set of an exercise marked "+ drop set": no rest, about 30% lighter, to failure.
+- **Each arm**: the weaker arm first, then the other arm does the same reps; the set counts the weaker arm's reps.
+- **Swap** for a busy machine (Options): the exercise named after "swap" takes the step's place for the day (same sets, reps
+  and rest; the first one listed is the best).
+- **Deload week**, when you choose it (the app suggests it after 6 weeks or when several lifts stall): half the sets, same
   weights, every set 3–4 reps short of failure.
 - **No weight** (knee raise, leg raise, 45° back extension): reps first; once every set reaches the top, the knee raise moves on
   to the leg raise ("next"), and the others get harder (slower, then with a weight).

@@ -141,6 +141,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .pic { display: inline-flex; flex: none; }
 .primary[data-act="next"] .pic { order: 2; }
 .pic svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.pic svg.fill { width: 17px; height: 17px; fill: currentColor; stroke: none; }
 .primary:active { background: rgba(236,231,222,.17); }
 .primary[data-ack] { background: var(--ember); border-color: rgba(255,168,112,.6); color: #fff; box-shadow: 0 0 30px rgba(255,96,36,.42); cursor: default; }
 .primary[data-ack] .pic svg { width: 27px; height: 27px; stroke-width: 2.3; }
@@ -156,7 +157,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .cphase .cbar::after { content: ""; position: absolute; inset: 0; border-radius: 2px; background: var(--ink); transform-origin: 0 50%; transform: scaleX(0); }
 .cphase.run .cbar::after { animation: cfill var(--dur, 1s) linear forwards; }
 .cphase[data-k="fast"] .cbar::after { background: var(--amber); }
-.cphase[data-k="still"] .cbar { display: none; }
+.cphase[data-k="still"] .cbar, .cphase[data-k="hard"] .cbar { display: none; }
+.cphase[data-k="hard"] { padding-bottom: 0; }
+.cphase[data-k="hard"] .cverb { color: var(--amber); }
 .cphase[data-k="still"] { padding-bottom: 0; }
 .cphase.run { animation: cpop .2s var(--ease); }
 .cverb { font: 700 20px/1.1 var(--sans); letter-spacing: .09em; text-transform: uppercase; color: var(--ink); }
@@ -219,16 +222,34 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .sheetbox li svg { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; vertical-align: -4px; margin: 0 2px; }
 .sheetbox .primary { width: 100%; flex: none; }
 .kp { padding-bottom: 16px; }
-.kpval { display: block; margin: 0 0 14px; text-align: center; font: 300 58px/1.1 var(--serif); font-variant-numeric: tabular-nums lining-nums; color: var(--ink); }
-.kpval[data-ph] { color: var(--ink3); }
-.kpval .u { margin-left: 8px; font: 400 18px/1 var(--sans); color: var(--ink3); }
-.keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
-.keys button { height: 54px; border-radius: 14px; display: grid; place-items: center; background: rgba(236,231,222,.07); border: 1px solid rgba(236,231,222,.16); font: 400 27px/1 var(--serif); color: var(--ink); touch-action: manipulation; }
-.keys button svg { width: 24px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.keys button:active { background: rgba(236,231,222,.18); }
+/* the weight field: at the top of the screen, so the phone's keyboard never covers it */
+.sheet.kpsheet { align-items: flex-start; }
+.kpsheet .sheetbox { border-radius: 0 0 24px 24px; border: 1px solid var(--line2); border-top: 0; padding-top: calc(18px + env(safe-area-inset-top, 0px)); }
+.kpfield { display: flex; align-items: baseline; justify-content: center; gap: 10px; margin: 2px 0 16px; padding: 4px 0 8px; border-bottom: 1px solid var(--line2); cursor: text; }
+.kpin { width: 5.2em; min-width: 0; margin: 0; padding: 0; border: 0; outline: 0; background: none; text-align: right; font: 300 58px/1.1 var(--serif); color: var(--ink); font-variant-numeric: tabular-nums lining-nums; caret-color: var(--amber); -webkit-user-select: text; user-select: text; }
+.kpin::placeholder { color: var(--ink3); }
+.kpin[aria-invalid="true"] { color: var(--amber); }
+.kpfield .u { font: 400 18px/1 var(--sans); color: var(--ink3); }
 .kpact { display: flex; gap: 10px; }
 .kpact .primary { flex: 1 1 auto; width: auto; }
 .kpcancel { flex: none; height: 56px; padding: 0 22px; border-radius: 999px; border: 1px solid rgba(236,231,222,.22); font: 500 16px/1 var(--sans); color: var(--ink2); touch-action: manipulation; }
+/* v10: the pacer (a countdown, then the reps counted on the figure's clock), both sides, Options, the breathing line */
+.app[data-view="pace"] .clock { font-size: clamp(84px, 26vw, 120px); }
+.clock[data-tone="count"] { color: var(--amber); }
+.app[data-view="pace"] .kicker { margin-bottom: 0; font: 600 14px/1.2 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--ink); }
+.app[data-view="pace"] .kicker[data-tone="warm"] { color: var(--amber); }
+.app[data-view="pace"] .line { margin-top: 2px; font-size: 16px; color: var(--ink2); }
+.app[data-view="pace"] .line[data-tone="go"] { color: var(--amber); }
+.cbreath { margin: -2px 0 0; font: 500 14.5px/1.25 var(--sans); color: var(--ink2); }
+.optbtn { pointer-events: auto; height: 30px; margin: 0 6px 0 2px; padding: 0 13px; border-radius: 999px; border: 1px solid rgba(236,231,222,.34); background: rgba(236,231,222,.06);
+  font: 500 13px/1 var(--sans); color: var(--ink); letter-spacing: .01em; white-space: nowrap; touch-action: manipulation; }
+.optbtn:active { background: rgba(236,231,222,.17); }
+.optlist { display: flex; flex-direction: column; gap: 4px; margin: 4px 0 16px; }
+.optlist button { display: block; width: 100%; padding: 15px 14px; border-radius: 12px; text-align: left; font: 500 16px/1.2 var(--sans); color: var(--ink); background: rgba(236,231,222,.06); touch-action: manipulation; }
+.optlist button:active { background: rgba(236,231,222,.15); }
+.app[data-view="rest"] .num { font-size: 34px; line-height: 40px; }
+.app[data-view="rest"] .sel { margin-bottom: 8px; }
+.app[data-view="rest"] .mus { display: block; color: var(--ink2); }
 .app.side .note { margin-top: 6px; }
 .app.compact .coach { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: center; column-gap: 16px; width: min(calc(var(--bw) - var(--sl) - 12px), 460px); padding: 8px 14px 9px; }
 .app.compact .cphase { flex-direction: column; align-items: flex-start; gap: 2px; padding-bottom: 8px; }
@@ -288,6 +309,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       <div class="barr">
         <p class="turntip" id="turntip" hidden>Drag sideways to turn</p>
         <button class="resetview" id="resetview" type="button" aria-label="Reset the view" hidden><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4.2 8.2A6 6 0 1 1 4 11.6"/><path d="M3.6 4.2v4.2h4.2"/></svg></button>
+        <button class="optbtn" id="optbtn" type="button" aria-haspopup="dialog" hidden>Options</button>
         <p class="sess" id="sess" role="timer" aria-label="Workout time" data-idle>0:00</p>
         <button class="morebtn" id="morebtn" type="button" aria-label="Workout menu" aria-controls="menu" aria-expanded="false"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="4" cy="10" r="1.6"/><circle cx="10" cy="10" r="1.6"/><circle cx="16" cy="10" r="1.6"/></svg></button>
       </div>
@@ -296,11 +318,15 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   <div class="menu" id="menu" hidden>
     <div class="mbusy" id="mbusy"><button type="button" id="mlater">Do it later</button><div id="mswaps"></div></div>
     <button type="button" id="mdeload"><span id="mdeloadt">Deload week</span><small id="mdeloads"></small></button>
+    <button type="button" id="msound"><span>Sound</span><small id="msounds">On</small></button>
+    <button type="button" id="munit"><span>Weight unit</span><small id="munits">kg</small></button>
+    <button type="button" id="mtest"><span>Test rest alert</span><small id="mtests"></small></button>
     <button type="button" id="mrestart">Restart workout</button>
     <button type="button" id="mhome">All workouts</button>
   </div>
   <section class="coach" id="coach" aria-label="How to do this exercise" hidden>
     <p class="cphase" id="cphase" data-k="still" aria-hidden="true"><b class="cverb" id="cverb"></b><span class="cspeed" id="cspeed"></span><i class="cbar" id="cbar"></i></p>
+    <p class="cbreath" id="cbreath" aria-hidden="true" hidden></p>
     <p class="crule" id="crule" hidden></p>
     <p class="ccue" id="ccue"></p>
   </section>
@@ -328,6 +354,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     <div class="prow">
       <button class="undobtn" id="back" type="button" aria-label="Undo" aria-disabled="true" title="Undo the last step"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M7.2 4.2 3.6 7.8l3.6 3.6"/><path d="M4 7.8h7.6a4.2 4.2 0 0 1 0 8.4H7.6"/></svg></button>
       <button class="primary" id="primary" type="button" hidden><span class="pic" id="pic" aria-hidden="true"></span><span id="plabel"></span></button>
+      <button class="undobtn" id="logbtn" type="button" aria-label="Log the set without the pacer" title="Log the set without the pacer" hidden><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="m4.4 10.6 3.7 3.6 7.6-8.4"/></svg></button>
     </div>
   </section>
   <div class="days" id="days" role="dialog" aria-modal="true" aria-labelledby="daystitle" hidden>
@@ -344,6 +371,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       <div class="homefoot">
         <button class="linkbtn" id="newweek" type="button" hidden>Start a new week</button>
         <p class="food">Build muscle: eat 5&ndash;10% above maintenance and 1.6&ndash;2.2 g protein per kg a day.</p>
+        <p class="food">Walk 8,000&ndash;10,000 steps a day, some of it brisk.</p>
+        <p class="food" id="safety">High blood pressure, heart or eye problems: breathe out every rep.</p>
         <p class="savenote" id="savenote" hidden>Saved on this phone</p>
         <p class="credit">A custom program, built on ideas from Jeff Nippard&rsquo;s free videos and published research. Not his routine. Not affiliated.</p>
       </div>
@@ -356,22 +385,23 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       <button class="primary" id="sheetok" type="button">Got it</button>
     </div>
   </div>
-  <div class="sheet" id="kpsheet" role="dialog" aria-modal="true" aria-labelledby="kptitle" hidden>
+  <div class="sheet kpsheet" id="kpsheet" role="dialog" aria-modal="true" aria-labelledby="kptitle" hidden>
     <div class="sheetbox kp">
       <h3 id="kptitle">Weight</h3>
-      <output class="kpval" id="kpval" aria-live="polite"></output>
-      <div class="keys" id="kpkeys">
-        <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
-        <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
-        <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
-        <button type="button" data-k="." aria-label="Decimal point">.</button><button type="button" data-k="0">0</button><button type="button" data-k="del" aria-label="Delete"><svg viewBox="0 0 24 20" aria-hidden="true" focusable="false"><path d="M8.5 3h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-11L2.5 10zM12 7.5l5 5m0-5-5 5"/></svg></button>
-      </div>
+      <label class="kpfield"><input class="kpin" id="kpin" type="text" inputmode="decimal" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" maxlength="7"><span class="u" id="kpu">kg</span></label>
       <div class="kpact"><button class="kpcancel" id="kpcancel" type="button">Cancel</button><button class="primary" id="kpset" type="button">Set</button></div>
+    </div>
+  </div>
+  <div class="sheet" id="optsheet" role="dialog" aria-modal="true" aria-labelledby="opttitle" hidden>
+    <div class="sheetbox">
+      <h3 id="opttitle">Options</h3>
+      <div class="optlist" id="optlist"></div>
+      <div class="kpact"><button class="kpcancel" id="optclose" type="button">Close</button></div>
     </div>
   </div>
   <p class="sr" id="status" aria-live="polite"></p>
 </main>
-<script type="application/json" id="program">{"days":[{"name":"Upper","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"chest_press","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"lat_pulldown","n":4,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"chest_row","n":3,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"lateral_raise","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"bayesian_curl","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"overhead_ext","n":3,"lo":10,"hi":15,"rest":90}],"cover":"chest_press"},{"name":"Lower","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"hack_squat","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"leg_extension","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"leg_curl","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_adduction","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"calf_raise","n":4,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"back_extension","n":3,"lo":10,"hi":15,"rest":120}],"cover":"hack_squat","order":[0,1,2,3,6,4,5]},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike","line":"20–40 min easy bike","sec":1200,"open":true,"pulse":"115–140","cue":"Can’t talk in full sentences? Slow down."},{"t":"sets","ex":"cable_crunch","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":20,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600}],"cover":"bike"},{"name":"Push","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"incline_press","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"shoulder_press","n":3,"lo":8,"hi":10,"rest":120},{"t":"sets","ex":"pec_deck","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"lateral_raise","n":4,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"pushdown","n":3,"lo":10,"hi":15,"rest":90}],"cover":"incline_press"},{"name":"Pull","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"lat_pulldown","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"chest_row","n":4,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"bayesian_curl","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"preacher_curl","n":2,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"hammer_curl","n":2,"lo":10,"hi":15,"rest":90}],"cover":"lat_pulldown","order":[0,1,2,3,4,6,5]},{"name":"Legs","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then leg and arm swings","sec":300,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk."},{"t":"sets","ex":"leg_curl","n":4,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_thrust","n":4,"top":[6,8],"lo":8,"hi":12,"rest":180},{"t":"sets","ex":"leg_press","n":3,"lo":10,"hi":12,"rest":180},{"t":"sets","ex":"hip_abduction","n":3,"lo":15,"hi":20,"rest":90},{"t":"sets","ex":"hip_adduction","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"seated_calf_raise","n":4,"lo":10,"hi":15,"rest":90}],"cover":"hip_thrust"},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike","line":"20–40 min easy bike","sec":1200,"open":true,"pulse":"115–140","cue":"Can’t talk in full sentences? Slow down."},{"t":"sets","ex":"machine_crunch","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":20,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600}],"cover":"knee_raise"}],"ex":{"back_extension":{"name":"45° back extension","ready":true,"cue":"Hinge at the hips, then squeeze your glutes","muscles":{"primary":["Glutes","Hamstrings"],"secondary":["Lower back"]},"unilateral":false,"verbs":["Rise","Lower"],"kg0":0,"fail":true,"harder":["lower slowly over 3 s","hold a plate to your chest"],"swap":["hip_thrust"],"reps":[10,15]},"bayesian_curl":{"name":"Bayesian cable curl","ready":true,"cue":"Arms behind torso, cable at hand height","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":true,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"partials":true,"swap":["preacher_curl","hammer_curl"]},"bike":{"name":"Bike","ready":true,"cue":"","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false},"cable_crunch":{"name":"Cable crunch","ready":true,"cue":"Round your lower back, squeeze abs","muscles":{"primary":["Abs"],"secondary":[]},"unilateral":false,"verbs":["Crunch","Return"],"kg0":20,"fail":true,"drop":true,"failAll":true,"swap":["machine_crunch"]},"calf_raise":{"name":"Standing calf raise","ready":true,"cue":"Pause 1–2 s at the bottom. No bouncing.","muscles":{"primary":["Calves"],"secondary":[]},"unilateral":false,"verbs":["Rise","Sink"],"kg0":40,"fail":true,"drop":true,"partials":true,"swap":["seated_calf_raise"]},"chest_press":{"name":"Chest press","ready":true,"cue":"Let handles come back to deep stretch","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Press","Return"],"kg0":20,"fail":true,"compound":true,"swap":["incline_press"]},"chest_row":{"name":"Chest-supported row","ready":true,"cue":"Chest on the pad. Stretch fully forward.","muscles":{"primary":["Mid traps","Lats","Upper back"],"secondary":[]},"unilateral":false,"verbs":["Row","Return"],"kg0":20,"fail":true,"compound":true},"hack_squat":{"name":"Hack squat","ready":true,"cue":"Go as deep as the machine allows","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Stand","Lower"],"kg0":40,"short":true,"compound":true,"swap":["leg_press"]},"hammer_curl":{"name":"Rope hammer curl","ready":true,"cue":"Elbows pinned, palms facing in","muscles":{"primary":["Brachialis","Forearms"],"secondary":["Biceps"]},"unilateral":false,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"swap":["bayesian_curl","preacher_curl"]},"hip_abduction":{"name":"Seated hip abduction","ready":true,"cue":"Lean forward about 30 degrees","muscles":{"primary":["Side glutes","Upper glutes"],"secondary":[]},"unilateral":false,"verbs":["Open","Close"],"kg0":30,"fail":true,"drop":true},"hip_adduction":{"name":"Seated hip adduction","ready":true,"cue":"Open slowly against the weight.","muscles":{"primary":["Inner thighs"],"secondary":[]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":30,"fail":true,"drop":true},"hip_thrust":{"name":"Hip thrust","ready":true,"cue":"","muscles":{"primary":["Glutes"],"secondary":[]},"unilateral":false,"verbs":["Thrust","Lower"],"kg0":40,"fail":true,"compound":true,"swap":["back_extension"]},"incline_press":{"name":"Incline press","ready":true,"cue":"Touch high on upper chest; set safety stops","muscles":{"primary":["Upper chest"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":20,"fail":true,"compound":true,"swap":["chest_press"]},"knee_raise":{"name":"Knee raise","ready":true,"cue":"Curl your lower back up, not just legs","muscles":{"primary":["Abs","Hip flexors"],"secondary":[]},"unilateral":false,"verbs":["Raise","Lower"],"kg0":0,"fail":true,"failAll":true,"harder":"straighten your legs more","next":"leg_raise","reps":[10,20]},"lat_pulldown":{"name":"Lat pulldown","ready":true,"cue":"Stay vertical at the top","muscles":{"primary":["Lats"],"secondary":[]},"unilateral":false,"verbs":["Pull","Return"],"kg0":30,"fail":true,"compound":true},"lateral_raise":{"name":"Cable lateral raise","ready":true,"cue":"Cable at hand height","muscles":{"primary":["Side shoulders"],"secondary":[]},"unilateral":true,"verbs":["Raise","Lower"],"kg0":5,"fail":true,"drop":true,"partials":true},"leg_curl":{"name":"Seated leg curl","ready":true,"cue":"Lean forward until hamstrings feel stretched","muscles":{"primary":["Hamstrings"],"secondary":[]},"unilateral":false,"verbs":["Curl","Return"],"kg0":25,"fail":true,"drop":true,"partials":true},"leg_extension":{"name":"Leg extension","ready":true,"cue":"Seat back, lower over 3 seconds","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":30,"fail":true,"drop":true,"partials":true},"leg_press":{"name":"Leg press","ready":true,"cue":"Deep, without your lower back rounding","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false,"verbs":["Press","Return"],"kg0":60,"short":true,"compound":true,"swap":["hack_squat"]},"leg_raise":{"name":"Leg raise","ready":true,"cue":"Straight legs to hip height, lower slowly","muscles":{"primary":["Abs"],"secondary":["Hip flexors"]},"unilateral":false,"verbs":["Raise","Lower"],"kg0":0,"fail":true,"failAll":true,"harder":["lower slowly over 3 s","add ankle weights"],"swap":["knee_raise"],"reps":[10,20]},"machine_crunch":{"name":"Machine crunch","ready":true,"cue":"Curl your ribs toward your pelvis","muscles":{"primary":["Abs"],"secondary":["Obliques"]},"unilateral":false,"verbs":["Crunch","Return"],"kg0":20,"fail":true,"drop":true,"failAll":true,"swap":["cable_crunch"]},"overhead_ext":{"name":"Overhead extension","ready":true,"cue":"Arms overhead, feel the deep stretch","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":15,"fail":true,"drop":true,"partials":true,"swap":["pushdown"]},"pec_deck":{"name":"Pec deck","ready":true,"cue":"","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":20,"fail":true,"drop":true,"partials":true},"preacher_curl":{"name":"Machine preacher curl","ready":true,"cue":"Go all the way down","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":false,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"partials":true,"swap":["bayesian_curl","hammer_curl"]},"pushdown":{"name":"Cable pushdown","ready":true,"cue":"Use a bar, not the rope","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Push","Return"],"kg0":15,"fail":true,"drop":true,"swap":["overhead_ext"]},"reverse_fly":{"name":"Reverse fly","ready":true,"cue":"Sweep out, not back","muscles":{"primary":["Rear shoulders"],"secondary":[]},"unilateral":false,"verbs":["Sweep","Return"],"kg0":10,"fail":true,"drop":true},"seated_calf_raise":{"name":"Seated calf raise","ready":true,"cue":"Pause 1–2 s at the bottom. No bouncing.","muscles":{"primary":["Calves"],"secondary":[]},"unilateral":false,"verbs":["Rise","Sink"],"kg0":20,"fail":true,"drop":true,"partials":true,"swap":["calf_raise"]},"shoulder_press":{"name":"Shoulder press","ready":true,"cue":"Lower until arms pass below parallel","muscles":{"primary":["Front shoulders"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":15,"fail":true,"compound":true}}}</script>
+<script type="application/json" id="program">{"days":[{"name":"Upper","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"3 min easy bike, then 30 s leg and arm swings","sec":210,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk.","phases":[{"sec":180,"name":"Easy bike","pulse":"105–125"},{"sec":30,"name":"Leg and arm swings","cue":"Swing each leg and both arms, easy."}]},{"t":"sets","ex":"chest_press","n":4,"top":[6,8],"lo":8,"hi":12,"rest":120,"restTop":180},{"t":"sets","ex":"lat_pulldown","n":3,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"chest_row","n":3,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"lateral_raise","n":3,"lo":12,"hi":15,"rest":60},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90,"off":true},{"t":"sets","ex":"bayesian_curl","n":2,"lo":10,"hi":15,"rest":60},{"t":"sets","ex":"overhead_ext","n":3,"lo":10,"hi":15,"rest":90}],"cover":"chest_press"},{"name":"Lower","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then 30 s leg and arm swings","sec":330,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk.","phases":[{"sec":300,"name":"Easy bike","pulse":"105–125"},{"sec":30,"name":"Leg and arm swings","cue":"Swing each leg and both arms, easy."}]},{"t":"sets","ex":"hack_squat","n":4,"top":[6,8],"lo":8,"hi":12,"rest":120,"restTop":180},{"t":"sets","ex":"leg_extension","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"leg_curl","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_adduction","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"calf_raise","n":4,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"back_extension","n":3,"lo":10,"hi":15,"rest":120}],"cover":"hack_squat","order":[0,1,2,3,6,4,5]},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike intervals","line":"8 min easy, 4 × 4 min hard, 5 min easy","sec":2280,"pulse":"115–179","cue":"Hard: only a few words possible.","phases":[{"sec":480,"name":"Easy, building up","pulse":"up to 140","cue":"You can still talk."},{"sec":240,"name":"Hard 1 of 4","pulse":"160, then 170–179","hard":true,"cue":"Hard: only a few words possible."},{"sec":180,"name":"Easy","pulse":"115–130","cue":"You can still talk."},{"sec":240,"name":"Hard 2 of 4","pulse":"160, then 170–179","hard":true,"cue":"Hard: only a few words possible."},{"sec":180,"name":"Easy","pulse":"115–130","cue":"You can still talk."},{"sec":240,"name":"Hard 3 of 4","pulse":"160, then 170–179","hard":true,"cue":"Hard: only a few words possible."},{"sec":180,"name":"Easy","pulse":"115–130","cue":"You can still talk."},{"sec":240,"name":"Hard 4 of 4","pulse":"160, then 170–179","hard":true,"cue":"Hard: only a few words possible."},{"sec":300,"name":"Easy","pulse":"115–130","cue":"You can still talk."}]},{"t":"sets","ex":"cable_crunch","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":20,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600,"optional":true}],"cover":"bike"},{"name":"Push","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"3 min easy bike, then 30 s leg and arm swings","sec":210,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk.","phases":[{"sec":180,"name":"Easy bike","pulse":"105–125"},{"sec":30,"name":"Leg and arm swings","cue":"Swing each leg and both arms, easy."}]},{"t":"sets","ex":"incline_press","n":4,"top":[6,8],"lo":8,"hi":12,"rest":120,"restTop":180},{"t":"sets","ex":"shoulder_press","n":3,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"pec_deck","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"lateral_raise","n":4,"lo":12,"hi":15,"rest":60},{"t":"sets","ex":"pushdown","n":4,"lo":10,"hi":15,"rest":90}],"cover":"incline_press"},{"name":"Pull","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"3 min easy bike, then 30 s leg and arm swings","sec":210,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk.","phases":[{"sec":180,"name":"Easy bike","pulse":"105–125"},{"sec":30,"name":"Leg and arm swings","cue":"Swing each leg and both arms, easy."}]},{"t":"sets","ex":"lat_pulldown","n":4,"top":[6,8],"lo":8,"hi":12,"rest":120,"restTop":180},{"t":"sets","ex":"chest_row","n":4,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"bayesian_curl","n":3,"lo":10,"hi":15,"rest":60},{"t":"sets","ex":"preacher_curl","n":2,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"hammer_curl","n":2,"lo":10,"hi":15,"rest":90,"off":true},{"t":"sets","ex":"lateral_raise","n":2,"lo":12,"hi":15,"rest":60}],"cover":"lat_pulldown","order":[0,1,2,3,7,4,5,6]},{"name":"Legs","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then 30 s leg and arm swings","sec":330,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk.","phases":[{"sec":300,"name":"Easy bike","pulse":"105–125"},{"sec":30,"name":"Leg and arm swings","cue":"Swing each leg and both arms, easy."}]},{"t":"sets","ex":"leg_curl","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_thrust","n":4,"top":[6,8],"lo":8,"hi":12,"rest":120,"restTop":180},{"t":"sets","ex":"leg_press","n":3,"lo":10,"hi":12,"rest":120},{"t":"sets","ex":"hip_abduction","n":3,"lo":15,"hi":20,"rest":90},{"t":"sets","ex":"hip_adduction","n":2,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"seated_calf_raise","n":4,"lo":10,"hi":15,"rest":90,"off":true},{"t":"sets","ex":"calf_raise","n":4,"lo":10,"hi":15,"rest":90}],"cover":"hip_thrust","order":[0,1,2,3,4,5,7,6]},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike","line":"40–45 min easy bike","sec":2400,"open":true,"pulse":"120–140","cue":"You can still talk."},{"t":"sets","ex":"machine_crunch","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":20,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600,"optional":true}],"cover":"knee_raise"}],"ex":{"back_extension":{"name":"45° back extension","ready":true,"cue":"Hinge at the hips, then squeeze your glutes","muscles":{"primary":["Glutes","Hamstrings"],"secondary":["Lower back"]},"unilateral":false,"verbs":["Rise","Lower"],"kg0":0,"fail":true,"harder":["lower slowly over 3 s","hold a plate to your chest"],"swap":["hip_thrust"],"reps":[10,15],"breath":"In as you lower, out as you rise."},"bayesian_curl":{"name":"Bayesian cable curl","ready":true,"cue":"Arms behind torso, cable at hand height","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":true,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"partials":true,"swap":["preacher_curl","hammer_curl"],"breath":"Out as you curl, in as you lower."},"bike":{"name":"Bike","ready":true,"cue":"","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false},"cable_crunch":{"name":"Cable crunch","ready":true,"cue":"Round your lower back, squeeze abs","muscles":{"primary":["Abs"],"secondary":[]},"unilateral":false,"verbs":["Crunch","Return"],"kg0":20,"fail":true,"drop":true,"failAll":true,"swap":["machine_crunch"],"breath":"Breathe out fully as you crunch."},"calf_raise":{"name":"Standing calf raise","ready":true,"cue":"Pause 1–2 s at the bottom. No bouncing.","muscles":{"primary":["Calves"],"secondary":[]},"unilateral":false,"verbs":["Rise","Sink"],"kg0":40,"fail":true,"drop":true,"partials":true,"swap":["seated_calf_raise"],"breath":"Out as you rise, in as you sink."},"chest_press":{"name":"Chest press","ready":true,"cue":"Let handles come back to deep stretch","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Press","Return"],"kg0":20,"fail":true,"compound":true,"swap":["incline_press"],"breath":"In as handles return, out as you press."},"chest_row":{"name":"Chest-supported row","ready":true,"cue":"Chest on the pad. Stretch fully forward.","muscles":{"primary":["Mid traps","Lats","Upper back"],"secondary":[]},"unilateral":false,"verbs":["Row","Return"],"kg0":20,"fail":true,"compound":true,"swap":["lat_pulldown"],"breath":"Out as you row, in as you reach."},"hack_squat":{"name":"Hack squat","ready":true,"cue":"Go as deep as the machine allows","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Stand","Lower"],"kg0":40,"short":true,"compound":true,"swap":["leg_press"],"breath":"Big breath, brace, down; out near the top."},"hammer_curl":{"name":"Rope hammer curl","ready":true,"cue":"Elbows pinned, palms facing in","muscles":{"primary":["Brachialis","Forearms"],"secondary":["Biceps"]},"unilateral":false,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"swap":["bayesian_curl","preacher_curl"],"breath":"Out as you curl, in as you lower."},"hip_abduction":{"name":"Seated hip abduction","ready":true,"cue":"Lean forward about 30 degrees","muscles":{"primary":["Side glutes","Upper glutes"],"secondary":[]},"unilateral":false,"verbs":["Open","Close"],"kg0":30,"fail":true,"drop":true,"breath":"Out as you open, in as you close."},"hip_adduction":{"name":"Seated hip adduction","ready":true,"cue":"Start wide; close and open slowly.","muscles":{"primary":["Inner thighs"],"secondary":[]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":30,"fail":true,"drop":true,"swap":["leg_press"],"breath":"Out as you squeeze, in as you open."},"hip_thrust":{"name":"Hip thrust","ready":true,"cue":"Ribs down; drive your hips up straight.","muscles":{"primary":["Glutes"],"secondary":[]},"unilateral":false,"verbs":["Thrust","Lower"],"kg0":40,"fail":true,"compound":true,"swap":["back_extension"],"breath":"Breathe in and brace; out at the top."},"incline_press":{"name":"Incline press","ready":true,"cue":"Hands just outside shoulders; touch upper chest.","muscles":{"primary":["Upper chest"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":20,"fail":true,"compound":true,"swap":["chest_press"],"breath":"In as you lower, out as you press.","brace":"Big breath, brace, lower; out past halfway."},"knee_raise":{"name":"Knee raise","ready":true,"cue":"Curl your lower back up, not just legs","muscles":{"primary":["Abs","Hip flexors"],"secondary":[]},"unilateral":false,"verbs":["Raise","Lower"],"kg0":0,"fail":true,"failAll":true,"harder":"straighten your legs more","next":"leg_raise","reps":[10,20],"breath":"Breathe out as your knees rise."},"lat_pulldown":{"name":"Lat pulldown","ready":true,"cue":"Stay vertical at the top","muscles":{"primary":["Lats"],"secondary":[]},"unilateral":false,"verbs":["Pull","Return"],"kg0":30,"fail":true,"compound":true,"swap":["chest_row"],"breath":"Out as you pull, in as arms rise."},"lateral_raise":{"name":"Cable lateral raise","ready":true,"cue":"Cable at hand height","muscles":{"primary":["Side shoulders"],"secondary":[]},"unilateral":true,"verbs":["Raise","Lower"],"kg0":5,"fail":true,"drop":true,"partials":true,"swap":["shoulder_press"],"breath":"Out as you raise, in as you lower."},"leg_curl":{"name":"Seated leg curl","ready":true,"cue":"Lean forward until hamstrings feel stretched","muscles":{"primary":["Hamstrings"],"secondary":[]},"unilateral":false,"verbs":["Curl","Return"],"kg0":25,"fail":true,"drop":true,"partials":true,"swap":["back_extension"],"breath":"Out as you curl, in as you return."},"leg_extension":{"name":"Leg extension","ready":true,"cue":"Lean back; lower slowly into a deep bend.","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":30,"fail":true,"drop":true,"partials":true,"swap":["hack_squat"],"breath":"Out as you extend, in as you lower."},"leg_press":{"name":"Leg press","ready":true,"cue":"Go deep; stop before your tailbone lifts.","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false,"verbs":["Press","Return"],"kg0":60,"short":true,"compound":true,"swap":["hack_squat"],"breath":"Brace on the way down; exhale near lockout."},"leg_raise":{"name":"Leg raise","ready":true,"cue":"Straight legs to hip height, lower slowly","muscles":{"primary":["Abs"],"secondary":["Hip flexors"]},"unilateral":false,"verbs":["Raise","Lower"],"kg0":0,"fail":true,"failAll":true,"harder":["lower slowly over 3 s","add ankle weights"],"swap":["knee_raise"],"reps":[10,20],"breath":"Breathe out as your legs rise."},"machine_crunch":{"name":"Machine crunch","ready":true,"cue":"Curl your ribs toward your pelvis","muscles":{"primary":["Abs"],"secondary":["Obliques"]},"unilateral":false,"verbs":["Crunch","Return"],"kg0":20,"fail":true,"drop":true,"failAll":true,"swap":["cable_crunch"],"breath":"Breathe out fully as you crunch."},"overhead_ext":{"name":"Overhead extension","ready":true,"cue":"Arms overhead, feel the deep stretch","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":15,"fail":true,"drop":true,"partials":true,"swap":["pushdown"],"breath":"Out as you extend, in as you lower."},"pec_deck":{"name":"Pec deck","ready":true,"cue":"Open wide to a stretch, then squeeze.","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":20,"fail":true,"drop":true,"partials":true,"swap":["chest_press"],"breath":"In as arms open, out as you squeeze."},"preacher_curl":{"name":"Machine preacher curl","ready":true,"cue":"Go all the way down","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":false,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"partials":true,"swap":["bayesian_curl","hammer_curl"],"breath":"Out as you curl, in as you lower."},"pushdown":{"name":"Cable pushdown","ready":true,"cue":"Use a bar, not the rope","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Push","Return"],"kg0":15,"fail":true,"drop":true,"swap":["overhead_ext"],"breath":"Out as you push, in as you return."},"reverse_fly":{"name":"Reverse fly","ready":true,"cue":"Sweep out, not back","muscles":{"primary":["Rear shoulders"],"secondary":[]},"unilateral":false,"verbs":["Sweep","Return"],"kg0":10,"fail":true,"drop":true,"swap":["chest_row"],"breath":"Out as you sweep, in as you return."},"seated_calf_raise":{"name":"Seated calf raise","ready":true,"cue":"Pause 1–2 s at the bottom. No bouncing.","muscles":{"primary":["Calves"],"secondary":[]},"unilateral":false,"verbs":["Rise","Sink"],"kg0":20,"fail":true,"drop":true,"partials":true,"swap":["calf_raise"],"breath":"Out as you rise, in as you sink."},"shoulder_press":{"name":"Shoulder press","ready":true,"cue":"Lower until arms pass below parallel","muscles":{"primary":["Front shoulders"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":15,"fail":true,"compound":true,"swap":["incline_press"],"breath":"In as you lower, out as you press."}},"breath":{"brace":"Big breath and brace; breathe out past the hard part."}}</script>
 <script>
 // Machine Coach figure engine - core helpers and the data loader.
 // Every engine file is a classic script that adds to the global namespace `MCE`, so the page works from
@@ -745,6 +775,17 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
 // the last set of the machine and cable isolations, abs to failure with a bodyweight progression (reps, then harder), Do it
 // later and Swap for a busy machine (the menu), the effort rule of every set in the coaching card, and a deload week (half the
 // sets, same weights) that the app suggests after 8 weeks or when several lifts stall.
+// v10 "the pacer": a set starts with Go: a 5 s countdown (big numerals, a beep and a buzz each second), then the figure starts
+// at the bottom of its rep and the app counts the reps on ONE clock that drives the figure (kept on it through the stage's
+// own setPhase), the coaching card's phase and the counter (a rep counts once its lift is done); Stop logs them and starts the rest, where the logged
+// numbers stay editable; the check button beside Go logs a set without the pacer. A one-arm exercise does both sides: the
+// weaker side first (left, then the side that did fewer reps), "Switch sides" (no rest), the other side mirrored on screen with
+// side 1's reps as its target (it stops by itself there); the set logs both sides, the lower one counts for progression. The
+// rest shows what comes next (the next set and its weight; the next exercise, its sets and weight, its figure) and ends with a
+// beep and a buzz, or a notification from the service worker when the app is in the background. The screen stays awake while
+// the app is open. Weights move by 1 (kg or lb, the menu), can be typed ("52,5" or "52.5"), and every worked-out weight is a
+// whole kg or lb. The first set of an exercise says how to beat last time ("Today: ..."); every later set shows last time's
+// numbers. Options (top right) lists Do it later and the other machines. The card says when to breathe.
 // Cold start: the program is inlined in the page and this file runs before three.js, so the horizon, the progress line,
 // the text and the buttons paint at once; the stage is created at DOMContentLoaded and the first figure fades in over
 // the same horizon. Without WebGL or three.js everything but the figure still works.
@@ -772,7 +813,9 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   const dash = (s) => String(s).replace(/-/g, ND);
   const mmss = (sec) => { sec = Math.max(0, sec); const m = Math.floor(sec / 60), s = Math.floor(sec % 60); return m + ':' + (s < 10 ? '0' : '') + s; };
   const REPS_MAX = 40; // the rep selector and every logged set: 0..40
-  const KG_MAX = 500; // the weight selector: 0..500 kg, in quarters (the selector moves by 2.5, or 1 below 10)
+  const KG_MAX = 500; // the weight selector: 0..500 kg (kept to the gram behind the screen; the selector moves by 1 kg or 1 lb)
+  const LB = 0.45359237; // kg in a pound
+  const COUNT_MS = 5000, SWITCH_MS = 5000; // the pacer's countdown before the reps, and between the two sides (program time)
   const HIST_MAX = 60, HIST_KEEP = 6; // steps Undo remembers (this visit), and how many of them survive a reload
   const IDLE_MS = 90 * 60e3; // no action for this long, then back: the pause is not part of the session's time
   const ACK_MS = 600, AUTO_ACK_MS = 900; // the ember check after Done (and after a timer that ran out on its own)
@@ -793,6 +836,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     deloadWhat: 'Half the sets, same weights, stop 3\u20134 reps short',
     addToday: 'Add weight today',
     addNext: 'Next time: add weight',
+    noRest: 'No rest',
+    switchSides: 'Switch sides',
+    getReady: 'Get ready',
+    breath: { brace: 'Big breath and brace; breathe out past the hard part.' },
+    uniCue: 'Weaker arm first; match its reps.',
     undone: 'Undone',
     restarted: 'Workout restarted',
     restartLabel: 'restart workout',
@@ -803,6 +851,9 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   const ICONS = {
     check: '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="m4.4 10.6 3.7 3.6 7.6-8.4"/></svg>',
     next: '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4.5 10h11m-4.4-4.6 4.6 4.6-4.6 4.6"/></svg>',
+    go: '<svg class="fill" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M6.5 4.6v10.8l8.6-5.4z"/></svg>',
+    stop: '<svg class="fill" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="5.2" y="5.2" width="9.6" height="9.6" rx="1.6"/></svg>',
+    skip: '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="m5 5 6 5-6 5M14.5 5v10"/></svg>',
   };
   const loadJSON = (p) => (MCE.loadJSON ? MCE.loadJSON(p)
     : fetch(p).then((r) => { if (!r.ok) throw new Error('fetch ' + p + ' ' + r.status); return r.json(); }));
@@ -815,7 +866,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     sel: $('sel'), minus: $('minus'), plus: $('plus'), reps: $('reps'), repsn: $('repsn'),
     kgminus: $('kgminus'), kgplus: $('kgplus'), kg: $('kg'), kgn: $('kgn'), kgu: $('kgu'),
     primary: $('primary'), pic: $('pic'), plabel: $('plabel'), tip: $('turntip'), back: $('back'), sess: $('sess'),
-    coach: $('coach'), cphase: $('cphase'), cverb: $('cverb'), cspeed: $('cspeed'), crule: $('crule'), ccue: $('ccue'),
+    coach: $('coach'), cphase: $('cphase'), cverb: $('cverb'), cspeed: $('cspeed'), crule: $('crule'), ccue: $('ccue'), cbreath: $('cbreath'),
+    log: $('logbtn'), opt: $('optbtn'),
   };
 
   // ---------------------------------------------------------------- saving
@@ -825,20 +877,45 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // can this view keep anything at all (a strict sandbox throws on localStorage)?
   const lsOK = (() => { try { const k = 'machine-program:probe'; g.localStorage.setItem(k, '1'); g.localStorage.removeItem(k); return true; } catch (_) { return false; } })();
   // (v9 added: dl, the deload week { w: its week, prev: the one before }; up, the harder variants an exercise moved on to;
-  // hard, how many of its "harder" steps a bodyweight exercise has taken; pv, the program version the document was saved for)
-  const PV = 9;
+  // hard, how many of its "harder" steps a bodyweight exercise has taken; pv, the program version the document was saved for.
+  // v10 added: lr, a one-arm exercise's reps per side, [left, right] per set, in step with the sets (null: one number for both,
+  // as with the check button); weights kept to the gram (a weight typed in pounds comes back as typed))
+  const PV = 10, PV_PIN = 9; // (a document or an Undo step from before v9 has its v8 days pinned: pinOld)
   const blank = () => ({ v: 1, pv: PV, updated: 0, current: null, prog: {}, lastDone: null, last: {}, history: [], cycle: 0, week: 1, dl: null, up: {}, hard: {} });
   const ID = /^[a-z0-9_]{1,40}$/; // an exercise id
   // a number from a stored value: numbers and numeric strings only (null, '', true and [] are not 0)
   const num = (x) => (typeof x === 'number' ? x : typeof x === 'string' && x.trim() !== '' ? +x : NaN);
   const int = (x, a, b) => { const v = num(x); return Number.isFinite(v) ? clamp(Math.round(v), a, b) : null; };
   const reps = (a) => (Array.isArray(a) ? a.map((x) => int(x, 0, 200)).filter((x) => x != null).slice(0, 12) : []);
-  // weights in kg, one per set and in step with the reps (null: not recorded, as in a set logged before weights existed)
-  const kgOne = (x) => { const v = num(x); return Number.isFinite(v) ? clamp(Math.round(v * 4) / 4, 0, KG_MAX) : null; };
+  // weights in kg, one per set and in step with the reps (null: not recorded, as in a set logged before weights existed); kept to
+  // a millionth of a kg, so a weight typed in pounds converts back to exactly what was typed
+  const kgOne = (x) => { const v = num(x); return Number.isFinite(v) ? clamp(Math.round(v * 1e6) / 1e6, 0, KG_MAX) : null; };
   const kgs = (a) => (Array.isArray(a) ? a.map(kgOne).slice(0, 12) : []);
-  const fmtKg = (v) => (Number.isInteger(v) ? String(v) : String(+v.toFixed(2)));
+  // a one-arm set's reps per side: [left, right], or null
+  const pair = (x) => { if (!Array.isArray(x) || x.length !== 2) return null; const l = int(x[0], 0, 200), r = int(x[1], 0, 200); return l == null || r == null ? null : [l, r]; };
+  const pairs = (a) => (Array.isArray(a) ? a.slice(0, 12).map(pair) : []);
+  // ---- the weight unit (the menu: kg or lb; this phone's choice). Weights are kept in kg; the screen shows the unit, and
+  // every weight the app works out (warm-up sets, back-off sets, drop sets, a step up) is a whole kg or a whole lb
+  const prefs = { unit: 'kg', sound: true };
+  const toU = (kg) => (prefs.unit === 'lb' ? kg / LB : kg);
+  const fromU = (u) => (prefs.unit === 'lb' ? u * LB : u);
+  const uName = () => prefs.unit;
+  const uWord = () => (prefs.unit === 'lb' ? 'pounds' : 'kilograms');
+  const UMAX = () => (prefs.unit === 'lb' ? Math.floor(KG_MAX / LB) : KG_MAX);
+  // a weight as a number in the unit: kg to two decimals (12.5, 47.25), lb to one (115.7, or 100 as typed)
+  const fmtU = (kg) => { const u = toU(kg), v = +u.toFixed(prefs.unit === 'lb' ? 1 : 2); return String(Math.abs(v) < 1e-9 ? 0 : v); };
+  const fmtW = (kg) => fmtU(kg) + ' ' + uName();
+  // the nearest whole unit (down: never rounded up, for an estimate)
+  const roundW = (kg, down) => { const u = toU(kg), v = down ? Math.floor(u + 1e-3) : Math.round(u); return clamp(kgOne(fromU(v)), 0, KG_MAX); };
+  // one press of - or + (mult on a held button): the next whole unit down or up (52.5 -> 52 or 53; 52 -> 51 or 53)
+  const stepW = (kg, dir, mult) => {
+    const u = toU(kg), m = mult || 1, v = dir > 0 ? Math.floor(u + 1e-3) + m : Math.ceil(u - 1e-3) - m;
+    return clamp(kgOne(fromU(clamp(v, 0, UMAX()))), 0, KG_MAX);
+  };
+  const sameW = (a, b) => Math.abs(toU(a) - toU(b)) < 0.005;
   // A stored document as the page trusts it: every field checked and clamped (it may come from another device, an older
-  // version or a hand edit), unknown fields dropped. A v8 document has none of v9's fields: each gets its empty default.
+  // version or a hand edit), unknown fields dropped. A v8 document has none of v9's fields, a v9 document none of v10's: each gets
+  // its empty default.
   function sane(d) {
     const o = blank(); if (!d || typeof d !== 'object') return o;
     const nd = P ? P.days.length : 7, time = (t) => { const v = num(t); return Number.isFinite(v) && v > 0 ? v : 0; };
@@ -857,6 +934,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if (p.done && typeof p.done === 'object') for (const i of Object.keys(p.done)) { const ii = int(i, 0, 40); if (ii != null && p.done[i]) q.done[ii] = 1; }
       if (p.drop && typeof p.drop === 'object') for (const [i, a] of Object.entries(p.drop)) { const ii = int(i, 0, 40), x = drop(a); if (ii != null && x) q.drop[ii] = x; }
       if (p.swap && typeof p.swap === 'object') for (const [i, id] of Object.entries(p.swap)) { const ii = int(i, 0, 40); if (ii != null && typeof id === 'string' && ID.test(id)) q.swap[ii] = id; }
+      if (p.lr && typeof p.lr === 'object') for (const [i, a] of Object.entries(p.lr)) { const ii = int(i, 0, 40), x = pairs(a); if (ii != null && x.some(Boolean)) (q.lr = q.lr || {})[ii] = x; }
       const n = P && P.days[dd] ? P.days[dd].steps.length : 0;
       if (Array.isArray(p.order) && n && p.order.length === n) { const ord = p.order.map((x) => int(x, 0, n - 1)); if (ord.every((x) => x != null) && new Set(ord).size === n) q.order = ord; }
       if (Number.isFinite(num(p.bike))) q.bike = int(p.bike, 0, 600);
@@ -869,6 +947,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (d.last && typeof d.last === 'object') for (const [id, L] of Object.entries(d.last)) if (ID.test(id) && L && typeof L === 'object') {
       const x = o.last[id] = { reps: reps(L.reps), kg: kgs(L.kg), at: time(L.at), top: !!L.top };
       if (L.ts) x.ts = 1; if (L.bt) x.bt = 1;
+      const lr = pairs(L.lr); if (lr.some(Boolean)) x.lr = lr; // (a one-arm exercise: its reps per side)
     }
     if (Array.isArray(d.history)) o.history = d.history.filter((h) => h && typeof h === 'object').slice(0, 90).map((h) => {
       const e = { day: int(h.day, 0, nd - 1) || 0, at: time(h.at), sets: int(h.sets, 0, 999) || 0, exercises: int(h.exercises, 0, 99) || 0, ex: {}, kg: {} };
@@ -877,6 +956,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if (h.ex && typeof h.ex === 'object') for (const [id, a] of Object.entries(h.ex)) if (ID.test(id)) e.ex[id] = reps(a);
       if (h.kg && typeof h.kg === 'object') for (const [id, a] of Object.entries(h.kg)) if (ID.test(id)) e.kg[id] = kgs(a);
       if (h.dr && typeof h.dr === 'object') for (const [id, a] of Object.entries(h.dr)) { const x = drop(a); if (ID.test(id) && x) (e.dr = e.dr || {})[id] = x; }
+      if (h.lr && typeof h.lr === 'object') for (const [id, a] of Object.entries(h.lr)) { const x = pairs(a); if (ID.test(id) && x.some(Boolean)) (e.lr = e.lr || {})[id] = x; }
       if (Number.isFinite(num(h.bike))) e.bike = int(h.bike, 0, 600);
       if (h.dl) e.dl = 1; // done in a deload week
       return e;
@@ -985,6 +1065,12 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // a bodyweight exercise does once every set reaches the top: "straighten your legs more"), next: the id of its harder
   // variant (it takes the step's place then), reps: [lo, hi], a no-weight exercise's own rep range (kg0 0: it is straight sets
   // in that range wherever it is done). Adding an exercise as a swap or a variant is a change to this data only.
+  // v10: unilateral (one arm at a time: the pacer does both sides, the other side's figure mirrored), inc (optional: the step up
+  // in percent when every set reached the top, instead of stepPct's), breath (the breathing cue in the coaching card), brace (its
+  // own line for a heavy top set; else P.breath.brace). A step's restTop: the rest after a top set (rest: after the others); off:
+  // a step taken out of the program (it keeps its place, so saved progress keeps its step numbers; the day's order leaves it to
+  // the end, and nothing shows it); a timer's phases: [{ sec, name, verb, pulse, cue, hard }] (a beep and a buzz at each change);
+  // optional: a timed step that can be skipped (stretching).
   let P = null;
   const ADHOC = { name: '', steps: [] };
   const dayOf = (d) => (d < 0 ? ADHOC : P.days[d]);
@@ -995,7 +1081,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     return { name: e.name || nameOf(id), cue: e.cue || '', muscles: e.muscles || { primary: [], secondary: [] }, unilateral: !!e.unilateral, ready: !!e.ready,
       verbs: Array.isArray(e.verbs) && e.verbs.length === 2 ? e.verbs : null, kg0: Number.isFinite(e.kg0) ? e.kg0 : 20, fail: !!e.fail, short: !!e.short,
       compound: !!e.compound, drop: !!e.drop, partials: !!e.partials, failAll: !!e.failAll, swap: Array.isArray(e.swap) ? e.swap.filter((x) => typeof x === 'string') : [],
-      harder: typeof e.harder === 'string' || Array.isArray(e.harder) ? e.harder : '', next: typeof e.next === 'string' ? e.next : '' };
+      harder: typeof e.harder === 'string' || Array.isArray(e.harder) ? e.harder : '', next: typeof e.next === 'string' ? e.next : '',
+      inc: Number.isFinite(e.inc) && e.inc > 0 ? e.inc : null, breath: typeof e.breath === 'string' ? e.breath : '', brace: typeof e.brace === 'string' ? e.brace : '' };
   };
   const isReady = (id) => !!(P && id && P.ex[id] && P.ex[id].ready);
   const dayLabel = (d) => (d < 0 ? '' : 'Day ' + (d + 1) + MID + P.days[d].name);
@@ -1041,17 +1128,21 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   };
   // the day's order: as it is after an exercise was moved to the end (Do it later), else the program's (a step added later is
   // appended to its day's steps, so saved sets keep their step, and the day's order puts it in its place), else the steps'
-  const orderOf = (d) => {
+  // (fullOrderOf: every step, as it is saved; orderOf: the steps that are in the program, as the day goes)
+  const fullOrderOf = (d) => {
     const n = stepsOf(d).length, p = d >= 0 ? S.prog[d] : null, o = dayOf(d).order;
     if (p && Array.isArray(p.order) && p.order.length === n) return p.order;
     return Array.isArray(o) && o.length === n ? o : [...Array(n).keys()];
   };
+  const isOff = (d, i) => { const st = stepsOf(d)[i]; return !!(st && st.off); };
+  const orderOf = (d) => fullOrderOf(d).filter((i) => !isOff(d, i));
   const setsOf = (d, i) => ((S.prog[d] && S.prog[d].sets[i]) || []);
   const kgsOf = (d, i) => ((S.prog[d] && S.prog[d].kg && S.prog[d].kg[i]) || []); // the weights of those sets (null: none recorded)
+  const lrOf = (d, i) => ((S.prog[d] && S.prog[d].lr && S.prog[d].lr[i]) || []); // a one-arm exercise's [left, right] per set
   const dropDue = (d, i) => !!(S.prog[d] && S.prog[d].dd && S.prog[d].dd[i]);
   const warmDone = (d, i) => !!(S.prog[d] && S.prog[d].warm && S.prog[d].warm[i]);
   // a sets step is done once its sets are logged and its drop set (if one is due) is done or skipped
-  const isDone = (d, i) => { const st = stepsOf(d)[i]; return st.t === 'sets' ? setsOf(d, i).length >= nOf(d, i) && !dropDue(d, i) : !!(S.prog[d] && S.prog[d].done[i]); };
+  const isDone = (d, i) => { const st = stepsOf(d)[i]; return st.off ? true : st.t === 'sets' ? setsOf(d, i).length >= nOf(d, i) && !dropDue(d, i) : !!(S.prog[d] && S.prog[d].done[i]); };
   // the first step still open from position `pos` of the day's order on (going on from the start when the end is reached),
   // `skip` excepted; the automatic warm-up is never gone back to. -1: nothing left.
   const openFrom = (d, pos, skip) => {
@@ -1123,13 +1214,16 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     go: null,          // { day, step, k, until }: the next set's highlight, "Set 3 . go"
     glow: null,        // { day, step, k, t0, until }: the tick of the set just logged lights up
     sel: null,         // { day, step, k, v, kg }: the reps and weight selectors' numbers for the set on screen (kept on this device)
+    pace: null,        // the pacer of the set on screen: { day, step, k, drop, uni, first, side, stage, t0, run0, done, target, kg } (paceView)
     tipUntil: 0, end: null, rimFade: null,
   };
   const tkey = (d, i) => d + ':' + i;
   const timerOf = (d, i) => ui.timers.get(tkey(d, i)) || null;
   const curTimer = () => timerOf(ui.day, ui.step);
   const ackOn = () => !!(ui.ack && now() < ui.ack.until);
-  const selMode = () => ui.mode === 'set' || ui.mode === 'drop'; // the reps and weight selectors are on screen
+  const setMode = () => ui.mode === 'set' || ui.mode === 'drop'; // a set's own screen (its pacer may be running)
+  // the reps and weight selectors are on screen: a set before its pacer starts, or the rest after it (its numbers, to correct)
+  const selMode = () => (setMode() && !ui.pace) || amendOn();
   const tipMode = () => ui.mode === 'set' || ui.mode === 'warm' || ui.mode === 'drop'; // an exercise's own screen (a tap shows its tip)
 
   // ---------------------------------------------------------------- text
@@ -1142,52 +1236,101 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   const rangeText = (d, i, k) => { const r = rangeAt(d, i, k); return r.lo + (r.hi !== r.lo ? ND + r.hi : '') + ' reps' + (exOf(exIdAt(d, i)).unilateral ? ' each arm' : ''); };
   const repsWord = (n) => n + (n === 1 ? ' rep' : ' reps');
-  // a weight as a machine takes it: whole kg below 10, 2.5 kg steps above (down: never rounded up, for an estimate)
-  const roundKg = (x, down) => { const s = x < 10 ? 1 : 2.5; return clamp((down ? Math.floor : Math.round)(+(x / s).toFixed(6)) * s, 0, KG_MAX); };
   // Last time's sets of this step's exercise, read as this step's sets. One exercise can have a top set on one day and straight
   // sets on another (lat pulldown: day 5 and day 1): after a top-set day, a straight-set step goes on from the back-off sets; a
   // top-set step after a straight-set day has no top set to go on from (est: its weight is worked out from the best set).
   function prevOf(d, i) {
     const st = stepsOf(d)[i], L = st && st.t === 'sets' ? S.last[exIdAt(d, i)] : null;
     if (!L || !L.reps || !L.reps.length) return null;
-    const kg = L.kg || [];
+    const kg = L.kg || [], lr = L.lr || [];
     const top = topAt(d, i);
-    if (!top && L.ts) return L.reps.length > 1 ? { reps: L.reps.slice(1), kg: kg.slice(1), top: !!L.bt, at: L.at } : null;
-    return { reps: L.reps, kg, top: !!L.top, ts: !!L.ts, bt: !!L.bt, at: L.at, est: top && !L.ts };
+    if (!top && L.ts) return L.reps.length > 1 ? { reps: L.reps.slice(1), kg: kg.slice(1), lr: lr.slice(1), top: !!L.bt, at: L.at } : null;
+    return { reps: L.reps, kg, lr, top: !!L.top, ts: !!L.ts, bt: !!L.bt, at: L.at, est: top && !L.ts };
   }
-  // Double progression: when every set of an exercise reached the top of its rep range last time (a top-set step: its top set),
-  // this time starts one weight step heavier ({ kg }) and back at the bottom of the range; an exercise done with no weight gets
-  // harder instead ({ harder }: its "harder" line, e.g. straighten your legs more). null: no step (not in a deload week either).
+  // The step up when every set reached the top of the range (the science audit, from the rep math: about 1 rep per 2.5-4 %):
+  // +2.5 % for a top set and any range only 2 reps wide, +4 % for an upper-body compound, +5 % for a lower-body machine and every
+  // isolation (an exercise's own "inc" wins); rounded down to a whole kg or lb, at least one up (upW).
+  const LOWER = new Set(['Quads', 'Glutes', 'Hamstrings', 'Calves', 'Inner thighs', 'Side glutes', 'Upper glutes']);
+  function stepPct(d, i, k) {
+    const e = exOf(exIdAt(d, i)), R = rangeAt(d, i, k);
+    if (e.inc != null) return e.inc / 100;
+    if ((k === 0 && topAt(d, i)) || R.hi - R.lo <= 2) return 0.025;
+    if (e.compound && !e.muscles.primary.some((m) => LOWER.has(m))) return 0.04;
+    return 0.05;
+  }
+  const upW = (w, pct) => Math.min(KG_MAX, Math.max(roundW(w * (1 + pct), true), stepW(w, 1)));
+  // A light weight: one kg (or lb) is more than 8 % of it. Reps come first: it stays until every set reaches R reps, the reps
+  // that put the next whole unit at the bottom of the range (Epley: R = (1 + 1 / load) x (30 + bottom) - 30; 12-15 at 6 kg: 19)
+  const light = (w) => { const u = toU(w); return u > 0 && 1 / u > 0.08; };
+  const lightR = (w, lo) => Math.round((1 + 1 / toU(w)) * (30 + lo) - 30);
+  // Double progression: when every set of an exercise reached the top of its rep range last time (a top-set step: its top set;
+  // a light weight: R), this time starts a step heavier ({ kg, from, light }); an exercise done with no weight gets harder
+  // instead ({ harder }: its "harder" line, e.g. straighten your legs more). null: no step (not in a deload week either).
   function bumpFor(d, i) {
     const V = prevOf(d, i);
     if (deloadOn() || !V || !V.top || V.est) return null;
     const w = V.kg[0];
-    if (Number.isFinite(w) && w > 0) { const up = kgNext(w, 1); return up > w ? { kg: up } : null; }
+    if (Number.isFinite(w) && w > 0) {
+      const lt = light(w), R1 = rangeAt(d, i, 1);
+      // (a light weight: every set at R, whatever an older version recorded as the top)
+      if (lt && !V.reps.every((x, k) => x >= Math.max(R1.hi, lightR(V.kg[k] > 0 ? V.kg[k] : w, R1.lo)))) return null;
+      const up = lt ? stepW(w, 1) : upW(w, stepPct(d, i, 0));
+      return up > w ? { kg: up, from: w, light: lt } : null;
+    }
     if (bwTop(V)) return { harder: true };
     return null;
   }
+  // The reps a set starts on: after a step up, last time's reps on it minus 2 (a 2.5-5 % step costs about 2 reps), kept in the
+  // range (a light weight's step: the bottom of the range, where R puts it); a deload week: the bottom; a first top set after
+  // straight sets: the top (its weight is worked out for it); else last time's reps on this set, else the top of the range.
   function defaultReps(d, i) {
     const st = stepsOf(d)[i], k = setsOf(d, i).length, R = rangeAt(d, i, k), V = prevOf(d, i);
-    // heavier (or harder) today, or a deload: every set from the bottom of its range (a top set's back-off sets: when they moved up)
-    const up = topAt(d, i) && k > 0 ? !!(V && V.ts && V.bt) : !!bumpFor(d, i);
-    if (deloadOn() || up) return clamp(R.lo, 0, REPS_MAX);
-    if (k === 0 && V && V.est) return clamp(R.hi, 0, REPS_MAX); // a first top set: its weight is worked out for the top of its range
+    const up = topAt(d, i) && k > 0 ? (V && V.ts && V.bt ? { light: false } : null) : bumpFor(d, i);
     const v = V && V.reps[k];
+    if (deloadOn()) return clamp(R.lo, 0, REPS_MAX);
+    if (up) return clamp(up.light || !(v > 0) ? R.lo : clamp(v - 2, R.lo, R.hi), 0, REPS_MAX);
+    if (k === 0 && V && V.est) return clamp(R.hi, 0, REPS_MAX); // a first top set: its weight is worked out for the top of its range
+    if (k === 0 && v > 0 && stallStep(d, i) === 1) return clamp(v + 1, 0, REPS_MAX); // (stuck: one more rep on set 1)
     return clamp(Number.isFinite(v) && v > 0 ? v : R.hi, 0, REPS_MAX);
+  }
+  // ---- stalls: the sessions of an exercise on a day (newest first, deload weeks left out); one beats another with more weight
+  // on its heaviest set, or the same and more reps at it. A stall is 3 sessions in a row with no extra rep or kg; the app then
+  // suggests, in turn: one more rep on set 1, the swap (Options), then 10 % lighter to climb again (a session 5 % or more lighter
+  // than the one before starts afresh).
+  function sessionsOf(d, id) {
+    return S.history.filter((h) => !h.dl && h.day === d && h.ex && h.ex[id] && h.ex[id].length).map((h) => ({ a: h.ex[id], w: (h.kg && h.kg[id]) || [] }));
+  }
+  const topW = (x) => { const w = x.w.filter((v) => Number.isFinite(v)); return w.length ? Math.max(...w) : 0; };
+  const repsAtTop = (x) => { const m = topW(x); return x.a.reduce((s, r, k) => s + (!m || sameW(x.w[k] || 0, m) ? r : 0), 0); };
+  const beats = (x, y) => topW(x) > topW(y) + 1e-6 || (Math.abs(topW(x) - topW(y)) <= 1e-6 && repsAtTop(x) > repsAtTop(y));
+  function stallRun(d, id) {
+    const a = sessionsOf(d, id); let n = a.length ? 1 : 0;
+    for (let j = 0; j + 1 < a.length; j++) { if (beats(a[j], a[j + 1]) || topW(a[j]) < 0.95 * topW(a[j + 1])) break; n++; }
+    return n;
+  }
+  // the rung of the ladder for step i today: 0 none, 1 one more rep on set 1, 2 the swap, 3 10 % lighter
+  function stallStep(d, i) {
+    if (deloadOn() || ui.adhoc || d < 0) return 0;
+    const id = exIdAt(d, i), n = stallRun(d, id);
+    if (n < 3 || noWeight(id)) return n >= 3 && noWeight(id) ? 1 : 0;
+    if (n === 3) return 1;
+    if (n === 4 && swapsFor(d, i).length) return 2;
+    return 3;
   }
   // the weight a set starts on: a top-set step's first back-off set a share of today's top set; else the set before it in this
   // workout, else what was lifted on this set last time (the last one recorded when there were fewer sets), else the
-  // exercise's starting point
+  // exercise's starting point (a whole kg or lb)
   function defaultKg(d, i) {
     const st = stepsOf(d)[i], k = setsOf(d, i).length, cur = kgsOf(d, i), V = prevOf(d, i);
     if (topAt(d, i) && k === 1 && cur[0] > 0) return backoffKg(d, i, cur[0]);
     if (k > 0 && Number.isFinite(cur[k - 1])) return cur[k - 1];
     if (k === 0) { const up = bumpFor(d, i); if (up && up.kg != null) return clamp(up.kg, 0, KG_MAX); }
     if (k === 0 && V && V.est) { const e = topFrom(V, rangeAt(d, i, 0).hi); if (e != null) return e; }
+    if (k === 0 && V && V.kg[0] > 0 && stallStep(d, i) === 3) return roundW(V.kg[0] * 0.9, true);
     if (V && Number.isFinite(V.kg[k])) return V.kg[k];
     const lk = V ? V.kg.filter((x) => Number.isFinite(x)) : [];
     if (lk.length) return lk[lk.length - 1];
-    return clamp(exOf(exIdAt(d, i)).kg0, 0, KG_MAX);
+    return roundW(clamp(exOf(exIdAt(d, i)).kg0, 0, KG_MAX));
   }
   // the first back-off set: last time's share of the top set (87.5 %, about 85-90 %, the first time), a step more when every
   // back-off set reached the top of its range last time (the sets after it follow it, as always)
@@ -1195,24 +1338,24 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const V = prevOf(d, i);
     let r = 0.875;
     if (V && V.ts && V.kg[0] > 0 && V.kg[1] > 0) r = clamp(V.kg[1] / V.kg[0], 0.7, 0.95);
-    let w = roundKg(top * r);
-    if (V && V.ts && V.bt && !deloadOn()) w = kgNext(w, 1);
+    let w = roundW(top * r);
+    if (V && V.ts && V.bt && !deloadOn()) w = upW(w, stepPct(d, i, 1));
     return clamp(Math.min(w, top), 0, KG_MAX);
   }
   // a top set's weight from last time's straight sets: what their best set points to for `reps` reps (Epley), rounded down
   function topFrom(V, reps) {
     let best = 0;
     V.reps.forEach((r, k) => { const w = V.kg[k]; if (w > 0 && r > 0) best = Math.max(best, w * (1 + r / 30)); });
-    return best ? roundKg(best / (1 + reps / 30), true) : null;
+    return best ? roundW(best / (1 + reps / 30), true) : null;
   }
   const kgKnown = (d, i) => { const V = prevOf(d, i); return !!(V && V.kg.some((x) => Number.isFinite(x))) || kgsOf(d, i).some((x) => Number.isFinite(x)); };
   // ---- warm-up sets: before the first set of a compound, a ramp from that set's planned weight (about 50 % x 8, 75 % x 4,
   // and 85 % x 2 before a heavy top set; 75 % x 4 alone when its muscles are warm already); before an isolation for a muscle
   // not yet worked today, one light set (50 % x 10).
-  // Rounded to machine steps; never logged. A compound also warms the muscles that help its main ones (pressing the triceps, a
+  // Rounded to whole kg (or lb); never logged. A compound also warms the muscles that help its main ones (pressing the triceps, a
   // shoulder press the side shoulders, pulling the biceps and rear shoulders, a squat or leg press the glutes and inner thighs, a
   // hip thrust the hamstrings and side glutes).
-  const ALSO = { Chest: ['Upper chest', 'Triceps', 'Front shoulders'], 'Upper chest': ['Chest', 'Triceps', 'Front shoulders'], 'Front shoulders': ['Triceps', 'Side shoulders'],
+  const ALSO = { Chest: ['Upper chest', 'Triceps', 'Front shoulders', 'Side shoulders'], 'Upper chest': ['Chest', 'Triceps', 'Front shoulders', 'Side shoulders'], 'Front shoulders': ['Triceps', 'Side shoulders'],
     Lats: ['Biceps', 'Brachialis', 'Forearms', 'Rear shoulders', 'Upper back'], 'Upper back': ['Biceps', 'Brachialis', 'Forearms', 'Rear shoulders', 'Lats'], 'Mid traps': ['Rear shoulders', 'Biceps', 'Brachialis', 'Forearms'],
     Quads: ['Glutes', 'Inner thighs'], Glutes: ['Hamstrings', 'Upper glutes', 'Side glutes', 'Inner thighs'] };
   const NEAR = { Biceps: ['Brachialis', 'Forearms'], Brachialis: ['Biceps', 'Forearms'] };
@@ -1239,12 +1382,12 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     else if (!warm) ramp = [[0.5, 10]];
     if (!ramp) return null;
     const out = [];
-    for (const [f, r] of ramp) { const w = roundKg(plan * f); if (w > (out.length ? out[out.length - 1][0] : 0) && w < plan) out.push([w, r]); }
+    for (const [f, r] of ramp) { const w = roundW(plan * f); if (w > (out.length ? out[out.length - 1][0] : 0) && w < plan) out.push([w, r]); }
     return out.length ? out : null;
   }
-  const warmText = (W, e) => W.map(([w, r]) => fmtKg(w) + ' kg × ' + r).join(MID) + (e.unilateral ? ' each arm' : '');
-  // ---- the drop set: right after the last set, about half its weight (rounded to a machine step), as many reps as it gives
-  function dropKg(d, i) { const w = kgsOf(d, i), x = w[w.length - 1]; if (!(x > 1)) return 0; const h = roundKg(x / 2); return h < x ? h : roundKg(x / 2, true); }
+  const warmText = (W, e) => W.map(([w, r]) => fmtW(w) + ' × ' + r).join(MID) + (e.unilateral ? ' each arm' : '');
+  // ---- the drop set: right after the last set, about 30 % lighter (a whole kg or lb), as many reps as it gives
+  function dropKg(d, i) { const w = kgsOf(d, i), x = w[w.length - 1]; if (!(x > 1)) return 0; const h = roundW(x * 0.7); return h < x ? h : roundW(x * 0.7, true); }
   function dropReps(d, i) { const a = setsOf(d, i); return clamp(a[a.length - 1] || stepsOf(d)[i].lo, 0, REPS_MAX); }
   // The effort rule of the set on screen, by its kind (it goes in the coaching card, or above the controls when the card has no
   // room): most sets stop 1-2 reps short and the last set goes to failure (Jeff Nippard; hack squat and leg press stop 0-1 short),
@@ -1259,50 +1402,91 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (k === nOf(d, i) - 1) { if (e.fail) return T.lastSet; if (e.short) return T.lastShort; }
     return T.stayShort;
   }
-  // what changes today, above the controls on an exercise's first set: a step heavier (or harder), or no weight known yet. Nothing
-  // here is a number of kilograms worked out for the lifter beyond their own last time (and the shares of it above).
+  // How to beat last time, above the controls on an exercise's first set: a step up ("Today: 52 kg (+2): you hit 12 on every
+  // set"), a harder version ("Today: lower slowly over 3 s"), else last time's reps to beat at its weight ("Today: beat 12 · 11 ·
+  // 10 at 50 kg"); no weight known yet: pick one. Nothing here is a weight worked out beyond the lifter's own last time (and
+  // the shares of it above).
   function progFor(d, i) {
     if (ui.mode !== 'set' || setsOf(d, i).length || deloadOn()) return null;
-    const up = bumpFor(d, i), e = exOf(exIdAt(d, i));
-    if (up && up.kg != null) return T.addToday + MID + fmtKg(up.kg) + ' kg';
-    if (up && up.harder) { const H = hardList(e), id = exIdAt(d, i); return H.length ? cap(H[clamp((S.hard[id] || 1) - 1, 0, H.length - 1)]) + ' today' : T.addToday; }
+    const up = bumpFor(d, i), id = exIdAt(d, i), e = exOf(id), V = prevOf(d, i), top = topAt(d, i);
+    if (up && up.kg != null) {
+      const dv = +(toU(up.kg) - toU(up.from)).toFixed(1), R0 = rangeAt(d, i, 0), hit = up.light ? Math.max(R0.hi, lightR(up.from, rangeAt(d, i, 1).lo)) : null;
+      return 'Today: ' + fmtW(up.kg) + ' (+' + dv + '): you hit ' + (top ? R0.hi + ' on the top set' : (hit || rangeAt(d, i, 1).hi) + ' on every set');
+    }
+    if (up && up.harder) { const H = hardList(e); return H.length ? 'Today: ' + H[clamp((S.hard[id] || 1) - 1, 0, H.length - 1)] : T.addToday; }
+    if (V && V.est) { const w = defaultKg(d, i); return w > 0 ? 'Today: top set at ' + fmtW(w) : null; }
+    if (V && V.reps.length) {
+      const a = top ? V.reps.slice(0, 1) : V.reps.slice(0, nOf(d, i)), w = V.kg[0], at = Number.isFinite(w) && w > 0 ? ' at ' + fmtW(w) : '';
+      // stuck 3 times in a row: one more rep on set 1; then the swap; then 10 % lighter, to climb again
+      const sl = stallStep(d, i);
+      if (sl === 1) return 'Today: ' + (a[0] + 1) + ' on set 1' + at + ' (stuck 3 times)';
+      if (sl === 2) return 'Stuck: try ' + nameOf(swapsFor(d, i)[0]) + ' (Options)';
+      if (sl === 3) return 'Stuck: today 10% lighter, ' + fmtW(defaultKg(d, i)) + ', and climb again';
+      return 'Today: beat ' + a.join(MID) + at;
+    }
     if (e.kg0 > 0 && !kgKnown(d, i)) return T.pickWeight;
     return null;
   }
-  // what was done on this set last time: "Last time 9 reps . 40 kg"
+  // what was done on this set last time: "Last time 11 × 50 kg" (a one-arm set: its lower side; no weight: "Last time 11 reps")
   function lastFor(d, i) {
     const k = setsOf(d, i).length, V = prevOf(d, i);
     if (ui.mode !== 'set' || !(V && V.reps[k])) return null;
     const w = V.kg[k];
-    return 'Last time ' + repsWord(V.reps[k]) + (Number.isFinite(w) && w > 0 ? MID + fmtKg(w) + ' kg' : '');
+    return 'Last time ' + (Number.isFinite(w) && w > 0 ? V.reps[k] + ' × ' + fmtW(w) : repsWord(V.reps[k]));
   }
   // what an exercise's sets leave for next time (S.last): reps, weights, and whether they reached the top of the range (a top-set
-  // step: its top set; bt: every back-off set). A deload week's sets never count as reaching the top.
-  function lastRecord(d, i, a, w, n, t, dl) {
+  // step: its top set; bt: every back-off set); lr: a one-arm exercise's reps per side. A deload week's sets never count as
+  // reaching the top.
+  function lastRecord(d, i, a, w, n, t, dl, lr) {
     const L = { reps: a.slice(), kg: w.slice(), at: t, top: false }, top = topAt(d, i), hi = rangeAt(d, i, 1).hi;
+    if (lr && lr.some(Boolean)) L.lr = lr.slice(0, a.length);
     if (top) L.ts = 1;
     if (dl) return L;
-    if (top) { L.top = a[0] >= rangeAt(d, i, 0).hi; if (a.length >= n && a.length > 1 && a.slice(1).every((x) => x >= hi)) L.bt = 1; }
-    else L.top = a.length >= n && a.every((x) => x >= hi);
+    // (a light weight's set reaches the top at R reps: reps first)
+    const lo = rangeAt(d, i, 1).lo, need = (k) => { const x = w[k]; return Number.isFinite(x) && x > 0 && light(x) ? Math.max(hi, lightR(x, lo)) : hi; };
+    if (top) { L.top = a[0] >= rangeAt(d, i, 0).hi; if (a.length >= n && a.length > 1 && a.slice(1).every((x, k) => x >= need(k + 1))) L.bt = 1; }
+    else L.top = a.length >= n && a.every((x, k) => x >= need(k));
     return L;
   }
-  // after the last set of an exercise that reached the top: what next time brings ("Next time: add weight . 42.5 kg", or for a
-  // bodyweight exercise its harder variant or its "harder" line)
-  function nextMsg(id, L, stage) {
-    if (!L || !L.top) return null;
-    const e = exOf(id), w = L.kg[0];
-    if (Number.isFinite(w) && w > 0) { const up = kgNext(w, 1); return T.addNext + (up > w ? MID + fmtKg(up) + ' kg' : ''); }
-    if (bwTop(L)) { const H = hardList(e); if (e.next && isReady(e.next)) return 'Next time: ' + nameOf(e.next); if (H.length) return 'Next time: ' + H[Math.min(stage || 0, H.length - 1)]; }
-    return T.addNext;
+  // After the last set of an exercise: what next time brings. Every set at the top: "Next time: 62 kg (+2), expect ~2 fewer reps"
+  // (a light weight: "expect ~12 reps", the bottom of the range), for a bodyweight exercise its harder variant or its "harder"
+  // line; else the same weight and the reps to beat: "Next time: 60 kg, beat 11 · 10 · 9".
+  function nextMsg(d, i, L, stage) {
+    if (!L || !L.reps || !L.reps.length) return null;
+    const id = exIdAt(d, i), e = exOf(id), top = topAt(d, i), w = L.kg[0], a = top ? L.reps.slice(0, 1) : L.reps;
+    if (L.top) {
+      if (Number.isFinite(w) && w > 0) {
+        const lt = light(w), up = lt ? stepW(w, 1) : upW(w, stepPct(d, i, 0));
+        if (up > w) return 'Next time: ' + fmtW(up) + ' (+' + +(toU(up) - toU(w)).toFixed(1) + '), expect ' + (lt ? '~' + rangeAt(d, i, 0).lo + ' reps' : '~2 fewer reps');
+      }
+      if (bwTop(L)) { const H = hardList(e); if (e.next && isReady(e.next)) return 'Next time: ' + nameOf(e.next); if (H.length) return 'Next time: ' + H[Math.min(stage || 0, H.length - 1)]; }
+    }
+    return 'Next time: ' + (Number.isFinite(w) && w > 0 ? fmtW(w) + ', beat ' : 'beat ') + a.join(MID);
   }
   // the same message after the exercise's drop set (from the record its last set left today)
-  const msgFor = (d, i) => { const id = exIdAt(d, i), L = S.last[id], p = S.prog[d]; return !deloadOn() && L && p && L.at >= (p.started || 0) ? nextMsg(id, L, Math.max(0, (S.hard[id] || 0) - 1)) : null; };
+  const msgFor = (d, i) => { const id = exIdAt(d, i), L = S.last[id], p = S.prog[d]; return !deloadOn() && L && p && L.at >= (p.started || 0) ? nextMsg(d, i, L, Math.max(0, (S.hard[id] || 0) - 1)) : null; };
+  // the weight the next set of step i starts on (none for an exercise with no weight)
+  const nextKgOf = (d, i) => { const st = stepsOf(d)[i]; return st && st.t === 'sets' && !noWeight(exIdAt(d, i)) ? defaultKg(d, i) : 0; };
+  // What the rest leads to: the next set and its weight ("Next: Set 3 of 4 · 50 kg"), or the next exercise, with its plan
+  // under it (planText) and its figure on the stage
   function restNext(r) {
-    if (r.next === r.after) return 'Next: Set ' + (setsOf(ui.day, r.next).length + 1) + ' of ' + nOf(ui.day, r.next);
-    return 'Next: ' + stepName(ui.day, r.next);
+    const d = ui.day, nx = r.next;
+    if (nx === r.after) { const w = nextKgOf(d, nx); return 'Next: Set ' + (setsOf(d, nx).length + 1) + ' of ' + nOf(d, nx) + (w > 0 ? MID + fmtW(w) : ''); }
+    return 'Next: ' + stepName(d, nx);
   }
-  // what a logged set did, for the done line: "Set 2 done . 10 reps", or "Chest press done" after the exercise's last set
-  const doneText = (d, i, set, exDone) => (exDone ? stepName(d, i) + ' done' : 'Set ' + set.k + ' done' + MID + repsWord(set.n) + (set.kg > 0 ? MID + fmtKg(set.kg) + ' kg' : ''));
+  // step i's sets as a plan: "4 × 8–12 · 50 kg", "Top set 6–8, then 3 × 8–12 · 60 kg", "3 × 12–15 each arm · 7 kg"
+  function planText(d, i) {
+    const st = stepsOf(d)[i]; if (!st) return '';
+    if (st.t !== 'sets') return dash(st.line);
+    const id = exIdAt(d, i), w = nextKgOf(d, i), n = nOf(d, i), k = setsOf(d, i).length, R = rangeAt(d, i, Math.min(1, n - 1)), R0 = rangeAt(d, i, 0);
+    const rr = (x) => x.lo + (x.hi !== x.lo ? ND + x.hi : ''), each = exOf(id).unilateral ? ' each arm' : '';
+    const sets = topAt(d, i) && !k ? 'Top set ' + rr(R0) + (n > 1 ? ', then ' + (n - 1) + ' × ' + rr(R) : '') : (n - k) + ' × ' + rr(R);
+    return sets + each + (w > 0 ? MID + fmtW(w) : '');
+  }
+  // what a logged set did, for the done line: "Set 2 done . 10 reps . 40 kg" (both sides: "left 12 . right 11"), or "Chest press
+  // done" after the exercise's last set; short: the numbers are on the selectors under it (the rest, where they can be corrected)
+  const doneText = (d, i, set, exDone, short) => (exDone ? stepName(d, i) + ' done' : 'Set ' + set.k + ' done' + (short ? ''
+    : (set.lr ? MID + 'left ' + set.lr[0] + MID + 'right ' + set.lr[1] : MID + repsWord(set.n)) + (set.kg > 0 ? MID + fmtW(set.kg) : '')));
   // The title stays on one line when it can (shrinking at most to 26 px), otherwise it wraps at spaces, never at a hyphen.
   function fitName() {
     const el = E.name; el.style.fontSize = '';
@@ -1354,13 +1538,39 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const k = a.filter((x) => Number.isFinite(x));
     if (!k.length) return '';
     const lo = Math.min(...k), hi = Math.max(...k);
-    return MID + (lo === hi ? fmtKg(lo) : fmtKg(lo) + ND + fmtKg(hi)) + ' kg';
+    return MID + (sameW(lo, hi) ? fmtW(lo) : fmtU(lo) + ND + fmtW(hi));
   };
+  const sideWord = (s) => (s === 'l' ? 'Left side' : s === 'r' ? 'Right side' : '');
   function viewNow() {
     const d = ui.day, i = ui.step, t = now(), st = ui.mode === 'end' || ui.mode === 'boot' ? null : stepsOf(d)[i];
-    const v = { kind: ui.mode, kicker: '', kTone: '', name: '', check: false, clock: '', line: '', lTone: '', ticks: null, mus: '', note: null, sel: false, primary: null, coach: null, hint: null };
+    const v = { kind: ui.mode, kicker: '', kTone: '', name: '', check: false, clock: '', cTone: '', line: '', lTone: '', ticks: null, mus: '', note: null, sel: false, primary: null, log: null, coach: null, hint: null };
     if (st && ((ui.mode === 'timer' && st.t !== 'timer') || ((ui.mode === 'set' || ui.mode === 'warm' || ui.mode === 'drop') && st.t !== 'sets'))) return v; // a change in the middle: the next draw has it right
     const glowAt = (step) => (ui.glow && t < ui.glow.until && ui.glow.day === d && ui.glow.step === step ? ui.glow : null);
+    const pc = setMode() ? paceNow(t) : null;
+    if (pc) {
+      // the pacer: the countdown's big numerals (amber), then the reps as they are counted; one button, Stop (Go while the
+      // sides are switched: the second side now)
+      const e = exOf(exIdAt(d, i)), k = setsOf(d, i).length, n = nOf(d, i), Pc = ui.pace, sw = pc.stage === 'switch';
+      const what = Pc.drop ? 'Drop set' : 'Set ' + Math.min(k + 1, n) + ' of ' + n;
+      v.kind = 'pace';
+      if (pc.stage !== 'run') {
+        v.kicker = sw ? T.switchSides : sideWord(pc.side) || T.getReady; v.kTone = 'warm';
+        v.clock = String(pc.secs); v.cTone = 'count';
+        v.line = sw ? sideWord(pc.side) + MID + 'match ' + pc.target : Pc.uni ? T.uniCue : what + (Pc.kg > 0 ? MID + fmtW(Pc.kg) : '');
+        v.primary = sw ? { act: 'go2', label: 'Go', icon: 'go', aria: 'Go: the ' + sideWord(pc.side).toLowerCase() + ' now' }
+          : { act: 'stop', label: 'Stop', icon: 'stop', aria: 'Stop: cancel the countdown' };
+      } else {
+        v.kicker = pc.side ? sideWord(pc.side) : what;
+        v.clock = String(pc.count);
+        v.line = Pc.side === 1 ? 'Match ' + pc.target : Pc.drop ? 'To failure' : Pc.target ? 'Target ' + Pc.target : '';
+        v.lTone = Pc.side === 1 ? 'go' : '';
+        v.primary = { act: 'stop', label: 'Stop', icon: 'stop', aria: 'Stop: log ' + repsWord(pc.count) };
+      }
+      v.ticks = Pc.drop ? null : { n, done: k, go: false, glow: null, t0: null };
+      v.coach = { verbs: e.verbs, cue: e.cue, rule: ruleFor(d, i), pace: true, breath: breathAt(d, i, Pc.brace) };
+      v.hint = { rule: v.coach.rule };
+      return v;
+    }
     if (ui.mode === 'set') {
       const e = exOf(exIdAt(d, i)), k = setsOf(d, i).length, n = nOf(d, i), gw = glowAt(i);
       const go = !!(ui.go && t < ui.go.until && ui.go.day === d && ui.go.step === i && ui.go.k === k);
@@ -1373,9 +1583,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       v.mus = musLine(e.muscles);
       v.sel = true;
       const r = selValue(), w = selKg();
-      v.primary = { act: 'done', label: 'Done', icon: 'check', aria: 'Done: log set ' + (k + 1) + ' with ' + repsWord(r) + ' at ' + fmtKg(w) + ' kilograms' };
+      v.primary = { act: 'go', label: 'Go', icon: 'go', aria: 'Go: set ' + (k + 1) + ', a 5 second countdown, then the reps are counted' };
+      v.log = { aria: 'Log set ' + (k + 1) + ' with ' + repsWord(r) + ' at ' + fmtU(w) + ' ' + uWord() + ', without the pacer' };
       const rule = ruleFor(d, i);
-      v.coach = { verbs: e.verbs, cue: e.cue, rule: rule || '' };
+      v.coach = { verbs: e.verbs, cue: e.cue, rule: rule || '', breath: breathAt(d, i, braceAt(d, i)) };
       v.hint = { rule, prog: progFor(d, i), last: lastFor(d, i) };
     } else if (ui.mode === 'warm') {
       // the warm-up sets before the first set: the ramp in one line, one button; nothing is logged
@@ -1383,30 +1594,51 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       v.kicker = 'Warm-up sets'; v.name = e.name; v.line = warmText(W, e); v.lTone = 'plan'; v.mus = musLine(e.muscles);
       v.primary = { act: 'warm', label: 'Warm-up done', icon: 'check', aria: 'Warm-up done: on to set 1' };
       const rule = ruleFor(d, i);
-      v.coach = { verbs: e.verbs, cue: e.cue, rule }; v.hint = { rule };
+      v.coach = { verbs: e.verbs, cue: e.cue, rule, breath: breathAt(d, i, false) }; v.hint = { rule };
     } else if (ui.mode === 'drop') {
-      // the drop set, right after the last set: about half the weight, to failure; logged as a drop (0 reps: not done)
-      const e = exOf(exIdAt(d, i));
-      v.kicker = 'Drop set'; v.name = e.name; v.line = 'No rest' + MID + 'half the weight' + (e.unilateral ? MID + 'each arm' : ''); v.mus = musLine(e.muscles);
+      // the drop set, right after the last set: no rest, about 30 % lighter, to failure; logged as a drop (0 reps: not done)
+      const e = exOf(exIdAt(d, i)), w = selKg();
+      v.kicker = 'Drop set'; v.kTone = 'warm'; v.name = e.name;
+      v.line = T.noRest + MID + 'go now' + (w > 0 ? ' at ' + fmtW(w) : '') + (e.unilateral ? MID + 'each arm' : ''); v.lTone = 'go';
+      v.mus = musLine(e.muscles);
       v.sel = true;
-      v.primary = { act: 'drop', label: 'Done', icon: 'check', aria: 'Done: log the drop set with ' + repsWord(selValue()) + ' at ' + fmtKg(selKg()) + ' kilograms' };
+      v.primary = { act: 'go', label: 'Go', icon: 'go', aria: 'Go: the drop set, a 5 second countdown, then the reps are counted' };
+      v.log = { aria: 'Log the drop set with ' + repsWord(selValue()) + ' at ' + fmtU(w) + ' ' + uWord() + ', without the pacer' };
       const rule = ruleFor(d, i);
-      v.coach = { verbs: e.verbs, cue: e.cue, rule }; v.hint = { rule };
+      v.coach = { verbs: e.verbs, cue: e.cue, rule, breath: breathAt(d, i, false) }; v.hint = { rule };
     } else if (ui.mode === 'rest') {
-      // the rest: Rest (or the add-weight message for a moment), the countdown, what is next (with the exercise's ticks);
-      // above the button what was just done
-      const r = ui.rest, msg = r.msg && t < r.msgUntil, same = r.next === r.after, gw = glowAt(r.next);
+      // the rest: Rest (or the add-weight message for a moment), the countdown, what is next: the next set and its weight
+      // (with the exercise's ticks), or the next exercise with its plan (its figure is on the stage); above the button what
+      // was just done, its numbers on the selectors while they can still be corrected
+      const r = ui.rest, msg = r.msg && t < r.msgUntil, same = r.next === r.after, gw = glowAt(r.next), am = amendOn();
       v.kicker = msg ? r.msg : 'Rest'; v.kTone = msg ? 'warm' : '';
       v.clock = restClock(); v.line = restNext(r);
       if (same) v.ticks = { n: nOf(d, r.next), done: setsOf(d, r.next).length, glow: gw ? gw.k : null, t0: gw ? gw.t0 : null };
-      if (r.set) v.note = { text: doneText(d, r.after, r.set, r.set.drop || isDone(d, r.after)), tone: 'done', icon: true };
+      else v.mus = planText(d, r.next);
+      if (r.set) {
+        const exDone = !r.set.drop && isDone(d, r.after);
+        v.note = { text: am ? (r.set.drop ? 'Drop set done' : 'Set ' + r.set.k + ' done') + (r.set.lr ? MID + 'left ' + r.set.lr[0] + MID + 'right ' + r.set.lr[1] : '')
+          : r.set.drop ? 'Drop set done' + MID + repsWord(r.set.n) + (r.set.kg > 0 ? MID + fmtW(r.set.kg) : '') : doneText(d, r.after, r.set, exDone), tone: 'done', icon: true };
+      }
+      v.sel = am;
       v.primary = { act: 'skip', label: 'Skip rest' };
     } else if (ui.mode === 'timer') {
-      const tm = curTimer(), nm = st.name.toLowerCase(), e = st.ex ? exOf(st.ex) : null;
+      // a timed step: Start, then its clock (a step in phases: the phase, its time left and its pulse); an optional one can be
+      // skipped (the button beside Start)
+      const tm = curTimer(), nm = st.name.toLowerCase(), e = st.ex ? exOf(st.ex) : null, ph = tm ? phaseNow(st, elapsedOf(tm)) : null;
       v.line = st.line;
-      if (!tm) { v.name = st.name; v.primary = { act: 'start', label: 'Start', aria: 'Start the ' + nm + ' timer' }; }
-      else { v.kicker = st.name; v.clock = timerClock(st, tm); v.primary = { act: 'finish', label: 'Done', icon: 'check', aria: 'Done: finish the ' + nm }; }
-      if (e && e.ready && (st.cue || e.cue)) v.coach = { verbs: e.verbs, cue: st.cue || e.cue, rule: '', cycle: true, speed: st.pulse ? 'pulse ' + st.pulse : '' };
+      if (!tm) {
+        v.name = st.name; v.primary = { act: 'start', label: 'Start', aria: 'Start the ' + nm + ' timer' };
+        if (st.optional) { v.line = dash(st.line) + MID + 'optional'; v.log = { act: 'skip', aria: 'Skip the ' + nm + ' (optional)' }; }
+      } else {
+        v.kicker = ph ? ph.p.name : st.name; v.kTone = ph && ph.p.hard ? 'warm' : '';
+        v.clock = timerClock(st, tm);
+        if (ph) v.line = ph.p.pulse ? 'Pulse ' + ph.p.pulse : ph.i + 1 < ph.n ? 'Next: ' + st.phases[ph.i + 1].name : st.line;
+        v.primary = { act: 'finish', label: 'Done', icon: 'check', aria: 'Done: finish the ' + nm };
+      }
+      const pp = ph ? ph.p : st.phases && st.phases[0], pulse = (pp && pp.pulse) || st.pulse;
+      if (e && e.ready && (st.cue || e.cue)) v.coach = { verbs: e.verbs, cue: (pp && pp.cue) || st.cue || e.cue, rule: '', cycle: true, speed: pulse ? 'pulse ' + pulse : '',
+        verb: pp ? pp.verb || (pp.hard ? 'Hard' : 'Easy') : null, hard: !!(pp && pp.hard) };
     } else if (ui.mode === 'done') {
       if (st.t === 'sets') { const e = exOf(exIdAt(d, i)), a = setsOf(d, i); v.name = e.name; v.line = a.length + ' sets done' + MID + a.join(', ') + ' reps' + kgLine(kgsOf(d, i)); v.mus = musLine(e.muscles); }
       else { v.name = st.name; v.line = 'Done'; }
@@ -1429,6 +1661,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (ui.flash && t < ui.flash.until && (ui.mode === 'set' || (ui.mode === 'timer' && !v.kicker))) { v.kicker = ui.flash.text; v.kTone = 'warm'; }
     return v;
   }
+  // a heavy top set's first set (not in a deload week): the card says to brace instead of when to breathe out and in
+  const braceAt = (d, i) => ui.mode === 'set' && topAt(d, i) && !setsOf(d, i).length && !deloadOn();
   // the moment after Done (or a timer that ran out): the screen as it was, with the set's tick lit and the done line;
   // the button is an ember check and takes no press. then: the step change that waits for the moment to end (the next
   // figure cuts in after it, not under the old text)
@@ -1441,30 +1675,31 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function render() {
     let v = viewNow();
     if (ui.ack && now() < ui.ack.until) {
-      v = Object.assign({}, ui.ack.view, { note: ui.ack.note, sel: false, hint: null, primary: { act: 'ack', ack: true, icon: 'check', label: '', aria: ui.ack.note ? ui.ack.note.text : 'Done' } });
+      v = Object.assign({}, ui.ack.view, { note: ui.ack.note, sel: false, hint: null, log: null, primary: { act: 'ack', ack: true, icon: 'check', label: '', aria: ui.ack.note ? ui.ack.note.text : 'Done' } });
     }
     setText(E.kicker, v.kicker); E.kicker.dataset.tone = v.kTone;
-    setName(v.name, v.check); setText(E.clock, v.clock);
+    setName(v.name, v.check); setText(E.clock, v.clock); E.clock.dataset.tone = v.cTone || '';
     setLine(v.line, v.ticks, v.lTone); setText(E.mus, v.mus);
     app.dataset.mode = ui.mode;
     if (!selMode() && kpOpen()) closeKeypad();
-    wake.set(ui.mode !== 'end' && !dialogOpen()); // the screen stays awake while a day is on
     app.dataset.view = v.kind;
     app.classList.toggle('kicked', !!v.kicker && (v.kind === 'set' || v.kind === 'drop')); // a set's kind takes the muscles line's room
     const key = v.kind + '|' + v.name + '|' + v.line;
     if (key !== lastView) { lastView = key; fitName(); }
     const hadFocus = E.act.contains(doc.activeElement) ? doc.activeElement : null;
+    if (!ackOn()) syncFig(); // (the rest before another exercise shows that exercise; a one-arm set the side it is on)
+    mirrorFor();
     // the coaching card first: what it has no room for goes above the controls instead
     const cs = paintCoach(v.coach);
     let note = v.note;
     if (!note && v.coach && v.coach.cue && !cs.cue && tipMode() && now() < ui.tipUntil) note = { text: v.coach.cue, tone: 'tip' }; // a tap on the figure: the tip
-    // then what changes today (heavier, harder), the set's rule when the card has no room for it, what was done last time
+    // then how to beat last time (the first set), what was done on this set last time, the set's rule when the card has no room
     if (!note && v.hint) {
       if (v.hint.prog) note = { text: v.hint.prog, tone: 'guide' };
-      else if (v.hint.rule && !cs.rule) note = { text: v.hint.rule, tone: 'guide' };
       else if (v.hint.last) note = { text: v.hint.last, tone: 'soft' };
+      else if (v.hint.rule && !cs.rule) note = { text: v.hint.rule, tone: 'guide' };
     }
-    paintNote(note); paintSel(v.sel); paintPrimary(v.primary); paintBack(); paintSess();
+    paintNote(note); paintSel(v.sel); paintPrimary(v.primary); paintLog(v.log); paintBack(); paintSess(); paintOpt();
     // a control that had the keyboard's focus went away with the state (the selector in the rest): the focus
     // goes to the primary button, so a keyboard user stays in the action area
     if (hadFocus && hadFocus !== E.primary && (hadFocus.offsetParent === null || hadFocus.hidden)) { try { E.primary.focus({ preventScroll: true }); } catch (_) { /* fine */ } }
@@ -1489,10 +1724,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (E.repsn.textContent !== v) E.repsn.textContent = v;
     E.minus.setAttribute('aria-disabled', +v <= 0 ? 'true' : 'false');
     E.plus.setAttribute('aria-disabled', +v >= REPS_MAX ? 'true' : 'false');
-    const w = selKg(), ws = fmtKg(w), unit = w === 0 ? 'bodyweight' : 'kg';
+    const w = selKg(), ws = fmtU(w), unit = w === 0 ? 'bodyweight' : uName();
     if (E.kgn.textContent !== ws) E.kgn.textContent = ws;
     if (E.kgu.textContent !== unit) E.kgu.textContent = unit;
-    E.kg.setAttribute('aria-label', 'Weight, ' + fmtKg(w) + ' kilograms. Tap to type a weight.');
+    E.kg.setAttribute('aria-label', 'Weight, ' + ws + ' ' + uWord() + '. Tap to type a weight.');
     E.kgminus.setAttribute('aria-disabled', w <= 0 ? 'true' : 'false');
     E.kgplus.setAttribute('aria-disabled', w >= KG_MAX ? 'true' : 'false');
   }
@@ -1513,12 +1748,21 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const aria = p.aria || p.label;
     if (b.getAttribute('aria-label') !== aria) b.setAttribute('aria-label', aria);
   }
-  // Undo is always in view: dim while there is nothing to take back, and it names the step it would take back
+  // the check beside Go: the set logged as the selectors say, without the pacer (a set done without pressing Go first)
+  let logLock = 0;
+  function paintLog(l) {
+    const b = E.log, on = !!l, act = on ? l.act || 'log' : '';
+    if (b.hidden === on) { b.hidden = !on; if (on) logLock = now() + LOCK_MS; }
+    if (on && b.dataset.act !== act) { b.dataset.act = act; b.innerHTML = act === 'skip' ? ICONS.skip : ICONS.check; logLock = now() + LOCK_MS; }
+    if (on && b.getAttribute('aria-label') !== l.aria) { b.setAttribute('aria-label', l.aria); b.title = l.aria; }
+  }
+  // Undo is always in view: dim while there is nothing to take back, and it names the step it would take back (while the
+  // pacer runs: it stops it, nothing logged)
   function paintBack() {
-    const u = hist.length ? hist[hist.length - 1] : null, b = E.back;
-    b.setAttribute('aria-disabled', u ? 'false' : 'true');
-    const label = u ? 'Undo ' + u.label : 'Undo';
-    if (b.getAttribute('aria-label') !== label) { b.setAttribute('aria-label', label); b.title = u ? label : 'Nothing to undo yet'; }
+    const u = hist.length ? hist[hist.length - 1] : null, b = E.back, pacing = !!ui.pace && setMode();
+    b.setAttribute('aria-disabled', u || pacing ? 'false' : 'true');
+    const label = pacing ? 'Undo: stop the pacer, nothing logged' : u ? 'Undo ' + u.label : 'Undo';
+    if (b.getAttribute('aria-label') !== label) { b.setAttribute('aria-label', label); b.title = u || pacing ? label : 'Nothing to undo yet'; }
   }
   // the session's clock in the top band: dim (0:00) until the first action, then counting; the day's time once it is done
   let sessT = 0;
@@ -1534,33 +1778,49 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   // ---------------------------------------------------------------- the coaching card
   // What to do on this rep, in the sky beside the figure: the phase the loop is in ("PRESS fast", "RETURN slow 3 s"; the
-  // stage says when it changes), the set's rule when there is room for it, and the exercise's cue. The stage says where
-  // the figure is over its whole loop, so the card sits in the free sky above it and never over it, and the composition
-  // keeps that much room free (playerLayout's figTop; the side layout has no such reserve, a card with no room for the
-  // cue shows less, and with no room at all is off). While the figure is turned the card is off; with no figure it sits at the top.
-  let seg = null, phaseK = 'fast', phaseDur = 1, phaseKey = '', coachC = null, turned = false;
+  // stage says when it changes; while the pacer counts, its own clock says it, the same clock the figure runs on), when to
+  // breathe (out on the lift, in on the lowering; a brace before each rep of a heavy top set), the set's rule and the
+  // exercise's cue, as far as there is room (the pacer leaves the cue out: the machine is set up by then). The stage says
+  // where the figure is over its whole loop, so the card sits in the free sky above it and never over it, and the
+  // composition keeps that much room free (playerLayout's figTop; the side layout has no such reserve, a card with no room
+  // shows less, and with no room at all is off). While the figure is turned the card is off; with no figure it sits at the top.
+  let seg = null, phaseK = 'fast', phaseDur = 1, phaseKey = '', coachC = null, turned = false, phaseAt = 0;
   function onSeg(s) {
     seg = s;
     // a lift and its hold are one label, a lowering and its pause too: only the two main phases change it
     if (s.phase === 'con') { phaseK = 'fast'; phaseDur = s.dur; } else if (s.phase === 'ecc') { phaseK = 'slow'; phaseDur = s.dur; }
-    paintPhase();
+    if (!(coachC && coachC.pace)) paintPhase(); // (the pacer paints the phase from its own clock, every frame)
   }
   // the lowering's time as it is coached: the figure's 2.5 s is "2–3 s" (a card that said "3 s" would ask for more than it shows)
   function secsText(d) {
     const h = Math.round(d * 2) / 2;
     return (Number.isInteger(h) ? h : Math.floor(h) + ND + Math.ceil(h)) + ' s';
   }
+  // the breathing cue of step i's exercise (table B of the science audit: out on the effort, in on the return); a heavy top set:
+  // the brace (the exercise's own, else the program's)
+  function breathAt(d, i, brace) {
+    const st = stepsOf(d)[i]; if (!st || st.t !== 'sets') return '';
+    const e = exOf(exIdAt(d, i));
+    if (brace) return e.brace || (P && P.breath && P.breath.brace) || T.breath.brace;
+    return typeof e.breath === 'string' ? e.breath : '';
+  }
   function paintPhase() {
     const c = coachC, el = E.cphase;
     if (!c) return;
-    let k = 'still', verb = '', speed = '', dur = 0;
-    if (c.cycle) { verb = c.verbs ? c.verbs[0] : 'Easy'; speed = c.speed || ''; }
-    else if (c.verbs && seg) {
+    let k = 'still', verb = '', speed = '', dur = 0, n = '';
+    const t = now(), pc = c.pace ? paceNow(t) : null;
+    phaseAt = t;
+    if (c.cycle) { verb = c.verb || (c.verbs ? c.verbs[0] : 'Easy'); speed = c.speed || ''; if (c.hard) k = 'hard'; }
+    else if (pc && c.verbs) {
+      // the pacer: the phase on its clock (the countdown: the figure waits at the bottom of the rep, the lift comes first)
+      if (pc.stage === 'run') { k = pc.ph.k; verb = k === 'fast' ? c.verbs[0] : c.verbs[1]; speed = k === 'fast' ? 'fast' : 'slow' + MID + secsText(pc.ph.dur); dur = pc.ph.dur; n = pc.ph.rep + ':' + k; }
+      else verb = c.verbs[0];
+    } else if (c.verbs && seg) {
       if (phaseK === 'fast') { k = 'fast'; verb = c.verbs[0]; speed = 'fast'; dur = phaseDur; }
       else { k = 'slow'; verb = c.verbs[1]; speed = 'slow' + MID + secsText(phaseDur); dur = phaseDur; }
     } else if (c.verbs) verb = c.verbs[0];
     el.hidden = !verb;
-    const key = k + '|' + verb + '|' + speed + '|' + dur.toFixed(2);
+    const key = k + '|' + verb + '|' + speed + '|' + dur.toFixed(2) + '|' + n;
     if (key === phaseKey) return;
     phaseKey = key; el.dataset.k = k;
     E.cverb.textContent = verb; E.cspeed.textContent = speed;
@@ -1576,36 +1836,46 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const y0 = top + 4, y1 = sb.fig.y0 - 8;
     return { y0, y1, h: y1 - y0 };
   }
-  // c: { verbs, cue, rule, cycle } or null; returns which of the rule and the cue the card shows (what it has no room
-  // for is put above the controls by render())
+  // c: { verbs, cue, rule, cycle, pace, brace } or null; returns which of the rule and the cue the card shows (what it has no
+  // room for is put above the controls by render()). It is measured with the longest breathing line it may show; with no room
+  // the breathing line goes first, then the rule, then the cue (the pacer: the cue is left out, the rule goes before the breathing)
   function paintCoach(c) {
     const el = E.coach, shown = { rule: false, cue: false };
     coachC = c;
     const drawn = engine === 'ready' && !!stage && !!stage.cur && stage.cur.id === wantFig && !figHidden && !placeholderOn && !loadingNow;
     if (!c || !(drawn || engine === 'none')) { el.hidden = true; return shown; }
     const rule = app.classList.contains('compact') ? '' : c.rule || '';
-    setText(E.crule, rule); setText(E.ccue, c.cue);
+    setText(E.crule, rule); setText(E.ccue, c.pace ? '' : c.cue);
+    const bmax = c.cycle ? '' : c.breath || '';
+    setText(E.cbreath, bmax);
     el.hidden = false;
-    paintPhase();
     const room = coachRoom();
     let h = el.offsetHeight;
-    if (room && h > room.h && !E.crule.hidden) { E.crule.hidden = true; h = el.offsetHeight; }
-    if (room && h > room.h && !E.ccue.hidden) { E.ccue.hidden = true; h = el.offsetHeight; }
+    const drop = (x) => { if (room && h > room.h && !x.hidden) { x.hidden = true; h = el.offsetHeight; } };
+    for (const x of c.pace ? [E.crule, E.cbreath] : [E.cbreath, E.crule, E.ccue]) drop(x);
     if (room && h > room.h) { el.hidden = true; return shown; } // not even the phase fits: the tip on a tap tells the cue
+    paintPhase();
     shown.rule = !E.crule.hidden; shown.cue = !E.ccue.hidden;
     el.style.top = Math.round(room ? Math.max(room.y0, room.y1 - h) : (curComp ? curComp.top : 48) + 6) + 'px';
     if (turned) el.setAttribute('data-off', ''); else el.removeAttribute('data-off');
     return shown;
   }
   function stageLabel() {
-    const id = ui.mode === 'end' ? null : figAt(ui.day, ui.step);
+    const id = ui.mode === 'end' ? null : wantFig;
     if (!id || figHidden) return 'Horizon';
     const e = exOf(id);
-    return e.name + ' animation' + (e.muscles.primary.length ? ', working ' + e.muscles.primary.join(', ').toLowerCase() : '');
+    return e.name + ' animation' + (mirrored ? ', left side' : '') + (e.muscles.primary.length ? ', working ' + e.muscles.primary.join(', ').toLowerCase() : '');
   }
   const restClock = () => { const r = ui.rest; return mmss(Math.ceil(Math.max(0, r.dur - (now() - r.t0)) * SPEED / 1000)); };
   const elapsedOf = (tm) => (tm ? (now() - tm.t0) * SPEED / 1000 : 0); // program seconds
-  function timerClock(st, tm) { const el = elapsedOf(tm); return st.open ? mmss(el) : mmss(Math.ceil(Math.max(0, st.sec - el))); }
+  function timerClock(st, tm) { const el = elapsedOf(tm), ph = phaseNow(st, el); return ph ? mmss(Math.ceil(ph.left)) : st.open ? mmss(el) : mmss(Math.ceil(Math.max(0, st.sec - el))); }
+  // a timed step's phase at el program seconds in: { p, i, left (s), n }; null: a step with no phases
+  function phaseNow(st, el) {
+    const L = st && Array.isArray(st.phases) ? st.phases : null; if (!L || !L.length) return null;
+    let t = 0;
+    for (let i = 0; i < L.length; i++) { const p = L[i]; if (el < t + p.sec || i === L.length - 1) return { p, i, left: Math.max(0, t + p.sec - el), n: L.length }; t += p.sec; }
+    return null;
+  }
 
   // ---------------------------------------------------------------- the top band: progress segments and the day
   // The segments follow the day's order (an exercise moved to the end has its segment at the end).
@@ -1615,7 +1885,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const d = ui.day, segs = $('segs');
     $('daylabel').textContent = ui.adhoc ? nameOf(stepsOf(-1)[0].ex) : dayLabel(d);
     $('daybtn').setAttribute('aria-label', (ui.adhoc ? '' : dayLabel(d) + '. ') + 'Choose a day');
-    const O = ui.mode === 'end' && ui.end && ui.end.prog.order ? ui.end.prog.order : orderOf(d), key = d + '|' + O.join(',');
+    const O = (ui.mode === 'end' && ui.end && ui.end.prog.order ? ui.end.prog.order : orderOf(d)).filter((i) => !isOff(d, i)), key = d + '|' + O.join(',');
     if (segKey !== key || segs.childElementCount !== O.length) {
       segKey = key; segs.textContent = '';
       for (const i of O) {
@@ -1650,7 +1920,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // ---------------------------------------------------------------- the flow
   function openDay(d, o) {
     o = o || {};
-    cancelRest(); ui.end = null; ui.ack = null; ui.note = null; ui.go = null; ui.glow = null;
+    cancelRest(); cancelPace(); ui.end = null; ui.ack = null; ui.note = null; ui.go = null; ui.glow = null;
     hist = []; if (ui.mode !== 'boot') saveHist(); // another day starts with nothing to undo (at boot the last steps are restored instead)
     if (ui.mode !== 'boot' && (d !== ui.day || ui.adhoc !== (d < 0))) { ui.timers.clear(); saveTimers(); } // another day's timers stop (at boot they are restored instead)
     ui.adhoc = d < 0; ui.day = d;
@@ -1669,23 +1939,26 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (!setsOf(d, i).length && !warmDone(d, i) && warmSets(d, i)) return 'warm';
     return 'set';
   }
-  // o.go: arrived from a rest or a finished timer: the set gets its short highlight ("Set 3 . go")
+  // o.go: arrived from a rest or a finished timer: the set gets its short highlight ("Set 3 . go"), and a figure the viewer
+  // turned comes back to its own view (with the coaching card)
   function goStep(i, o) {
     o = o || {};
     const d = ui.day;
     ui.step = i; ui.tipUntil = 0;
     if (S.prog[d]) S.prog[d].step = i;
     ui.mode = modeOf(d, i);
+    if (ui.pace && !paceHere()) cancelPace(); // (a pacer belongs to its set)
     ui.go = o.go && ui.mode === 'set' ? { day: d, step: i, k: setsOf(d, i).length, until: now() + GO_MS } : null;
     showFigure(figAt(d, i), o.cut);
-    render(); if (!o.quiet) announceStep(o.pre); prefetch(); kickLoop();
+    if (o.go) unturn();
+    render(); if (!o.quiet) announceStep(o.pre); prefetch(); kickLoop(); loadTempo(figAt(d, i));
   }
   // a tap on a progress segment: that step, as far as it has got; the end screen's segments stay put (the day is done:
   // the overview opens any day)
   function jumpTo(i) {
     if (dialogOpen() || ui.mode === 'end') return;
     if (i === ui.step && ui.mode !== 'rest' && !ackOn()) return;
-    cancelGesture(); ui.ack = null; dropNote(); cancelRest(); goStep(i, { cut: true });
+    cancelGesture(); ui.ack = null; dropNote(); cancelRest(); cancelPace(); goStep(i, { cut: true });
   }
   function continueDay() { // from a finished step: the next open one, or the end of the day when none is left
     const nx = openAfter(ui.day, ui.step);
@@ -1693,59 +1966,79 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     else if (!ui.adhoc) { snapshot('finish the day'); finishDay(null, null); Save.persist(); announce(endSpeech()); }
   }
 
-  // Done: log one set with the reps and the weight shown (a user action: saved). The screen answers at once: the button an
-  // ember check, the set's tick lit, the done line above the button; the rest (or what comes next) follows the moment.
-  function logSet(n, kg, how) {
-    if (ui.mode !== 'set' || ackOn()) return;
-    const d = ui.day, i = ui.step, st = stepsOf(d)[i], id = exIdAt(d, i), e = exOf(id), N = nOf(d, i);
-    n = clamp(Math.round(n), 0, REPS_MAX); kg = kgOne(kg); if (kg == null) kg = 0;
-    const before = viewNow(); // the set as it is on screen: it stays for the moment of the check
-    const u = snapshot('set ' + (setsOf(d, i).length + 1));
+  // A set into the record (no screen): its reps, its weight and (a one-arm set) its reps per side; after an exercise's last set
+  // its reps and weights are kept for next time (a deload week's only when there is nothing yet), a bodyweight exercise that
+  // reached the top moves on, and a machine or cable isolation owes its drop set. logSet and amend() both use it.
+  function recordSet(d, i, n, kg, lr) {
+    const id = exIdAt(d, i), e = exOf(id), N = nOf(d, i);
     if (ui.adhoc) { S.prog[-1] = S.prog[-1] || { sets: {}, done: {} }; }
     const p = ensureProg(d), a = (p.sets[i] = (p.sets[i] || []).concat([n]));
     const w = (p.kg[i] = (p.kg[i] || []).slice(0, a.length - 1)); while (w.length < a.length - 1) w.push(null); w.push(kg);
+    if (lr || (p.lr && p.lr[i])) {
+      p.lr = p.lr || {};
+      const x = (p.lr[i] = (p.lr[i] || []).slice(0, a.length - 1)); while (x.length < a.length - 1) x.push(null); x.push(lr || null);
+      if (!x.some(Boolean)) delete p.lr[i];
+    }
     touchProg(p); p.step = i; if (!ui.adhoc) S.current = d;
-    if (u) u.sel = { day: d, step: i, k: a.length - 1, v: n, kg }; // Undo puts these numbers back on the selectors
-    lastLog = { how: how || 'done', v: n, kg, t: Math.round(now()) };
+    const exDone = a.length >= N, dl = deloadOn();
+    let msg = null, drop = false;
+    if (exDone) {
+      if (!dl || !S.last[id]) {
+        const L = lastRecord(d, i, a, w, N, Date.now(), dl, p.lr && p.lr[i]), stage = S.hard[id] || 0;
+        // a bodyweight exercise done to the top of its range on every set moves on to its harder variant next time (when this
+        // version has one; the sets logged on it so far stay with it: pinned before the record says it reached the top), or
+        // takes its next harder step
+        const up = !dl && !ui.adhoc && bwTop(L);
+        if (up && e.next && isReady(e.next)) pinLogged(id);
+        S.last[id] = L;
+        msg = dl ? null : nextMsg(d, i, L, stage);
+        if (up) { if (e.next && isReady(e.next)) S.up[id] = e.next; else if (hardList(e).length) S.hard[id] = Math.min(99, stage + 1); }
+      }
+      // a machine or cable isolation: its drop set comes right away, with no rest before it (none in a deload week)
+      if (e.drop && !noWeight(id) && !dl && !ui.adhoc) { p.dd[i] = 1; drop = true; }
+    }
+    return { a, w, exDone, msg, drop };
+  }
+  // Stop on the pacer, or the check button: log one set with these reps (and, a one-arm set, both sides: n is the lower one) and
+  // the weight shown (a user action: saved). The screen answers at once: the button an ember check, the set's tick lit, the
+  // done line above the button; the rest (or what comes next) follows the moment.
+  function logSet(n, kg, how, lr) {
+    if (ui.mode !== 'set' || ackOn()) return;
+    const d = ui.day, i = ui.step, N = nOf(d, i);
+    n = clamp(Math.round(n), 0, REPS_MAX); kg = kgOne(kg); if (kg == null) kg = 0;
+    lr = lr ? lr.map((x) => clamp(Math.round(x), 0, REPS_MAX)) : null;
+    const before = viewNow(); // the set as it is on screen (the pacer's count): it stays for the moment of the check
+    endPace();
+    const u = snapshot('set ' + (setsOf(d, i).length + 1));
+    const R = recordSet(d, i, n, kg, lr);
+    if (u) u.sel = { day: d, step: i, k: R.a.length - 1, v: n, kg }; // Undo puts these numbers back on the selectors
+    lastLog = { how: how || 'done', v: n, kg, lr, t: Math.round(now()) };
     ui.sel = null; saveSel(); // the next set starts on its own default
-    const set = { k: a.length, n, kg }, t0 = now(), exDone = a.length >= N, line = doneText(d, i, set, exDone);
-    ui.glow = { day: d, step: i, k: a.length - 1, t0, until: t0 + GLOW_MS };
-    Object.assign(before, { kind: 'set', lTone: '', line: 'Set ' + a.length + ' of ' + N + MID + rangeText(d, i, a.length - 1), ticks: { n: N, done: a.length, glow: a.length - 1, t0 } });
-    const said = 'Set ' + set.k + ' done, ' + repsWord(n) + (kg > 0 ? ', ' + fmtKg(kg) + ' kilograms.' : '.');
+    const set = { k: R.a.length, n, kg, lr }, t0 = now(), line = doneText(d, i, set, R.exDone);
+    ui.glow = { day: d, step: i, k: R.a.length - 1, t0, until: t0 + GLOW_MS };
+    const ticks = { n: N, done: R.a.length, glow: R.a.length - 1, t0 };
+    if (before.kind === 'pace') Object.assign(before, { lTone: '', line: 'Set ' + R.a.length + ' of ' + N, ticks });
+    else Object.assign(before, { kind: 'set', lTone: '', line: 'Set ' + R.a.length + ' of ' + N + MID + rangeText(d, i, R.a.length - 1), ticks });
+    const said = 'Set ' + set.k + ' done, ' + (lr ? 'left ' + lr[0] + ', right ' + lr[1] : repsWord(n)) + (kg > 0 ? ', ' + fmtU(kg) + ' ' + uWord() + '.' : '.');
     haptic(14);
-    if (!exDone) {
-      startRest(i, i, null, set);
+    if (!R.exDone) {
+      startRest(i, i, null, set, null, u);
       ackView(before, { text: line, tone: 'done', icon: true }, ACK_MS);
       render(); Save.persist();
       announce(said + ' Rest ' + Math.round(ui.rest.dur * SPEED / 60000) + ' minutes. ' + restNext(ui.rest) + '.');
       return;
     }
-    // the exercise's last set: its reps and weights are kept for next time (a deload week's only when there is nothing yet)
-    const dl = deloadOn();
-    let msg = null;
-    if (!dl || !S.last[id]) {
-      const L = lastRecord(d, i, a, w, N, Date.now(), dl), stage = S.hard[id] || 0;
-      // a bodyweight exercise done to the top of its range on every set moves on to its harder variant next time (when this
-      // version has one; the sets logged on it so far stay with it: pinned before the record says it reached the top), or
-      // takes its next harder step
-      const up = !dl && !ui.adhoc && bwTop(L);
-      if (up && e.next && isReady(e.next)) pinLogged(id);
-      S.last[id] = L;
-      msg = dl ? null : nextMsg(id, L, stage);
-      if (up) { if (e.next && isReady(e.next)) S.up[id] = e.next; else if (hardList(e).length) S.hard[id] = Math.min(99, stage + 1); }
-    }
-    // a machine or cable isolation: its drop set comes right away, with no rest before it (none in a deload week)
-    if (e.drop && !noWeight(id) && !dl && !ui.adhoc) {
-      p.dd[i] = 1;
-      ackView(before, { text: line, tone: 'done', icon: true }, ACK_MS, () => goStep(i, { quiet: true }));
-      render(); Save.persist(); announce(said + ' Drop set now: about half the weight, no rest.');
+    if (R.drop) {
+      // the drop set comes right away: no rest (its screen says so, in amber, with its weight; a double buzz and two beeps)
+      ackView(before, { text: line, tone: 'done', icon: true }, ACK_MS, () => { goStep(i, { quiet: true }); Snd.play('drop'); haptic([40, 60, 40]); });
+      render(); Save.persist(); announce(said + ' Drop set now: no rest, ' + fmtU(dropKg(d, i)) + ' ' + uWord() + '.');
       return;
     }
-    exerciseOver(i, before, set, msg, line, said);
+    exerciseOver(i, before, set, R.msg, line, said, u);
   }
   // the exercise of step i is over (its last set, or its drop set): a rest and the next open step (earlier ones included), the
   // next timed step at once (the recovery day's stretching: its own rest), or the end of the day. msg: what next time brings
-  function exerciseOver(i, before, set, msg, line, said) {
+  function exerciseOver(i, before, set, msg, line, said, u) {
     const d = ui.day, p = ensureProg(d), nx = openAfter(d, i), ack = { text: line, tone: 'done', icon: true };
     if (nx < 0) {
       finishDay(msg, line); ackView(before, ack, ACK_MS);
@@ -1758,7 +2051,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       ackView(before, ack, ACK_MS, () => goStep(nx, { cut: true, quiet: true }));
       render(); Save.persist(); announce(said + (msg ? ' ' + msg + '.' : '') + ' Next: ' + stepsOf(d)[nx].name + '.'); return;
     }
-    startRest(i, nx, msg, set);
+    startRest(i, nx, msg, set, null, u);
     ackView(before, ack, ACK_MS);
     render(); Save.persist();
     announce(said + ' Rest ' + Math.round(ui.rest.dur * SPEED / 60000) + ' minutes. ' + restNext(ui.rest) + '.' + (msg ? ' ' + msg + '.' : ''));
@@ -1770,6 +2063,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const d = ui.day, i = ui.step;
     n = clamp(Math.round(n), 0, REPS_MAX); kg = kgOne(kg); if (kg == null) kg = 0;
     const before = viewNow();
+    endPace();
     const u = snapshot('drop set');
     const p = ensureProg(d);
     delete p.dd[i];
@@ -1778,9 +2072,40 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (u) u.sel = { day: d, step: i, k: setsOf(d, i).length, v: n, kg, drop: 1 };
     lastLog = { how: 'drop', v: n, kg, t: Math.round(now()) };
     ui.sel = null; saveSel();
-    const line = n > 0 ? 'Drop set done' + MID + repsWord(n) + (kg > 0 ? MID + fmtKg(kg) + ' kg' : '') : 'Drop set skipped';
+    const line = n > 0 ? 'Drop set done' + MID + repsWord(n) + (kg > 0 ? MID + fmtW(kg) : '') : 'Drop set skipped';
+    if (before.kind === 'pace') Object.assign(before, { lTone: '', line: 'Drop set' });
     haptic(14);
-    exerciseOver(i, before, { k: setsOf(d, i).length, n, kg, drop: 1 }, msgFor(d, i), line, line + '.');
+    exerciseOver(i, before, { k: setsOf(d, i).length, n, kg, drop: 1 }, msgFor(d, i), line, line + '.', u);
+  }
+  // The rest screen's selectors correct the set (or drop set) the rest follows, while that set is the last step Undo would take
+  // back: the record goes back to how it was before the set (that Undo step) and the set is logged again with the new numbers
+  // (a one-arm set: the lower side takes the new number); the session's clock, the rest and the Undo step stay, and Undo puts
+  // the corrected numbers back on the selectors.
+  const amendOn = () => ui.mode === 'rest' && !!ui.rest && !!ui.rest.set && !!ui.rest.uid && !ui.adhoc && hist.length > 0 && hist[hist.length - 1].id === ui.rest.uid;
+  const amendSides = (lr, n) => { const lo = lr[0] <= lr[1] ? 0 : 1, x = lr.slice(); x[lo] = n; if (x[1 - lo] < n) x[1 - lo] = n; return x; };
+  function amend(nv, nk) {
+    if (!amendOn()) return false;
+    const r = ui.rest, u = hist[hist.length - 1], d = ui.day, i = r.after, cur = S.prog[d] || {};
+    const keep = {}; for (const k of ['started', 't0', 'gap', 'at', 'step', 'order']) if (cur[k] != null) keep[k] = clone(cur[k]);
+    if (u.prog) S.prog[d] = clone(u.prog); else delete S.prog[d];
+    for (const [id, L] of Object.entries(u.last)) { if (L) S.last[id] = clone(L); else delete S.last[id]; }
+    if (u.up) S.up = clone(u.up);
+    if (u.hard) S.hard = clone(u.hard);
+    let set;
+    if (r.set.drop) {
+      const p = ensureProg(d); delete p.dd[i];
+      if (nv > 0) p.drop[i] = [nv, nk]; else delete p.drop[i];
+      set = Object.assign({}, r.set, { n: nv, kg: nk });
+    } else {
+      const lr = r.set.lr ? amendSides(r.set.lr, nv) : null;
+      const R = recordSet(d, i, nv, nk, lr);
+      set = Object.assign({}, r.set, { n: nv, kg: nk, lr });
+      if (R.msg !== r.msg) { r.msg = R.msg; r.msgUntil = R.msg ? now() + 3000 : 0; }
+    }
+    Object.assign(ensureProg(d), keep); S.current = d;
+    r.set = set; u.sel = Object.assign({}, u.sel || { day: d, step: i, k: set.k - 1 }, { v: nv, kg: nk });
+    saveHist(); saveRest(); Save.persist();
+    return true;
   }
   // Warm-up done: the warm-up sets are over (nothing is logged); the step's first set follows, with its "go"
   function warmUpDone() {
@@ -1792,24 +2117,37 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     render(); Save.persist(); haptic(14);
     announce('Warm-up done. Set 1 next.');
   }
-  // rest after a set
-  function startRest(after, next, msg, set, restored) {
-    const st = stepsOf(ui.day)[after];
-    const dur = restored ? restored.dur : (st.rest || 120) * 1000 / SPEED;
-    ui.rest = { t0: restored ? now() - (dur - restored.left) : now(), dur, after, next, msg, msgUntil: msg ? now() + (restored ? restored.msgLeft : ACK_MS + 4500) : 0, set };
-    ui.mode = 'rest'; ui.tipUntil = 0; ui.rimFade = null; ui.go = null;
-    saveRest();
-    render(); prefetch(); kickLoop();
+  // Rest after a set (u: the Undo step of the set it follows, so its numbers can be corrected during the rest). Its end is told
+  // by a beep and a buzz, or by the service worker's notification while the app is out of sight (Alerts).
+  function restAfter(d, i, k, nx) {
+    const st = stepsOf(d)[i]; let r = st.rest || 120;
+    if (k === 0 && nx === i && topAt(d, i) && st.restTop > 0) r = st.restTop;
+    if (P.ex[st.ex] && P.ex[st.ex].unilateral && !exOf(exIdAt(d, i)).unilateral) r = Math.max(r, 90);
+    if (nx !== i && nx >= 0 && stepsOf(d)[nx] && stepsOf(d)[nx].t === 'sets') {
+      const a = exOf(exIdAt(d, i)).muscles.primary, b = exOf(exIdAt(d, nx)).muscles.primary;
+      if (a.some((m) => b.includes(m))) r = Math.max(r, 120);
+    }
+    return r;
   }
-  function cancelRest() { if (ui.rest) { ui.rest = null; rimOff(); saveRest(); } }
-  // the rest ran out (auto: a haptic) or was skipped (a step Undo takes back): the next set with its "go", or a match cut to
-  // the next exercise; the rim light fades from where it was
+  function startRest(after, next, msg, set, restored, u) {
+    const dur = restored ? restored.dur : restAfter(ui.day, after, set && !set.drop ? set.k - 1 : null, next) * 1000 / SPEED;
+    ui.rest = { t0: restored ? now() - (dur - restored.left) : now(), dur, after, next, msg, msgUntil: msg ? now() + (restored ? restored.msgLeft : ACK_MS + 4500) : 0, set,
+      uid: u ? u.id : restored && restored.uid ? restored.uid : null };
+    ui.mode = 'rest'; ui.tipUntil = 0; ui.rimFade = null; ui.go = null;
+    endPace(); unturn();
+    saveRest(); Alerts.schedule(); Alerts.ask();
+    render(); prefetch(); kickLoop(); loadTempo(figAt(ui.day, next));
+  }
+  function cancelRest() { if (ui.rest) { ui.rest = null; rimOff(); saveRest(); Alerts.cancel(); } }
+  // the rest ran out (auto: a beep and a buzz while the app is in sight) or was skipped (a step Undo takes back): the next set
+  // with its "go", or a match cut to the next exercise; the rim light fades from where it was
   function endRest(auto) {
     const r = ui.rest; if (!r) return;
     if (!auto) snapshot('skip rest');
     ui.rest = null; ui.rimFade = { t0: now(), p: Math.min(1, (now() - r.t0) / r.dur) };
     saveRest();
-    haptic(auto ? [24, 70, 24] : 10);
+    if (!auto) Alerts.cancel(); // (one that ran out: the service worker shows its notification only while the app is out of sight)
+    if (auto && !doc.hidden) { Snd.play('rest'); haptic([160, 90, 160]); } else if (!auto) haptic(10);
     goStep(r.next, { cut: r.next !== r.after, go: true, pre: auto ? 'Rest over.' : '' });
   }
 
@@ -1828,17 +2166,17 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   // the timed step i (default: the one on screen) is finished: by Done, or on its own (its time is up); one that runs out
   // while another step is on screen is only marked done
-  function finishTimer(auto, i) {
+  function finishTimer(auto, i, skipped) {
     const d = ui.day, here = i == null || i === ui.step; if (i == null) i = ui.step;
     const st = stepsOf(d)[i], tm = timerOf(d, i);
     const before = here ? viewNow() : null;
-    if (!auto) snapshot('finish ' + st.name.toLowerCase());
+    if (!auto) snapshot((skipped ? 'skip ' : 'finish ') + st.name.toLowerCase());
     const p = ensureProg(d); p.done[i] = 1; touchProg(p); if (!ui.adhoc) S.current = d;
-    if (st.open && tm) p.bike = Math.max(1, Math.round(elapsedOf(tm) / 60));
+    if (st.key === 'bike' && (st.open || st.phases) && tm && !skipped) p.bike = Math.max(1, Math.round(elapsedOf(tm) / 60)); // (the recovery days' ride)
     ui.timers.delete(tkey(d, i)); saveTimers();
     if (!here) { Save.persist(); render(); return; }
     ui.rimFade = { t0: now(), p: 1 };
-    const line = st.name + ' done' + (st.open && p.bike ? MID + p.bike + ' min' : '');
+    const line = st.name + (skipped ? ' skipped' : ' done' + (st.key === 'bike' && p.bike ? MID + p.bike + ' min' : ''));
     if (auto && !st.open) before.clock = '0:00';
     const nx = openAfter(d, i);
     let then = null;
@@ -1865,8 +2203,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       const id = exIdAt(d, i), w = ((p.kg && p.kg[i]) || []).slice(0, a.length); while (w.length < a.length) w.push(null);
       entry.sets += a.length; entry.exercises++; entry.ex[id] = a.slice(); entry.kg[id] = w;
       if (p.drop && p.drop[i]) (entry.dr = entry.dr || {})[id] = p.drop[i].slice();
+      const lr = p.lr && p.lr[i] && p.lr[i].some(Boolean) ? p.lr[i].slice(0, a.length) : null;
+      if (lr) (entry.lr = entry.lr || {})[id] = lr;
       const Lr = S.last[id];
-      if ((!Lr || Lr.at < (p.started || 0)) && (!dl || !Lr)) S.last[id] = lastRecord(d, i, a, w, nOf(d, i), t, dl);
+      if ((!Lr || Lr.at < (p.started || 0)) && (!dl || !Lr)) S.last[id] = lastRecord(d, i, a, w, nOf(d, i), t, dl, lr);
     });
     if (p.bike) entry.bike = p.bike;
     if (p.t0) entry.dur = Math.max(1, Math.round(sessSecs(p, t)));
@@ -1877,7 +2217,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     }
     const prog = clone({ sets: p.sets || {}, done: p.done || {}, order: p.order || null });
     delete S.prog[d];
-    ui.timers.clear(); saveTimers(); cancelRest(); cancelGesture(); ui.go = null; ui.note = null;
+    ui.timers.clear(); saveTimers(); cancelRest(); cancelPace(); cancelGesture(); ui.go = null; ui.note = null;
     ui.end = { day: d, entry, prog, msg, msgUntil: msg ? now() + ACK_MS + 4500 : 0, note: note || null };
     ui.mode = 'end'; ui.step = L.length - 1;
     markTurn(); // the first day is done: the tip about turning has had its time
@@ -1892,7 +2232,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // on a stack; Undo takes the last one off and puts it back, as often as it is pressed. The stack belongs to the day on screen
   // (another day starts an empty one) and its last few steps survive a reload. A set undone puts its numbers back on the
   // selectors; a rest skipped comes back with the time it had left.
-  let hist = [];
+  let hist = [], histSeq = 0;
   // every exercise a day's steps can log to: the program's, their harder variants and their swaps
   function idsOf(d) {
     const s = new Set();
@@ -1903,8 +2243,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (ui.adhoc) return null;
     const d = ui.day, p = S.prog[d], last = {};
     for (const id of idsOf(d)) last[id] = S.last[id] ? clone(S.last[id]) : null;
-    const r = ui.rest && ui.mode === 'rest' ? { after: ui.rest.after, next: ui.rest.next, set: ui.rest.set, dur: ui.rest.dur, left: Math.max(0, ui.rest.dur - (now() - ui.rest.t0)) } : null;
-    const u = { label, at: Date.now(), day: d, step: ui.step, prog: p ? clone(p) : null, current: S.current, lastDone: S.lastDone ? clone(S.lastDone) : null, last, up: clone(S.up), hard: clone(S.hard), pv: PV,
+    const r = ui.rest && ui.mode === 'rest' ? { after: ui.rest.after, next: ui.rest.next, set: ui.rest.set, dur: ui.rest.dur, left: Math.max(0, ui.rest.dur - (now() - ui.rest.t0)), uid: ui.rest.uid || null } : null;
+    const u = { id: (++histSeq).toString(36) + '.' + Date.now().toString(36), label, at: Date.now(), day: d, step: ui.step, prog: p ? clone(p) : null, current: S.current, lastDone: S.lastDone ? clone(S.lastDone) : null, last, up: clone(S.up), hard: clone(S.hard), pv: PV,
       hAt: S.history.length ? S.history[0].at : 0, timers: [...ui.timers].map(([k, tm]) => ({ key: k, startedAt: Date.now() - elapsedOf(tm) * 1000 / SPEED })), rest: r, sel: null };
     hist.push(u); if (hist.length > HIST_MAX) hist.shift();
     saveHist();
@@ -1912,7 +2252,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   function doUndo() {
     const u = hist.pop(); if (!u || u.day !== ui.day) return;
-    cancelGesture(false); cancelRest(); ui.ack = null; ui.note = null; ui.glow = null; ui.go = null; ui.end = null; ui.flash = null;
+    cancelGesture(false); cancelRest(); cancelPace(); ui.ack = null; ui.note = null; ui.glow = null; ui.go = null; ui.end = null; ui.flash = null;
     if (u.prog) S.prog[u.day] = u.prog; else delete S.prog[u.day];
     S.current = u.current; S.lastDone = u.lastDone; if (u.cycleFrom != null) { S.cycle = u.cycleFrom; if (u.weekFrom != null) S.week = u.weekFrom; }
     for (const [id, L] of Object.entries(u.last)) { if (L) S.last[id] = L; else delete S.last[id]; }
@@ -1928,7 +2268,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if (u.rest && L[u.rest.after] && L[u.rest.next]) { // a rest that was skipped is back, with what it had left
         ui.mode = 'set'; ui.step = u.rest.after; // (a rest follows a set: the state fits the step before the figure is shown and the screen drawn)
         showFigure(figAt(u.day, u.rest.after), true);
-        startRest(u.rest.after, u.rest.next, null, u.rest.set, { dur: u.rest.dur, left: Math.max(300, u.rest.left), msgLeft: 0 });
+        startRest(u.rest.after, u.rest.next, null, u.rest.set, { dur: u.rest.dur, left: Math.max(300, u.rest.left), msgLeft: 0, uid: u.rest.uid || null });
       } else goStep(u.step, { cut: true, quiet: true });
     } finally { saveHist(); Save.persist(); } // (whatever the screen does, what was undone is what is kept)
     haptic(10);
@@ -1941,6 +2281,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     u.hist = hist.slice(-HIST_KEEP);
     lsSet(LS_UI, u);
   }
+  // a stored rest's set, as the page trusts it: { k, n, kg, drop, lr }
+  const restSet = (x) => (x && typeof x === 'object' && Number.isFinite(num(x.k)) ? { k: int(x.k, 1, 40), n: int(x.n, 0, REPS_MAX) || 0, kg: kgOne(x.kg), drop: x.drop ? 1 : 0, lr: pair(x.lr) } : null);
   // the stored steps, checked like the document (they may be from an older visit): only the day on screen, only recent
   function restoreHist() {
     const list = (lsGet(LS_UI) || {}).hist; hist = [];
@@ -1949,13 +2291,13 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     for (const e of list) {
       if (!e || typeof e !== 'object' || int(e.day, 0, nd - 1) !== ui.day || !(Date.now() - num(e.at) < FRESH) || typeof e.label !== 'string') continue;
       const doc = sane({ prog: e.prog ? { [e.day]: e.prog } : {}, current: e.current, lastDone: e.lastDone, up: e.up, hard: e.hard }), last = {};
-      if (!(num(e.pv) >= PV)) pinOld(ui.day, doc.prog[ui.day]); // (a step stored by v8)
+      if (!(num(e.pv) >= PV_PIN)) pinOld(ui.day, doc.prog[ui.day]); // (a step stored by v8)
       const timers = (Array.isArray(e.timers) ? e.timers : []).filter((x) => x && typeof x.key === 'string' && /^\d+:\d+$/.test(x.key) && Number.isFinite(num(x.startedAt)) && x.key.split(':')[0] === String(ui.day)).map((x) => ({ key: x.key, startedAt: num(x.startedAt) }));
       const step = int(e.step, 0, stepsOf(ui.day).length - 1); if (step == null) continue;
       if (e.last && typeof e.last === 'object') for (const id of ids) { const L = e.last[id]; last[id] = L && typeof L === 'object' ? sane({ last: { [id]: L } }).last[id] || null : null; }
-      const r = e.rest && typeof e.rest === 'object' && [e.rest.after, e.rest.next].every((x) => int(x, 0, 40) != null) ? { after: int(e.rest.after, 0, 40), next: int(e.rest.next, 0, 40), set: e.rest.set && Number.isFinite(num(e.rest.set.k)) ? { k: int(e.rest.set.k, 1, 40), n: int(e.rest.set.n, 0, REPS_MAX), kg: kgOne(e.rest.set.kg), drop: e.rest.set.drop ? 1 : 0 } : null, dur: clamp(num(e.rest.dur) || 120000, 1000, 600000), left: clamp(num(e.rest.left) || 0, 0, 600000) } : null;
+      const r = e.rest && typeof e.rest === 'object' && [e.rest.after, e.rest.next].every((x) => int(x, 0, 40) != null) ? { after: int(e.rest.after, 0, 40), next: int(e.rest.next, 0, 40), set: restSet(e.rest.set), dur: clamp(num(e.rest.dur) || 120000, 1000, 600000), left: clamp(num(e.rest.left) || 0, 0, 600000), uid: typeof e.rest.uid === 'string' ? e.rest.uid.slice(0, 40) : null } : null;
       const s = e.sel && typeof e.sel === 'object' && [e.sel.day, e.sel.step, e.sel.k, e.sel.v].every(Number.isInteger) ? { day: e.sel.day, step: e.sel.step, k: e.sel.k, v: clamp(e.sel.v, 0, REPS_MAX), kg: kgOne(e.sel.kg), drop: e.sel.drop ? 1 : 0 } : null;
-      hist.push({ label: e.label.slice(0, 60), at: num(e.at), day: ui.day, step, prog: doc.prog[ui.day] || null, current: doc.current, lastDone: doc.lastDone, last, up: e.up && typeof e.up === 'object' ? doc.up : undefined, hard: e.hard && typeof e.hard === 'object' ? doc.hard : undefined, pv: PV, hAt: num(e.hAt) || 0, cycleFrom: Number.isFinite(num(e.cycleFrom)) ? Math.max(0, num(e.cycleFrom)) : undefined, weekFrom: int(e.weekFrom, 1, 9999) || undefined, timers, rest: r, sel: s });
+      hist.push({ id: typeof e.id === 'string' ? e.id.slice(0, 40) : 'r' + hist.length + '.' + num(e.at), label: e.label.slice(0, 60), at: num(e.at), day: ui.day, step, prog: doc.prog[ui.day] || null, current: doc.current, lastDone: doc.lastDone, last, up: e.up && typeof e.up === 'object' ? doc.up : undefined, hard: e.hard && typeof e.hard === 'object' ? doc.hard : undefined, pv: PV, hAt: num(e.hAt) || 0, cycleFrom: Number.isFinite(num(e.cycleFrom)) ? Math.max(0, num(e.cycleFrom)) : undefined, weekFrom: int(e.weekFrom, 1, 9999) || undefined, timers, rest: r, sel: s });
     }
   }
   // Restart workout: the day's record goes (its sets, its clock, its timers) and the day starts again from its first step. The
@@ -1963,7 +2305,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function restartDay() {
     if (ui.adhoc || ui.mode === 'end' || !canRestart()) return;
     snapshot(T.restartLabel);
-    cancelGesture(false); cancelRest(); ui.timers.clear(); saveTimers();
+    cancelGesture(false); cancelRest(); cancelPace(); ui.timers.clear(); saveTimers();
     ui.ack = null; ui.go = null; ui.glow = null; ui.flash = null; ui.sel = null; saveSel();
     delete S.prog[ui.day];
     ui.step = 0;
@@ -1981,7 +2323,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // exercise in its place for today (only before its first set): the step keeps its sets, reps and rest, and its sets are
   // logged to the exercise done. Both are steps Undo takes back.
   function busyStep() {
-    if (ui.adhoc || dialogOpen()) return -1;
+    if (ui.adhoc || dialogOpen() || (ui.pace && setMode())) return -1;
     if (ui.mode === 'rest') return ui.rest ? ui.rest.next : -1;
     return ui.mode === 'set' || ui.mode === 'warm' || ui.mode === 'timer' ? ui.step : -1;
   }
@@ -2004,10 +2346,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function doLater() {
     const d = ui.day, i = busyStep();
     if (!canLater(d, i)) return;
-    const resting = ui.mode === 'rest', name = stepName(d, i), O = orderOf(d).slice(), pos = O.indexOf(i);
+    const resting = ui.mode === 'rest', name = stepName(d, i), O = fullOrderOf(d).slice(), pos = orderOf(d).indexOf(i);
     snapshot('do ' + lc(name) + ' later');
     const p = ensureProg(d);
-    O.splice(pos, 1); O.push(i); p.order = O; touchProg(p); S.current = d;
+    O.splice(O.indexOf(i), 1); O.push(i); p.order = O; touchProg(p); S.current = d;
     const nx = openFrom(d, pos, i), said = name + ' moved to the end';
     p.step = nx;
     if (resting) { ui.rest.next = nx; ui.rest.msg = said; ui.rest.msgUntil = now() + 3000; saveRest(); render(); prefetch(); }
@@ -2058,27 +2400,36 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     for (const s of Object.values(by)) if (s.length >= 3 && !beats(s[0], s[2]) && !beats(s[1], s[2])) n++;
     return n;
   }
-  const deloadDue = () => !!P && !deloadOn() && (S.week - 1 - (S.dl ? S.dl.w : 0) >= 8 || stalledLifts() >= 3);
+  const deloadDue = () => !!P && !deloadOn() && (S.week - 1 - (S.dl ? S.dl.w : 0) >= 6 || stalledLifts() >= 3);
 
   // ---------------------------------------------------------------- the reps and weight selectors
-  // "-  10 reps  +" and "-  40 kg  +" above Done: each number is the set's default (reps: what was done on this set last time,
-  // else the top of the range; weight: see defaultKg; on a drop set the last set's reps and half its weight) until the viewer
+  // "-  10 reps  +" and "-  40 kg  +" above Go: each number is the set's default (reps: what was done on this set last time,
+  // else the top of the range; weight: see defaultKg; on a drop set the last set's reps and 30 % less weight) until the viewer
   // changes it with - / +, (reps) a drag up or down on the stage, the wheel over it or Up / Down; kept on this device for the
-  // set on screen (a reload in the middle of a set keeps the numbers). The weight moves by 2.5 kg (1 kg below 10) and repeats,
-  // faster the longer its button is held.
+  // set on screen (a reload in the middle of a set keeps the numbers). On the rest screen they show the set just logged, and a
+  // change corrects it (amend). The weight moves by 1 kg (1 lb: the menu), to the next whole one, and repeats, faster the
+  // longer its button is held; tap it to type one.
   const selNow = () => { const s = ui.sel, d = ui.day, i = ui.step; return s && s.day === d && s.step === i && s.k === setsOf(d, i).length && !!s.drop === (ui.mode === 'drop') ? s : null; };
   const isSets = () => selMode() && !!stepsOf(ui.day)[ui.step] && stepsOf(ui.day)[ui.step].t === 'sets';
-  function selValue() { if (!isSets()) return 0; const s = selNow(); return s ? s.v : ui.mode === 'drop' ? dropReps(ui.day, ui.step) : defaultReps(ui.day, ui.step); }
-  function selKg() { if (!isSets()) return 0; const s = selNow(); return s && Number.isFinite(s.kg) ? s.kg : ui.mode === 'drop' ? dropKg(ui.day, ui.step) : defaultKg(ui.day, ui.step); }
+  function selValue() {
+    if (amendOn()) return ui.rest.set.n;
+    if (!isSets()) return 0; const s = selNow(); return s ? s.v : ui.mode === 'drop' ? dropReps(ui.day, ui.step) : defaultReps(ui.day, ui.step);
+  }
+  function selKg() {
+    if (amendOn()) return Number.isFinite(ui.rest.set.kg) ? ui.rest.set.kg : 0;
+    if (!isSets()) return 0; const s = selNow(); return s && Number.isFinite(s.kg) ? s.kg : ui.mode === 'drop' ? dropKg(ui.day, ui.step) : defaultKg(ui.day, ui.step);
+  }
   // v: the reps, kg: the weight; null leaves that one as it is
   function setSel(v, kg) {
     if (!selMode() || ackOn()) return false;
-    const d = ui.day, i = ui.step, k = setsOf(d, i).length, drop = ui.mode === 'drop';
     const nv = v == null ? selValue() : clamp(Math.round(v), 0, REPS_MAX), nk = kg == null ? selKg() : clamp(kgOne(kg) == null ? 0 : kgOne(kg), 0, KG_MAX);
     if (nv === selValue() && nk === selKg()) return false;
+    if (amendOn()) { if (!amend(nv, nk)) return false; render(); bump(v == null ? E.kg : E.reps); haptic(6); return true; }
+    const d = ui.day, i = ui.step, k = setsOf(d, i).length, drop = ui.mode === 'drop';
     ui.sel = { day: d, step: i, k, v: nv, kg: nk, drop: drop ? 1 : 0 };
     paintSel(true); bump(v == null ? E.kg : E.reps); haptic(6);
-    E.primary.setAttribute('aria-label', 'Done: log ' + (drop ? 'the drop set' : 'set ' + (k + 1)) + ' with ' + repsWord(nv) + ' at ' + fmtKg(nk) + ' kilograms');
+    E.log.setAttribute('aria-label', 'Log ' + (drop ? 'the drop set' : 'set ' + (k + 1)) + ' with ' + repsWord(nv) + ' at ' + fmtU(nk) + ' ' + uWord() + ', without the pacer');
+    if (drop) render(); // (the drop set's line says its weight)
     return true;
   }
   function saveSel() {
@@ -2102,27 +2453,22 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     saveSel();
     if (how === 'key' || how === 'button') announce(repsWord(selValue()));
   }
-  // one step of the weight: by 1 kg below 10 and by 2.5 above, never past 10 in one go; mult: a held button's speed-up
-  function kgNext(v, dir, mult) {
-    const base = (dir > 0 ? v < 10 : v <= 10) ? 1 : 2.5;
-    let x = v + dir * base * (mult || 1);
-    if (dir > 0 && v < 10 && x > 10) x = 10; else if (dir < 0 && v > 10 && x < 10) x = 10;
-    return clamp(Math.round(x / base) * base, 0, KG_MAX);
-  }
+  // one step of the weight: to the next whole kg or lb (mult: a held button's speed-up)
   function stepKg(dir, mult, how) {
     if (!selMode() || ackOn()) return false;
-    const cur = selKg(), nx = kgNext(cur, dir, mult);
-    if (nx === cur) return false;
-    setSel(null, nx); saveSel();
-    if (how === 'key' || how === 'button') announce(fmtKg(nx) + ' kilograms');
+    const cur = selKg(), nx = stepW(cur, dir, mult);
+    if (sameW(nx, cur) || (dir < 0 && nx > cur) || (dir > 0 && nx < cur)) return false;
+    if (!setSel(null, nx)) return false;
+    saveSel();
+    if (how === 'key' || how === 'button') announce(fmtU(nx) + ' ' + uWord());
     return true;
   }
-  // a weight button: a press steps once, holding it repeats (after 0.4 s, every 0.11 s; 2.5 kg, then 5, then 10 a step);
+  // a weight button: a press steps once, holding it repeats (after 0.4 s, every 0.11 s; 1, then 2, then 5 a step);
   // a keyboard's Enter or Space arrives as a click with no pointer (detail 0) and steps once
   function bindKg(btn, dir) {
     let t = 0, n = 0;
     const stop = () => { clearTimeout(t); t = 0; };
-    const rep = () => { stepKg(dir, n < 5 ? 1 : n < 12 ? 2 : 4); n++; t = setTimeout(rep, 110); };
+    const rep = () => { stepKg(dir, n < 5 ? 1 : n < 12 ? 2 : 5); n++; t = setTimeout(rep, 110); };
     btn.addEventListener('pointerdown', (e) => {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       wake.on(); stop(); n = 0;
@@ -2132,46 +2478,40 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     btn.addEventListener('click', (e) => { if (e.detail === 0) { wake.on(); stepKg(dir, 1, 'button'); } });
     btn.addEventListener('contextmenu', (e) => e.preventDefault());
   }
-  // Tap the weight to type it: any weight (12, 12.5, 47.25) rather than 1 or 2.5 kg at a time. A keypad of its own (no system
-  // keyboard to push the screen about); the first key replaces the number shown, Set puts it on the selector (kept to quarters,
-  // up to 500). A real keyboard's digits, Backspace and Escape work too.
-  const kp = $('kpsheet'); let kpText = '';
+  // Tap the weight to type it: any weight (12, 52.5, 47.25) in the unit on screen, in a text field with the phone's decimal
+  // keyboard (not a number field: with an English page a comma would empty it), at the top of the screen; "52,5" and "52.5"
+  // both work (parseW), Set or the keyboard's Done puts it on the selector (up to 500 kg), Cancel or Escape leave it.
+  const kp = $('kpsheet'), kpin = $('kpin');
+  const decSep = (() => { try { return (1.5).toLocaleString((g.navigator && g.navigator.language) || 'en').indexOf(',') >= 0 ? ',' : '.'; } catch (_) { return '.'; } })();
   const kpOpen = () => !kp.hidden;
-  function paintKeypad() {
-    const v = $('kpval'), u = doc.createElement('span');
-    v.textContent = kpText === '' ? fmtKg(selKg()) : kpText;
-    u.className = 'u'; u.textContent = 'kg'; v.append(u);
-    if (kpText === '') v.setAttribute('data-ph', ''); else v.removeAttribute('data-ph');
+  // a typed weight: digits with one "," or "." (spaces ignored); null for anything else or above the most the selector takes
+  function parseW(raw) {
+    const x = String(raw == null ? '' : raw).replace(/\s/g, '');
+    if (!/^\d*[.,]?\d*$/.test(x) || !/\d/.test(x)) return null;
+    const n = Number(x.replace(',', '.'));
+    return Number.isFinite(n) && n >= 0 && n <= UMAX() ? n : null;
   }
   function openKeypad() {
     if (!selMode() || ackOn() || dialogOpen() || kpOpen()) return;
-    kpText = ''; paintKeypad(); kp.hidden = false;
-    try { $('kpset').focus({ preventScroll: true }); } catch (_) { /* fine */ }
+    kpin.value = ''; kpin.placeholder = fmtU(selKg()).replace('.', decSep); kpin.removeAttribute('aria-invalid');
+    kpin.setAttribute('aria-label', 'Weight in ' + uWord()); $('kpu').textContent = uName();
+    kp.hidden = false;
+    try { kpin.focus({ preventScroll: true }); } catch (_) { /* fine */ }
   }
   function closeKeypad() {
     if (kp.hidden) return;
-    kp.hidden = true;
+    kp.hidden = true; try { kpin.blur(); } catch (_) { /* fine */ }
     try { E.kg.focus({ preventScroll: true }); } catch (_) { /* fine */ }
   }
-  function kpKey(k) {
-    if (k === 'del') kpText = kpText.slice(0, -1);
-    else if (k === '.') { if (!kpText.includes('.')) kpText = (kpText === '' ? '0' : kpText) + '.'; }
-    else if (kpText === '0') kpText = k; // (no leading zeros)
-    else if (kpText.length < 6 && !(kpText.includes('.') && kpText.split('.')[1].length >= 2)) kpText += k;
-    if (parseFloat(kpText) > KG_MAX) kpText = String(KG_MAX);
-    paintKeypad();
-  }
   function kpSet() {
-    const v = kpText === '' ? null : parseFloat(kpText);
+    if (kpin.value.trim() === '') { closeKeypad(); return; }
+    const v = parseW(kpin.value);
+    if (v == null) { kpin.setAttribute('aria-invalid', 'true'); return; }
     closeKeypad();
-    if (v != null && Number.isFinite(v) && setSel(null, v)) { saveSel(); announce(fmtKg(selKg()) + ' kilograms'); }
+    if (setSel(null, fromU(v))) { saveSel(); announce(fmtU(selKg()) + ' ' + uWord()); }
   }
-  function kpKeyDown(e) {
-    const k = e.key;
-    if (/^[0-9]$/.test(k)) kpKey(k); else if (k === '.' || k === ',') kpKey('.'); else if (k === 'Backspace') kpKey('del'); else return; // (Enter presses the focused button)
-    e.preventDefault();
-  }
-  $('kpkeys').addEventListener('click', (e) => { const b = e.target.closest('button[data-k]'); if (b) kpKey(b.dataset.k); });
+  kpin.addEventListener('input', () => { const x = kpin.value.replace(/[^0-9.,\s]/g, ''); if (x !== kpin.value) kpin.value = x; kpin.removeAttribute('aria-invalid'); });
+  kpin.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); kpSet(); } });
   $('kpset').addEventListener('click', kpSet);
   $('kpcancel').addEventListener('click', closeKeypad);
   kp.addEventListener('click', (e) => { if (e.target === kp) closeKeypad(); });
@@ -2234,7 +2574,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   function shown() {
     loadingState(false); soon.hidden = true; placeholderOn = false;
-    if (stage) { stage.glCanvas.style.visibility = ''; if (!VERIFY && !stage.isPlaying()) stage.play(); }
+    if (stage) {
+      stage.glCanvas.style.visibility = ''; tempoOf(wantFig); // (the figure's tempo and side, from its animation)
+      if (!VERIFY) { if (ui.pace && paceHere()) { ui.pace.tempo = tempoOf(exIdAt(ui.day, ui.step)); paceStage(); } else if (!stage.isPlaying()) stage.play(); }
+    }
     syncRender(); renderTip(); render();
     if (booting) { waiting(false); bootDone(); }
   }
@@ -2261,6 +2604,211 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const tq = Q.get('t');
     if (stage && stage.cur && tq != null) { stage.pause(); stage.setPhase(tq === 'peak' || tq === 'still' ? stage.info()[tq] : +tq); }
   }
+  // the figure the screen wants: during a rest the next set's (the next exercise, when the rest leads to another one: so its
+  // machine can be found while resting), else the step's
+  const figWanted = () => (ui.mode === 'end' ? null : ui.mode === 'rest' && ui.rest ? figAt(ui.day, ui.rest.next) : figAt(ui.day, ui.step));
+  function syncFig() { if (ui.mode === 'boot') return; const id = figWanted(); if (id !== wantFig) showFigure(id, true); }
+  // A turned figure comes back to its own view (the coaching card steps aside while it is turned): when the pacer starts, at a
+  // rest and at the next set, and by itself a while after the last turn (turnBack)
+  let turnT = 0;
+  function unturn() { clearTimeout(turnT); turnT = 0; if (stage && stage.view().turned) stage.resetView(); }
+  function turnBack() { clearTimeout(turnT); turnT = setTimeout(() => { turnT = 0; if (!G) unturn(); else turnBack(); }, 6000); }
+  // ---- one-arm exercises: the side on screen. The animations of one-arm exercises work one side (their muscles' "side"); the
+  // other side is the same figure mirrored: its WebGL layer flipped about the figure box's centre line (the horizon is
+  // symmetric; the rim light and the grain are other layers and stay as they are)
+  let mirrored = false;
+  const otherSide = (s) => (s === 'l' ? 'r' : 'l');
+  const animSide = (id) => { const x = id && tempos.get(id); return x && (x.side === 'l' || x.side === 'r') ? x.side : null; };
+  // the side a one-arm set starts on: the weaker one; by the set before it today when its sides differed, else by last time's
+  // sets (fewer reps in all), else the left
+  function firstSide(d, i) {
+    const a = lrOf(d, i).filter(Boolean), last = a[a.length - 1];
+    if (last && last[0] !== last[1]) return last[0] < last[1] ? 'l' : 'r';
+    const V = prevOf(d, i), L = ((V && V.lr) || []).filter(Boolean);
+    if (L.length) { const l = L.reduce((s, x) => s + x[0], 0), r = L.reduce((s, x) => s + x[1], 0); if (l !== r) return l < r ? 'l' : 'r'; }
+    return 'l';
+  }
+  const curSide = (pc) => (pc.side === 0 ? pc.first : otherSide(pc.first));
+  function sideNow() {
+    if (ui.mode === 'end' || !wantFig || !exOf(wantFig).unilateral) return null;
+    if (ui.pace && paceHere()) return curSide(ui.pace);
+    const i = ui.mode === 'rest' && ui.rest ? ui.rest.next : ui.step;
+    return figAt(ui.day, i) === wantFig ? firstSide(ui.day, i) : null;
+  }
+  function mirrorFor() {
+    const s = sideNow(), a = animSide(wantFig), want = !!(s && a && s !== a);
+    if (want === mirrored) return;
+    mirrored = want;
+    applyMirror();
+  }
+  function applyMirror() {
+    if (!stage) return;
+    const c = stage.glCanvas.style, B = stage.comp && stage.comp.box;
+    if (!mirrored) { c.transform = ''; c.transformOrigin = ''; return; }
+    c.transformOrigin = Math.round(B ? (B.x0 + B.x1) / 2 : stageEl.clientWidth / 2) + 'px 50%';
+    c.transform = 'scaleX(-1)';
+  }
+
+  // ---------------------------------------------------------------- the pacer
+  // Go on a set (or a drop set): a 5 s countdown (big amber numerals, a beep and a short buzz each second), then the reps. The
+  // figure waits at the bottom of its rep during the countdown and then runs from the start of the rep at the exercise's own
+  // tempo, on ONE clock: the pacer's start time drives the figure (paceStage), the coaching card's phase (paintPhase) and
+  // the counter, so all three agree to the frame (a rep counts once its lift is done; a soft tick each). Stop logs the reps
+  // counted with the weight shown and starts the rest (logSet); a stop before any rep (the countdown) logs nothing.
+  // A one-arm exercise: the countdown, the first side (the weaker one), Stop, "Switch sides" (a 5 s countdown, no rest; Go
+  // starts the second side at once), the second side mirrored with the first side's reps as its target: it stops by itself when
+  // it has matched them (a double buzz), Stop before that logs fewer. The set logs both sides; the lower one is its reps.
+  // The pacer is kept on this device, so a reload goes on where it was; Undo stops it (nothing logged).
+  const tempos = new Map(); // id -> { dur, segs, c1 (the lift's end), e1 (the lowering's end), lift, lower (s), side }
+  function tempoFrom(M, side) {
+    const segs = M.segs.map((s) => ({ phase: s.phase, t0: s.t0, t1: s.t1 })), dur = M.duration;
+    const con = segs.filter((s) => s.phase === 'con'), ecc = segs.filter((s) => s.phase === 'ecc');
+    const c1 = con.length ? con[0].t1 : dur * 0.25, e1 = ecc.length ? ecc[ecc.length - 1].t1 : dur;
+    const sum = (a) => a.reduce((x, s) => x + s.t1 - s.t0, 0);
+    return { dur, segs, c1, e1, lift: sum(con) || 1, lower: sum(ecc) || 2.5, side: side || null };
+  }
+  // the tempo of an exercise: from its figure on the stage, else its animation file (read through MCE.Motion), else a plain
+  // rep (lift 1 s, hold 0.5 s, lower 2.5 s, pause 0.5 s) until the file is in
+  const STD_TEMPO = tempoFrom({ duration: 4.5, segs: [{ phase: 'con', t0: 0, t1: 1 }, { phase: 'hold', t0: 1, t1: 1.5 }, { phase: 'ecc', t0: 1.5, t1: 4 }, { phase: 'pause', t0: 4, t1: 4.5 }] });
+  function tempoOf(id) {
+    if (!id) return STD_TEMPO;
+    if (stage && stage.cur && stage.cur.id === id && stage.cur.motion && stage.cur.motion.mode !== 'cycle') {
+      const x = tempoFrom(stage.cur.motion, stage.cur.ex && stage.cur.ex.muscles && stage.cur.ex.muscles.side); tempos.set(id, x); return x;
+    }
+    return tempos.get(id) || STD_TEMPO;
+  }
+  function loadTempo(id) {
+    if (!id || tempos.has(id) || !MCE.Motion) return;
+    tempos.set(id, null);
+    loadJSON('exercises/' + id + '.json').then((EX) => {
+      const M = new MCE.Motion(EX);
+      if (M.mode !== 'cycle') tempos.set(id, tempoFrom(M, EX.muscles && EX.muscles.side));
+      else tempos.delete(id);
+      if (ui.pace && exIdAt(ui.pace.day, ui.pace.step) === id) ui.pace.tempo = tempoOf(id); // (the figure's own tempo: one clock)
+      render();
+    }, () => tempos.delete(id));
+  }
+  // the pacer belongs to the set on screen
+  const paceHere = () => { const p = ui.pace; return !!p && setMode() && p.day === ui.day && p.step === ui.step && p.k === setsOf(ui.day, ui.step).length && p.drop === (ui.mode === 'drop'); };
+  // The pacer at time t, from its clock: { stage: 'count' | 'switch' | 'run', secs (the countdown's numeral), count, el (s into
+  // the run), ph: { k ('fast': the lift and its hold, 'slow': the lowering and its pause), dur, rep }, phase (of the loop),
+  // side ('l' | 'r' | null), target }. A countdown that is over is already the run (the loop moves the stored state on).
+  function paceNow(t) {
+    const p = ui.pace; if (!p || !paceHere()) return null;
+    t = t == null ? now() : t;
+    let st = p.stage, run0 = p.run0;
+    if (st !== 'run') { const end = p.t0 + (st === 'count' ? COUNT_MS : SWITCH_MS) / SPEED; if (t >= end) { st = 'run'; run0 = end; } else return { stage: st, secs: Math.max(1, Math.ceil((end - t) * SPEED / 1000 - 1e-6)), side: p.uni ? curSide(p) : null, target: p.side === 1 ? p.done[0] : p.target }; }
+    const T_ = p.tempo, el = Math.max(0, (t - run0) / 1000), cyc = el / T_.dur, rep = Math.floor(cyc), x = (cyc - rep) * T_.dur;
+    const sg = T_.segs.find((s) => x < s.t1) || T_.segs[T_.segs.length - 1], k = sg.phase === 'con' || sg.phase === 'hold' ? 'fast' : 'slow';
+    const count = Math.min(REPS_MAX, el < T_.c1 ? 0 : Math.floor((el - T_.c1) / T_.dur) + 1);
+    return { stage: 'run', count, el, run0, ph: { k, dur: k === 'fast' ? T_.lift : T_.lower, rep, seg: sg.phase }, phase: cyc - rep, side: p.uni ? curSide(p) : null, target: p.side === 1 ? p.done[0] : p.target };
+  }
+  // The stage follows the pacer: paused at the bottom of the rep during a countdown; while it counts, the figure's own loop
+  // (phase0 + elapsed / duration, at the exercise's real tempo, as the pacer's) is set to the pacer's phase as the reps start and
+  // set again whenever the two part by more than 1/500 of a rep (frames the page skipped, the page hidden and shown again): one
+  // clock; its own loop again after it. (The stage's public setPhase / play / pause: no change to the engine.)
+  let resyncs = 0;
+  function paceStage(t) {
+    if (!stage || VERIFY || !stage.cur) return;
+    t = t == null ? now() : t;
+    const pc = paceNow(t);
+    if (!pc) { if (!stage.isPlaying() && !figHidden) stage.play(); return; }
+    if (pc.stage !== 'run') { if (stage.isPlaying()) stage.pause(); if (stage.phase !== 0) stage.setPhase(0); return; }
+    if (!stage.isPlaying()) stage.play();
+    let d = Math.abs(stagePhaseAt(t) - pc.phase); d = Math.min(d, 1 - d);
+    if (d > 0.002) { stage.setPhase(pc.phase); resyncs++; }
+  }
+  // the stage's loop at time t, as its next frame will draw it (its playing clock: phase0, tStart and the loop's duration)
+  const stagePhaseAt = (t) => { const s = stage, dur = s.cur.motion.duration; return s.playing ? (((s.phase0 + (t - s.tStart) / 1000 / dur) % 1) + 1) % 1 : s.phase; };
+  function paceGo() {
+    if (!setMode() || ackOn() || ui.pace || kpOpen()) return;
+    const d = ui.day, i = ui.step, id = exIdAt(d, i), e = exOf(id);
+    Snd.unlock(); unturn(); dropNote();
+    ui.pace = { day: d, step: i, k: setsOf(d, i).length, drop: ui.mode === 'drop', uni: e.unilateral, first: e.unilateral ? firstSide(d, i) : null, side: 0, stage: 'count',
+      t0: now(), run0: 0, done: [], target: selValue(), kg: selKg(), brace: braceAt(d, i), beat: Math.ceil(COUNT_MS / 1000), seen: 0, tempo: tempoOf(id) };
+    savePace(); paceStage(); paceBeeps(); haptic(30);
+    render(); kickLoop();
+    announce((e.unilateral ? sideWord(ui.pace.first) + '. ' : '') + 'Five seconds, then go.');
+  }
+  // a countdown's beeps, set out on the audio clock from now to its end (one a second, then the higher "go")
+  function paceBeeps(skipNow) {
+    const p = ui.pace; if (!p || p.stage === 'run') return;
+    Snd.cancel();
+    const end = p.t0 + (p.stage === 'count' ? COUNT_MS : SWITCH_MS) / SPEED, t = now(), step = 1000 / SPEED;
+    for (let x = end - step; x >= t - 50 && x > end - 5.5 * step; x -= step) if (!(skipNow && x - t < 100)) Snd.at('count', Math.max(0, x - t));
+    Snd.at('go', Math.max(0, end - t));
+  }
+  // the loop's beat while the pacer is on: the countdown's seconds, its end, the reps as they come, the second side's match
+  function paceTick(t) {
+    const p = ui.pace; if (!p || !paceHere()) return;
+    if (p.stage !== 'run') {
+      const end = p.t0 + (p.stage === 'count' ? COUNT_MS : SWITCH_MS) / SPEED;
+      if (t >= end) { p.stage = 'run'; p.run0 = end; p.seen = 0; savePace(); paceStage(); if (t - end < 1000) haptic(90); render(); announce('Go.'); return; }
+      const secs = Math.ceil((end - t) * SPEED / 1000 - 1e-6);
+      if (secs !== p.beat) { p.beat = secs; haptic(30); render(); } // (its beeps are on the audio clock: paceBeeps)
+      return;
+    }
+    const pc = paceNow(t);
+    if (!pc) return;
+    // the second side stops by itself once it has matched the first: at the end of the lowering of the matching rep
+    if (p.uni && p.side === 1) {
+      const target = p.done[0], stopAt = target > 0 ? (target - 1) * p.tempo.dur + p.tempo.e1 : 0;
+      if (pc.el >= stopAt) { paceFinish(target, 'match'); return; }
+    }
+    paceStage(t);
+    if (pc.count !== p.seen) { if (pc.count > p.seen) { Snd.play('tick'); haptic(12); } p.seen = pc.count; render(); return; }
+    setText(E.clock, String(pc.count)); paintPhase();
+  }
+  // Stop: before any rep, nothing is logged; the first side of a one-arm set: switch sides; else the set is logged
+  function paceStop() {
+    const p = ui.pace; if (!p || !paceHere() || ackOn()) return;
+    const pc = paceNow();
+    if (pc.stage === 'count') { cancelPace(); render(); announce('Stopped. Nothing logged.'); return; }
+    if (pc.stage === 'switch') { paceSecondNow(); return; }
+    if (p.uni && p.side === 0) {
+      p.done = [pc.count]; p.side = 1; p.stage = 'switch'; p.t0 = now(); p.beat = Math.ceil(SWITCH_MS / 1000); p.seen = 0;
+      savePace(); paceStage(); paceBeeps(true); Snd.play('switch'); haptic([30, 50, 30]); render();
+      announce(T.switchSides + '. ' + sideWord(curSide(p)) + ', ' + repsWord(pc.count) + ' to match.');
+      return;
+    }
+    paceFinish(pc.count, 'stop');
+  }
+  // Go during "Switch sides": the second side now
+  function paceSecondNow() {
+    const p = ui.pace; if (!p || p.stage !== 'switch') return;
+    p.stage = 'run'; p.run0 = now(); p.seen = 0; savePace(); paceStage(); Snd.cancel(); Snd.play('go'); haptic(90); render();
+  }
+  function paceFinish(n, how) {
+    const p = ui.pace; if (!p) return;
+    let lr = null, reps = n;
+    if (p.uni) { const a = p.done[0], b = n; lr = p.first === 'l' ? [a, b] : [b, a]; reps = Math.min(a, b); }
+    if (how === 'match') { Snd.play('match'); haptic([60, 50, 60]); }
+    if (p.drop) logDrop(reps, p.kg); else logSet(reps, p.kg, 'pace', lr);
+  }
+  // the pacer goes (logged, stopped, or its set is not on screen any more): the figure's own loop again
+  function endPace() { if (!ui.pace) return; if (ui.pace.stage !== 'run') Snd.cancel(); ui.pace = null; savePace(); paceStage(); }
+  function cancelPace() { endPace(); }
+  function savePace() {
+    if (VERIFY || ui.adhoc) return;
+    const u = lsGet(LS_UI) || {}, p = ui.pace, at = (x) => Math.round(Date.now() - (now() - x));
+    u.pace = p ? { day: p.day, step: p.step, k: p.k, drop: p.drop ? 1 : 0, uni: p.uni ? 1 : 0, first: p.first, side: p.side, stage: p.stage, t0At: at(p.t0), run0At: p.run0 ? at(p.run0) : 0,
+      done: p.done.slice(), target: p.target, kg: p.kg, brace: p.brace ? 1 : 0 } : null;
+    lsSet(LS_UI, u);
+  }
+  // a pacer that was running when the page went (a reload, the phone closing the app): on, where its clock is now, if its set
+  // is still the one on screen and it is recent
+  function restorePace() {
+    const x = (lsGet(LS_UI) || {}).pace;
+    if (!x || typeof x !== 'object' || x.day !== ui.day || x.step !== ui.step || !setMode() || x.k !== setsOf(ui.day, ui.step).length || !!x.drop !== (ui.mode === 'drop')) return;
+    const age = Date.now() - num(x.t0At);
+    if (!(age >= 0 && age < 20 * 60e3) || !['count', 'switch', 'run'].includes(x.stage)) return;
+    const id = exIdAt(ui.day, ui.step), e = exOf(id), side = x.side === 1 ? 1 : 0, first = x.first === 'r' ? 'r' : 'l';
+    ui.pace = { day: ui.day, step: ui.step, k: x.k, drop: !!x.drop, uni: !!x.uni && e.unilateral, first, side, stage: x.stage, t0: now() - age, run0: x.run0At ? now() - (Date.now() - num(x.run0At)) : 0,
+      done: Array.isArray(x.done) ? x.done.slice(0, 1).map((n) => int(n, 0, REPS_MAX) || 0) : [], target: int(x.target, 0, REPS_MAX) || 0, kg: kgOne(x.kg) || 0, brace: !!x.brace, beat: 0, seen: 0, tempo: tempoOf(id) };
+    if (ui.pace.uni && side === 1 && !ui.pace.done.length) ui.pace.done = [0];
+    const pc = paceNow(); if (pc && pc.stage === 'run') ui.pace.seen = pc.count; else if (pc) { ui.pace.beat = pc.secs; paceBeeps(); }
+    paceStage(); render(); kickLoop();
+  }
 
   // ---------------------------------------------------------------- the rim-light timer and the loop
   function rim(p, o) {
@@ -2286,6 +2834,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if (!st.open && elapsedOf(tm) >= st.sec) { finishTimer(true, ki); continue; }
       need = true;
     }
+    // the pacer: its countdown, its reps, the second side's match (it may log the set: the rest follows in this same frame)
+    if (ui.pace && paceHere()) { if (!ack) paceTick(t); if (ui.pace) need = true; }
     if (ui.mode === 'rest' && ui.rest) {
       const r = ui.rest, el = t - r.t0;
       if (el >= r.dur && !ack) { endRest(true); return; }
@@ -2301,6 +2851,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       // time is up (the warm-up, stretching): the step is done and the day moves on, with the ember check
       if (!st.open && el >= st.sec && !ack) { finishTimer(true); return; }
       if (st.open && el >= st.sec && !tm.full) { tm.full = true; haptic([24, 70, 24]); }
+      const ph = phaseNow(st, el);
+      if (ph && tm.ph !== ph.i) { if (tm.ph != null && !ack) { Snd.play(ph.p.hard ? 'go' : 'switch'); haptic([90, 60, 90]); announce(ph.p.name + (ph.p.pulse ? ', pulse ' + ph.p.pulse : '') + '.'); } tm.ph = ph.i; if (!ack) render(); }
       rim(Math.min(1, el / st.sec), el >= st.sec ? { head: false } : null);
       need = true;
       if (!ack) setText(E.clock, timerClock(st, tm));
@@ -2327,7 +2879,12 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (need) { if (!doc.hidden) raf = requestAnimationFrame(loop); }
     else if (iv) { clearInterval(iv); iv = 0; }
   }
-  doc.addEventListener('visibilitychange', () => { if (!doc.hidden) { kickLoop(); closeGap(); paintSess(); } else cancelGesture(true); });
+  // out of sight during a rest: the service worker is told again when it ends (it shows the notification then); back in
+  // sight: the notification goes, and the pacer's figure picks up its clock where it is now
+  doc.addEventListener('visibilitychange', () => {
+    if (!doc.hidden) { kickLoop(); closeGap(); paintSess(); Alerts.clear(); if (ui.pace) paceStage(); }
+    else { cancelGesture(true); if (ui.mode === 'rest' && ui.rest) Alerts.schedule(); }
+  });
 
   // Running timed steps and a running rest survive a reload of the page (this device only: their start / end times are
   // kept locally; a timer never writes to the saved document).
@@ -2352,7 +2909,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function saveRest() {
     if (VERIFY || ui.adhoc) return;
     const u = lsGet(LS_UI) || {}, r = ui.rest;
-    u.rest = r ? { day: ui.day, after: r.after, next: r.next, dur: r.dur, endsAt: Date.now() + (r.dur - (now() - r.t0)), msg: r.msg || null, msgLeft: Math.max(0, r.msgUntil - now()), set: r.set || null } : null;
+    u.rest = r ? { day: ui.day, after: r.after, next: r.next, dur: r.dur, endsAt: Date.now() + (r.dur - (now() - r.t0)), msg: r.msg || null, msgLeft: Math.max(0, r.msgUntil - now()), set: r.set || null, uid: r.uid || null } : null;
     lsSet(LS_UI, u);
   }
   function restoreRest() {
@@ -2364,7 +2921,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     ui.mode = 'set'; ui.step = r.after; // (a rest follows a set)
     showFigure(figAt(ui.day, r.after), true);
     // (its timers are left as they run now: the stored ones were timed on the previous page's clock)
-    startRest(r.after, r.next, r.msg, r.set, { dur: r.dur, left, msgLeft: r.msgLeft || 0 });
+    startRest(r.after, r.next, typeof r.msg === 'string' ? r.msg.slice(0, 80) : null, restSet(r.set), { dur: r.dur, left, msgLeft: r.msgLeft || 0, uid: typeof r.uid === 'string' ? r.uid.slice(0, 40) : null });
   }
 
   // ---------------------------------------------------------------- small feedback: tip, haptics, speech
@@ -2382,16 +2939,101 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if (n && typeof n.vibrate === 'function' && (!ua || ua.hasBeenActive)) n.vibrate(p);
     } catch (_) { /* not allowed here */ }
   }
+  // Sound (the menu turns it off; on by default): short tones from Web Audio, unlocked by a tap (a browser lets a page make sound
+  // only after one) and put on the audio clock, not on timers (they keep time when the page is busy). count: a second of a
+  // countdown; go: its end; tick: a rep; switch: switch sides, or the next phase of a ride; match: the second side matched the
+  // first; drop: the drop set, now; rest: the rest is over. at(kind, ms): the same, ms from now (a countdown's beeps, set out at
+  // its start); cancel(): the ones set out and not played yet go. played: how many of each were asked for (the test hook).
+  const Snd = (() => {
+    let ctx = null, bus = null;
+    const played = {};
+    const TONES = {
+      count: [[880, 0, 0.09, 0.22]], go: [[1320, 0, 0.24, 0.3]], tick: [[1600, 0, 0.035, 0.07]],
+      switch: [[660, 0, 0.12, 0.25], [880, 0.16, 0.12, 0.25]], match: [[990, 0, 0.1, 0.28], [990, 0.17, 0.1, 0.28]],
+      drop: [[740, 0, 0.1, 0.26], [740, 0.17, 0.1, 0.26]], rest: [[660, 0, 0.18, 0.3], [990, 0.22, 0.28, 0.3]],
+    };
+    function unlock() {
+      const AC = g.AudioContext || g.webkitAudioContext;
+      if (!ctx && AC) { try { ctx = new AC({ latencyHint: 'interactive' }); bus = ctx.createGain(); bus.connect(ctx.destination); } catch (_) { ctx = null; } }
+      if (ctx && ctx.state === 'suspended') { try { const p = ctx.resume(); if (p && p.catch) p.catch(() => {}); } catch (_) { /* fine */ } }
+      return ctx;
+    }
+    function at(kind, ms) {
+      played[kind] = (played[kind] || 0) + 1;
+      if (!prefs.sound || !TONES[kind] || !ctx || !bus) return;
+      if (ctx.state === 'suspended') unlock();
+      if (ctx.state === 'closed') return;
+      const t0 = ctx.currentTime + 0.01 + Math.max(0, ms || 0) / 1000;
+      for (const [f, dt, len, vol] of TONES[kind]) {
+        try {
+          const o = ctx.createOscillator(), gn = ctx.createGain();
+          o.type = 'sine'; o.frequency.value = f;
+          gn.gain.setValueAtTime(0.0001, t0 + dt); gn.gain.exponentialRampToValueAtTime(vol, t0 + dt + 0.012); gn.gain.exponentialRampToValueAtTime(0.0001, t0 + dt + len);
+          o.connect(gn); gn.connect(bus); o.start(t0 + dt); o.stop(t0 + dt + len + 0.03);
+        } catch (_) { /* no sound here */ }
+      }
+    }
+    function cancel() { if (!ctx || !bus) return; try { bus.disconnect(); } catch (_) { /* fine */ } bus = ctx.createGain(); bus.connect(ctx.destination); }
+    doc.addEventListener('pointerup', unlock, true); doc.addEventListener('keydown', unlock, true);
+    doc.addEventListener('visibilitychange', () => { if (!doc.hidden && ctx) unlock(); });
+    return { unlock, play: (kind) => at(kind, 0), at, cancel, played, state: () => (ctx ? ctx.state : 'none') };
+  })();
+  // The end of a rest while the app is out of sight (browsing something else while resting): the service worker holds the time
+  // and shows a notification then (a hidden page's timers are slowed down or frozen; a worker waiting on a message is kept
+  // alive up to 5 minutes, and every rest is shorter), and a tap on it opens the app. In sight, the page beeps and buzzes
+  // itself (endRest) and the worker shows nothing. The permission is asked for from a tap: at the first rest (the press that
+  // started it, or the next press during it), or the menu's "Test rest alert" (it rings in 2 minutes, in or out of the app:
+  // the way to see what the phone lets through).
+  const Alerts = (() => {
+    const nav = g.navigator, sw = nav && nav.serviceWorker;
+    let sched = 0, pending = false, testAt = 0;
+    const can = () => !VERIFY && !!sw && 'Notification' in g;
+    const perm = () => ('Notification' in g ? g.Notification.permission : 'none');
+    const post = (m) => {
+      try { if (sw.controller) sw.controller.postMessage(m); else sw.ready.then((r) => { if (r.active) r.active.postMessage(m); }).catch(() => {}); } catch (_) { /* no worker here */ }
+    };
+    function schedule() {
+      const r = ui.rest; if (!can() || !r || ui.adhoc) return;
+      sched = Date.now() + Math.max(0, r.dur - (now() - r.t0));
+      post({ type: 'rest', at: sched, title: 'Rest over', body: restNext(r) });
+    }
+    function cancel() { if (!can()) return; sched = 0; post({ type: 'rest', at: 0 }); }
+    function request() { try { const p = g.Notification.requestPermission(); return p && p.then ? p : Promise.resolve(perm()); } catch (_) { return Promise.resolve(perm()); } }
+    function ask() {
+      if (!can() || perm() !== 'default') return;
+      const u = lsGet(LS_UI) || {}; if (u.notifAsked) return;
+      const ua = nav.userActivation; if (ua && !ua.isActive) { pending = true; return; }
+      pending = false; u.notifAsked = 1; lsSet(LS_UI, u);
+      request().then(() => { if (ui.mode === 'rest') schedule(); }, () => {});
+    }
+    doc.addEventListener('click', () => { if (pending && ui.mode === 'rest') ask(); }, true);
+    // the menu's test: allowed from this tap, then a notification in 2 minutes whatever is on screen (a rest of its own replaces it)
+    function test() {
+      if (!can()) return Promise.resolve('none');
+      const u = lsGet(LS_UI) || {}; u.notifAsked = 1; lsSet(LS_UI, u);
+      return (perm() === 'default' ? request() : Promise.resolve(perm())).then((p) => {
+        if (p !== 'granted') return p;
+        testAt = Date.now() + 120000; sched = testAt;
+        post({ type: 'rest', at: testAt, test: true, title: 'Rest over (test)', body: 'Rest alerts work on this phone.' });
+        return p;
+      });
+    }
+    function clear() {
+      if (!can()) return;
+      try { sw.ready.then((r) => (r.getNotifications ? r.getNotifications({ tag: 'rest' }) : [])).then((ns) => ns.forEach((n) => n.close())).catch(() => {}); } catch (_) { /* fine */ }
+    }
+    return { schedule, cancel, ask, clear, test, perm, state: () => ({ at: sched, permission: perm(), asked: !!(lsGet(LS_UI) || {}).notifAsked, testAt }) };
+  })();
   let lastSaid = '';
   function announce(s) { const el = $('status'); if (!s) return; el.textContent = s === lastSaid ? s + '\u00a0' : s; lastSaid = el.textContent; }
   // what the step on screen is, in words: "Chest press, set 2 of 4, 8 to 10 reps, 10 selected."
   function stepSpeech() {
     const d = ui.day, st = ui.mode === 'end' ? null : stepsOf(d)[ui.step];
     if (!st) return '';
-    const e = st.t === 'sets' ? exOf(exIdAt(d, ui.step)) : null, k = setsOf(d, ui.step).length, sel = selValue() + ' reps and ' + fmtKg(selKg()) + ' kilograms selected.';
+    const e = st.t === 'sets' ? exOf(exIdAt(d, ui.step)) : null, k = setsOf(d, ui.step).length, sel = selValue() + ' reps and ' + fmtU(selKg()) + ' ' + uWord() + ' selected.';
     if (ui.mode === 'set') { const R = rangeAt(d, ui.step, k); return e.name + ', ' + (topAt(d, ui.step) && !deloadOn() ? (k ? 'back-off set, ' : 'top set, ') : '') + 'set ' + (k + 1) + ' of ' + nOf(d, ui.step) + ', ' + R.lo + ' to ' + R.hi + ' reps' + (e.unilateral ? ' each arm' : '') + ', ' + sel; }
     if (ui.mode === 'warm') return e.name + ', warm-up sets: ' + warmText(warmSets(d, ui.step) || [], e).split(MID).join(', ').replace(/×/g, 'times') + '.';
-    if (ui.mode === 'drop') return e.name + ', drop set: no rest, about half the weight, ' + sel;
+    if (ui.mode === 'drop') return e.name + ', drop set: no rest, about 30 percent lighter, ' + sel;
     if (ui.mode === 'timer') return st.name + ', ' + dash(st.line).replace(ND, ' to ') + '.';
     if (ui.mode === 'done') return stepName(d, ui.step) + ', done.';
     return '';
@@ -2410,7 +3052,9 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // (pinch zoom is the browser's). The stage is touch-action: pinch-zoom, so every one-finger gesture is the page's.
   const DECIDE = 12, REP_PX = 24;
   let G = null, lastTap = null, tapT = 0, wheelAcc = 0;
-  const turnable = () => !!(stage && stage.cur && !figHidden && !loadingNow && !placeholderOn && engine === 'ready');
+  // (not while the pacer counts: the figure is the tempo to follow then; a mirrored figure turns the way the finger goes)
+  const turnable = () => !!(stage && stage.cur && !figHidden && !loadingNow && !placeholderOn && engine === 'ready') && !(ui.pace && paceHere());
+  const yawSign = () => (mirrored ? -1 : 1);
   const onStage = (t) => !!t && box.contains(t);
   const outside = (e) => e.clientX < 0 || e.clientY < 0 || e.clientX > g.innerWidth || e.clientY > g.innerHeight;
   app.addEventListener('pointerdown', (e) => {
@@ -2435,10 +3079,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if (dx * dx + dy * dy < DECIDE * DECIDE) return;
       const vertical = Math.abs(dy) > Math.abs(dx);
       if (vertical && selMode() && !ackOn()) { G.kind = 'adjust'; G.base = selValue(); G.sel = ui.sel; E.reps.classList.add('big'); app.classList.add('adjusting'); }
-      else if (!vertical && turnable()) { G.kind = 'turn'; stage.orbitStart(); markTurn(); stage.orbitBy(dx * 0.42, 0); return; }
+      else if (!vertical && turnable()) { G.kind = 'turn'; clearTimeout(turnT); stage.orbitStart(); markTurn(); stage.orbitBy(dx * 0.42 * yawSign(), 0); return; }
       else { G.kind = 'none'; return; }
     }
-    if (G.kind === 'turn') stage.orbitBy(ix * 0.42, 0);
+    if (G.kind === 'turn') stage.orbitBy(ix * 0.42 * yawSign(), 0);
     else if (G.kind === 'adjust') {
       if (!selMode() || ackOn()) { endAdjust(G, false); G.kind = 'none'; return; }
       const m = Math.sign(dy) * Math.max(0, Math.abs(dy) - DECIDE);
@@ -2459,8 +3103,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (g0.kind === 'adjust') { endAdjust(g0, !!revert); return; }
     if (g0.kind === 'turn') {
       const tr = g0.trail, a = tr[0], b = tr[tr.length - 1], dt = (b[0] - a[0]) / 1000;
-      const v = !cancel && dt > 0.008 && now() - b[0] < 90 ? ((b[1] - a[1]) / dt) * 0.42 : 0;
-      stage.orbitEnd(v); return;
+      const v = !cancel && dt > 0.008 && now() - b[0] < 90 ? ((b[1] - a[1]) / dt) * 0.42 * yawSign() : 0;
+      stage.orbitEnd(v); turnBack(); return;
     }
     if (cancel || g0.kind !== 'pending') return;
     if (now() - g0.t0 < 600) onTap(g0.x, g0.y);
@@ -2497,9 +3141,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (dialogOpen() || ackOn() || now() < primLock) return;
     const a = E.primary.dataset.act;
     dropNote(); // a new action: the previous step's done line and its Undo are over
-    if (a === 'done' && ui.mode === 'set') logSet(selValue(), selKg(), 'done');
+    if (a === 'go' && setMode() && !ui.pace) paceGo();
+    else if (a === 'stop' && ui.pace) paceStop();
+    else if (a === 'go2' && ui.pace) paceSecondNow();
     else if (a === 'warm' && ui.mode === 'warm') warmUpDone();
-    else if (a === 'drop' && ui.mode === 'drop') logDrop(selValue(), selKg());
     else if (a === 'skip' && ui.mode === 'rest') endRest(false);
     else if (a === 'start' && ui.mode === 'timer' && !curTimer()) timerStart();
     else if (a === 'finish' && ui.mode === 'timer' && curTimer()) finishTimer(false);
@@ -2507,11 +3152,22 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     else if (a === 'next' && ui.mode === 'end') continueEnd();
   }
   E.primary.addEventListener('click', primaryAct);
+  // the check beside Go: the set (or the drop set) logged as the selectors say, no pacer
+  E.log.addEventListener('click', () => {
+    wake.on();
+    if (dialogOpen() || ackOn() || now() < logLock || ui.pace || kpOpen()) return;
+    dropNote();
+    if (ui.mode === 'set') logSet(selValue(), selKg(), 'done');
+    else if (ui.mode === 'drop') logDrop(selValue(), selKg());
+    else if (ui.mode === 'timer' && E.log.dataset.act === 'skip' && !curTimer()) finishTimer(false, null, true);
+  });
   E.minus.addEventListener('click', () => { wake.on(); stepSel(-1, 'button'); });
   E.plus.addEventListener('click', () => { wake.on(); stepSel(1, 'button'); });
   bindKg(E.kgminus, -1); bindKg(E.kgplus, 1);
   E.back.addEventListener('click', () => {
-    wake.on(); if (dialogOpen() || !hist.length) return;
+    wake.on(); if (dialogOpen()) return;
+    if (ui.pace && paceHere()) { cancelPace(); render(); haptic(10); announce('Stopped. Nothing logged.'); return; } // (the pacer: stopped, nothing logged)
+    if (!hist.length) return;
     const f = doc.activeElement === E.back; doUndo();
     if (f && !hist.length) { try { E.primary.focus({ preventScroll: true }); } catch (_) { /* fine */ } } // (a disabled button keeps no focus)
   });
@@ -2532,11 +3188,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   doc.addEventListener('keydown', (e) => {
     if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.key === 'Escape') {
-      if (kpOpen()) { e.preventDefault(); closeKeypad(); } else if (sheetOpen()) { e.preventDefault(); closeSheet(); } else if (dialogOpen()) { e.preventDefault(); closeDays(); } else if (menuOpen()) { e.preventDefault(); closeMenu(true); } else cancelGesture(true);
+      if (kpOpen()) { e.preventDefault(); closeKeypad(); } else if (optOpen()) { e.preventDefault(); closeOpts(); } else if (sheetOpen()) { e.preventDefault(); closeSheet(); } else if (dialogOpen()) { e.preventDefault(); closeDays(); } else if (menuOpen()) { e.preventDefault(); closeMenu(true); } else cancelGesture(true);
       return;
     }
-    if (kpOpen()) { kpKeyDown(e); return; }
-    if (dialogOpen() || sheetOpen() || menuOpen()) return; // (the arrow keys belong to what is open)
+    if (kpOpen()) return; // (the weight field has the keys)
+    if (dialogOpen() || sheetOpen() || menuOpen() || optOpen()) return; // (the arrow keys belong to what is open)
     const t = e.target && e.target.nodeType === 1 ? e.target : null;
     if (t && (t.isContentEditable || t.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])'))) return;
     if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && selMode()) {
@@ -2546,7 +3202,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     }
     if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && turnable()) {
       e.preventDefault(); wake.on(); markTurn();
-      stage.orbitStart(); stage.orbitBy(e.key === 'ArrowLeft' ? -20 : 20, 0); stage.orbitEnd(0);
+      stage.orbitStart(); stage.orbitBy((e.key === 'ArrowLeft' ? -20 : 20) * yawSign(), 0); stage.orbitEnd(0); turnBack();
     }
   });
 
@@ -2583,10 +3239,13 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (p && fresh(p) && (Object.values(p.sets).some((a) => a.length) || Object.keys(p.done).length || p.t0)) {
       // how far: the sets logged of the sets in the day (the bar also counts the timed steps, each a whole step)
       let sets = 0, all = 0, f = 0;
+      let m = 0;
       L.forEach((st, i) => {
+        if (st.off && !setsOf(k, i).length) return;
+        m++;
         if (st.t === 'sets') { const N = nOf(k, i), n = Math.min(N, setsOf(k, i).length); sets += n; all += N; f += n / N; } else if (isDone(k, i)) f += 1;
       });
-      return { state: 'active', text: 'Resume' + (sets ? MID + sets + ' of ' + all + ' sets' : ''), frac: f / L.length };
+      return { state: 'active', text: 'Resume' + (sets ? MID + sets + ' of ' + all + ' sets' : ''), frac: f / Math.max(1, m) };
     }
     const h = doneIn(k);
     if (h) return { state: 'done', text: 'Done' + (h.dur ? MID + durLabel(h.dur) : '') + MID + whenShort(h.at), speech: 'done ' + whenShort(h.at) + (h.dur ? ', ' + durLabel(h.dur) : '') };
@@ -2609,7 +3268,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     cancelGesture(false); closeMenu(false); expireWeek();
     fillDays();
     if (dlg.hidden) dlgReturn = doc.activeElement;
-    dlg.hidden = false; app.classList.add('dlg'); dlg.scrollTop = 0; syncRender(); wake.set(false); // opaque: nothing renders behind it
+    dlg.hidden = false; app.classList.add('dlg'); dlg.scrollTop = 0; syncRender(); // opaque: nothing renders behind it
     try { $('daystitle').focus({ preventScroll: true }); } catch (_) { /* fine */ } // (screen readers land on the heading; no ring on a tile)
   }
   // the overview's squares, the week and what goes with it
@@ -2638,7 +3297,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function closeDays() {
     if (dlg.hidden) return;
     closeSheet();
-    dlg.hidden = true; app.classList.remove('dlg'); syncRender(); wake.set(ui.mode !== 'end'); render();
+    dlg.hidden = true; app.classList.remove('dlg'); syncRender(); render();
     const r = dlgReturn && dlgReturn.isConnected ? dlgReturn : $('daybtn'); dlgReturn = null;
     try { r.focus({ preventScroll: true }); } catch (_) { /* fine */ }
   }
@@ -2742,7 +3401,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // the items as the screen is now (render() calls it while the menu is open: a rest that ran out changes what it acts on)
   function paintMenu() {
     const d = ui.day, i = busyStep(), later = $('mlater'), sw = $('mswaps'), on = deloadOn();
-    const key = [i, canLater(d, i), ui.mode === 'rest' && ui.rest ? ui.rest.next : '', swapsFor(d, i).join(','), on, ui.adhoc, ui.mode, canRestart()].join('|');
+    const key = [i, canLater(d, i), ui.mode === 'rest' && ui.rest ? ui.rest.next : '', swapsFor(d, i).join(','), on, ui.adhoc, ui.mode, canRestart(), prefs.sound, prefs.unit].join('|');
     if (key === menuKey && !menu.hidden) return;
     menuKey = key;
     const had = menu.contains(doc.activeElement);
@@ -2761,6 +3420,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     $('mdeloads').textContent = on ? '' : deloadDue() ? 'Due now: ' + T.deloadWhat.charAt(0).toLowerCase() + T.deloadWhat.slice(1) : T.deloadWhat;
     $('mdeload').setAttribute('aria-disabled', ui.adhoc ? 'true' : 'false');
     $('mrestart').setAttribute('aria-disabled', !ui.adhoc && ui.mode !== 'end' && canRestart() ? 'false' : 'true');
+    $('msounds').textContent = prefs.sound ? 'On' : 'Off'; $('msound').setAttribute('aria-label', 'Sound: ' + (prefs.sound ? 'on' : 'off'));
+    $('munits').textContent = prefs.unit; $('munit').setAttribute('aria-label', 'Weight unit: ' + uWord() + '. Switch to ' + (prefs.unit === 'kg' ? 'pounds' : 'kilograms'));
+    const al = Alerts.state(), left = al.testAt - Date.now();
+    $('mtest').hidden = al.permission === 'none';
+    $('mtests').textContent = al.permission === 'denied' ? 'Blocked: allow notifications in the phone’s settings' : left > 0 ? 'Rings in ' + Math.max(1, Math.round(left / 60000)) + ' min' : 'Rings in 2 min, in or out of the app';
     if (had && !menu.contains(doc.activeElement)) { try { menuBtns()[0].focus({ preventScroll: true }); } catch (_) { /* fine */ } }
   }
   function closeMenu(focus) {
@@ -2780,7 +3444,45 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   $('mhome').addEventListener('click', () => { closeMenu(false); openDays(); });
   $('mlater').addEventListener('click', () => { closeMenu(true); doLater(); });
   $('mdeload').addEventListener('click', () => { if ($('mdeload').getAttribute('aria-disabled') === 'true') return; closeMenu(true); setDeload(!deloadOn()); });
+  // Sound on / off, and the weight unit (kg / lb): this phone's choices (the menu stays open, its line says the new one)
+  function savePrefs() { const u = lsGet(LS_UI) || {}; u.unit = prefs.unit; u.sound = prefs.sound ? 1 : 0; lsSet(LS_UI, u); }
+  $('msound').addEventListener('click', () => { prefs.sound = !prefs.sound; savePrefs(); Snd.unlock(); if (prefs.sound) Snd.play('count'); paintMenu(); announce('Sound ' + (prefs.sound ? 'on' : 'off') + '.'); });
+  // the test: the permission from this tap, then a notification in 2 minutes (switch to another app to see what the phone lets through)
+  $('mtest').addEventListener('click', () => {
+    Alerts.test().then((p) => {
+      menuKey = ''; if (menuOpen()) paintMenu();
+      const text = p === 'granted' ? 'Test alert in 2 min: switch to another app' : 'Notifications are blocked';
+      ui.note = { text, tone: 'plain', until: now() + 4000 }; render(); kickLoop(); announce(text + '.');
+    });
+  });
+  $('munit').addEventListener('click', () => { prefs.unit = prefs.unit === 'kg' ? 'lb' : 'kg'; savePrefs(); closeKeypad(); render(); paintMenu(); announce('Weights in ' + uWord() + '.'); });
   doc.addEventListener('pointerdown', (e) => { if (menuOpen() && !menu.contains(e.target) && !more.contains(e.target)) closeMenu(false); }, true);
+
+  // ---------------------------------------------------------------- Options: a busy machine
+  // The Options button at the top right (on a set, warm-up sets, a timed step, and during a rest for what comes next) lists what
+  // the menu lists for a busy machine: Do it later, and the other machines for the same muscles (each exercise's "swap" list
+  // in the program: a machine added there, with its animation, shows up here). It is there only when there is a choice.
+  const optSheet = $('optsheet');
+  const optOpen = () => !optSheet.hidden;
+  function optItems() { const d = ui.day, i = busyStep(); if (i < 0) return null; const later = canLater(d, i), swaps = swapsFor(d, i); return later || swaps.length ? { d, i, later, swaps } : null; }
+  function paintOpt() { const on = !!optItems() && !ackOn(); if (E.opt.hidden === on) E.opt.hidden = !on; if (!on && optOpen()) closeOpts(); }
+  function openOpts() {
+    const x = optItems(); if (!x || dialogOpen()) return;
+    closeMenu(false);
+    const list = $('optlist'); list.textContent = '';
+    const add = (text, fn, ex) => { const b = doc.createElement('button'); b.type = 'button'; b.textContent = text; if (ex) b.dataset.ex = ex; b.addEventListener('click', () => { closeOpts(); fn(); }); list.append(b); };
+    if (x.later) add(ui.mode === 'rest' && ui.rest && ui.rest.next !== ui.rest.after ? 'Do ' + lc(stepName(x.d, x.i)) + ' later' : 'Do it later', doLater);
+    for (const id of x.swaps) add('Swap: ' + nameOf(id), () => doSwap(id), id);
+    if (stage && x.swaps.length) stage.prefetch(x.swaps.filter((y) => !(stage.cur && stage.cur.id === y))); // (a swap cuts in at once)
+    $('opttitle').textContent = stepName(x.d, x.i);
+    optSheet.hidden = false;
+    try { list.firstChild.focus({ preventScroll: true }); } catch (_) { /* fine */ }
+  }
+  function closeOpts() { if (optSheet.hidden) return; optSheet.hidden = true; try { E.opt.focus({ preventScroll: true }); } catch (_) { /* fine */ } }
+  E.opt.addEventListener('click', () => { wake.on(); if (optOpen()) closeOpts(); else openOpts(); });
+  $('optclose').addEventListener('click', closeOpts);
+  optSheet.addEventListener('click', (e) => { if (e.target === optSheet) closeOpts(); });
+  optSheet.addEventListener('keydown', (e) => trapTab(optSheet, e));
 
   // ---------------------------------------------------------------- layout: the composition the stage uses
   // The shell reads the same composition (MCE.playerLayout) to place its text: CSS variables on .app; the page ground
@@ -2851,37 +3553,36 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     };
   }
 
-  // Keep the screen awake while a day is on (the installable app is a top-level page, so the Screen Wake Lock may be
-  // used): asked for when a day opens and whenever the page is visible again, released when the page is hidden (the
-  // browser drops it then too) and on the day's end screen. A refusal is not asked again until the page has been hidden
-  // and shown, except once after the first touch or key when it came before any (a browser may want a gesture first; a
-  // touch counts from its release); a lock the system took back is asked for again on the next touch or key. Every
-  // failure is silent; there is no UI.
+  // Keep the screen awake while the app is open and in sight (the installable app is a top-level page, so the Screen Wake Lock
+  // may be used): asked for at the start and whenever the page is visible again (the browser drops it when the page is
+  // hidden), on every screen, the overview and a finished day too. A lock the system takes back while the app is in sight is
+  // asked for again a second later, and on the next touch or key; a refusal is asked again on a touch or key (at most every
+  // 5 s) and whenever the page is shown again. Every failure is silent; there is no UI.
   const wake = (() => {
     const api = g.navigator && g.navigator.wakeLock;
     let allowed = !!(api && typeof api.request === 'function');
     try { const pp = doc.permissionsPolicy || doc.featurePolicy; if (allowed && pp && typeof pp.allowsFeature === 'function') allowed = pp.allowsFeature('screen-wake-lock'); } catch (_) { /* unknown: try */ }
-    let want = false, lock = null, seq = 0, busy = false, refused = false, retry = false;
-    const active = () => { const ua = g.navigator.userActivation; return !ua || ua.hasBeenActive; };
+    let want = false, lock = null, seq = 0, busy = false, refused = false, refusedAt = 0, taken = 0;
     const drop = (l) => { try { const p = l && l.release(); if (p && p.catch) p.catch(() => {}); } catch (_) { /* already released */ } };
     const release = () => { seq++; const l = lock; lock = null; drop(l); };
     const take = (gesture) => {
       if (!allowed || !want || lock || busy || doc.hidden) return;
-      if (refused) { if (!gesture || !retry || !active()) return; retry = false; }
-      const my = ++seq, early = !active(); busy = true;
+      if (refused && (!gesture || now() - refusedAt < 5000)) return;
+      const my = ++seq; busy = true;
       let p; try { p = api.request('screen'); } catch (_) { allowed = false; busy = false; return; }
       Promise.resolve(p).then((l) => {
         busy = false;
         if (my !== seq || !want || doc.hidden || lock) { drop(l); return; }
-        lock = l; refused = false;
-        try { l.addEventListener('release', () => { if (lock === l) lock = null; }); } catch (_) { /* no events: fine */ }
-      }, () => { busy = false; if (my === seq) { refused = true; retry = early; } });
+        lock = l; refused = false; taken++;
+        try { l.addEventListener('release', () => { if (lock === l) { lock = null; if (!doc.hidden) setTimeout(() => take(), 1000); } }); } catch (_) { /* no events: fine */ }
+      }, () => { busy = false; if (my === seq) { refused = true; refusedAt = now(); } });
     };
-    doc.addEventListener('visibilitychange', () => { if (doc.hidden) release(); else { refused = false; retry = false; take(); } });
+    doc.addEventListener('visibilitychange', () => { if (doc.hidden) release(); else { refused = false; take(); } });
     for (const ev of ['pointerup', 'keydown']) doc.addEventListener(ev, () => take(true), true);
     return {
       set(on) { on = !!on; if (on === want) return; want = on; if (on) take(); else release(); },
       on() { take(true); },
+      state: () => ({ want, held: !!lock, refused, taken, api: allowed }),
     };
   })();
 
@@ -2907,13 +3608,16 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function boot(idx) {
     P = idx;
     if (!VERIFY) {
+      const u = uiPrefs(); prefs.unit = u.unit === 'lb' ? 'lb' : 'kg'; prefs.sound = u.sound !== 0; // (this phone's choices)
       S = sane(lsGet(LS_LOG));
-      if (S.pv < PV) { for (const [d, p] of Object.entries(S.prog)) pinOld(+d, p); S.pv = PV; } // (written with the next action)
+      // (written with the next action; only v8's days in progress are pinned: v9's are as v10 reads them)
+      if (S.pv < PV) { if (S.pv < PV_PIN) for (const [d, p] of Object.entries(S.prog)) pinOld(+d, p); S.pv = PV; }
       restoreSel(); expireWeek();
     }
     const t = startTarget();
     openDay(t.day, { step: t.step });
-    if (!VERIFY) { restoreTimers(); restoreRest(); restoreHist(); closeGap(); }
+    if (!VERIFY) { restoreTimers(); restoreRest(); restoreHist(); restorePace(); closeGap(); }
+    wake.set(!VERIFY); // the screen stays awake while the app is open
     $('top').hidden = false; E.act.hidden = false;
     if (!VERIFY && !Q.get('day') && !Q.get('ex')) openDays(); // the app opens on the overview of the days (a link to a day or exercise goes straight to it)
     // the stage's data and the first exercise start downloading now, alongside three.js; core.js keeps the requests, so
@@ -2949,7 +3653,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (!webgl()) { console.info('Machine Program: WebGL is not available, so the program shows without animations'); return noEngine(); }
     try { stage = MCE.Stage.create(stageEl, { finish: FINISH, compose: MCE.playerLayout }); g.__stage = stage; } catch (e) { console.info('Machine Program: animations unavailable', String(e && e.message || e)); return noEngine(); }
     engine = 'ready';
-    stage.on('resize', (r) => { layout(r.comp, r.edge); render(); });
+    stage.on('resize', (r) => { layout(r.comp, r.edge); applyMirror(); render(); });
     stage.on('seg', onSeg);
     layout(stage.comp, stage.backdrop.edge);
     stage.on('view', (v) => {
@@ -3015,7 +3719,23 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         text: { kicker: E.kicker.hidden ? '' : E.kicker.textContent, name: E.name.hidden ? '' : E.name.textContent, clock: E.clock.hidden ? '' : E.clock.textContent, line: E.line.textContent, mus: E.mus.hidden ? '' : E.mus.textContent },
         save: { mode: Save.mode, writes: Save.writes, writing: Save.writing, dirty: Save.dirty, note: $('savenote') ? $('savenote').textContent : '' },
         view: stage ? stage.view() : null, dialog: dialogOpen(),
+        // v10
+        pace: (() => { const pc = paceNow(t); return pc ? { stage: pc.stage, secs: pc.secs || null, count: pc.count == null ? null : pc.count, side: pc.side, target: pc.target, k: pc.ph ? pc.ph.k : null, phase: pc.phase == null ? null : +pc.phase.toFixed(4), first: ui.pace.first, done: ui.pace.done.slice(), kg: ui.pace.kg, drop: ui.pace.drop } : null; })(),
+        log: !E.log.hidden, opt: !E.opt.hidden, optOpen: optOpen(), unit: prefs.unit, sound: prefs.sound, sounds: Object.assign({}, Snd.played), mirrored, side: sideNow(),
+        breath: E.cbreath.hidden ? '' : E.cbreath.textContent, wake: wake.state(), alerts: Alerts.state(), amend: amendOn(),
+        clockTone: E.clock.dataset.tone || '', lastLog,
       };
+    },
+    // one clock: the pacer at the instant the stage drew its frame, against the stage's own phase; the card's phase label as
+    // painted, against the pacer at the instant it was painted
+    sync: () => {
+      const t = now(), pc = paceNow(t);
+      if (!pc || pc.stage !== 'run') return null;
+      const pl = paceNow(phaseAt), live = !!(stage && stage.cur);
+      return { t, run0: pc.run0, dur: ui.pace.tempo.dur, stageDur: live ? stage.cur.motion.duration : null, playing: live && stage.isPlaying(), resyncs, pace: pc.phase,
+        stage: live ? { phase: stagePhaseAt(t), drawn: stage.phase, id: stage.cur.id } : null,
+        label: { k: E.cphase.dataset.k, verb: E.cverb.textContent, at: phaseAt, pace: pl && pl.stage === 'run' ? pl.ph.k : null, paceSeg: pl && pl.ph ? pl.ph.seg : null },
+        count: pc.count, clock: E.clock.textContent, mirrored, breath: E.cbreath.hidden ? '' : E.cbreath.textContent };
     },
     doc: () => clone(S),
     go: (i) => jumpTo(i), day: (d) => chooseDay(d),
