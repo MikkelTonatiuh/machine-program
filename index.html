@@ -247,6 +247,21 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .optlist { display: flex; flex-direction: column; gap: 4px; margin: 4px 0 16px; }
 .optlist button { display: block; width: 100%; padding: 15px 14px; border-radius: 12px; text-align: left; font: 500 16px/1.2 var(--sans); color: var(--ink); background: rgba(236,231,222,.06); touch-action: manipulation; }
 .optlist button:active { background: rgba(236,231,222,.15); }
+/* the workout card: in the sky of the end screen, and on its own sheet from the overview */
+.cardimg { position: absolute; z-index: 3; left: calc(var(--bx0) + var(--bw) / 2); top: calc(var(--top) + 8px); height: calc(var(--arc) - var(--top) - 30px); max-width: calc(var(--bw) - 2 * var(--gut));
+  aspect-ratio: 4 / 5; object-fit: contain; transform: translateX(-50%); border-radius: 16px; box-shadow: 0 18px 48px rgba(0,0,0,.6), 0 0 0 1px rgba(236,231,222,.16);
+  opacity: 0; transition: opacity .5s var(--ease); pointer-events: none; }
+.cardimg[data-on] { opacity: 1; }
+.app:not([data-mode="end"]) .cardimg { display: none; }
+.endnext { pointer-events: auto; margin: -4px 0 6px; }
+.cardsheet .sheetbox { display: flex; flex-direction: column; align-items: center; max-height: 100%; overflow-y: auto; }
+.cardsheet h3 { align-self: flex-start; }
+.cardsheetimg { display: block; width: auto; max-width: 100%; height: min(62vh, 520px); aspect-ratio: 4 / 5; object-fit: contain; margin: 4px 0 6px; border-radius: 14px; background: #101618;
+  box-shadow: 0 0 0 1px rgba(236,231,222,.14); opacity: 0; transition: opacity .4s var(--ease); }
+.cardsheetimg[data-on] { opacity: 1; }
+.cardsheetnote { min-height: 20px; margin: 0 0 8px !important; text-align: center; font: 500 14px/1.4 var(--sans) !important; color: var(--ink2); }
+.cardsheet .kpact { width: 100%; align-items: center; }
+.cardsheet .kpact .primary { flex: 1 1 auto; }
 .app[data-view="rest"] .num { font-size: 34px; line-height: 40px; }
 .app[data-view="rest"] .sel { margin-bottom: 8px; }
 .app[data-view="rest"] .mus { display: block; color: var(--ink2); }
@@ -324,6 +339,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     <button type="button" id="mrestart">Restart workout</button>
     <button type="button" id="mhome">All workouts</button>
   </div>
+  <img class="cardimg" id="cardimg" alt="">
   <section class="coach" id="coach" aria-label="How to do this exercise" hidden>
     <p class="cphase" id="cphase" data-k="still" aria-hidden="true"><b class="cverb" id="cverb"></b><span class="cspeed" id="cspeed"></span><i class="cbar" id="cbar"></i></p>
     <p class="cbreath" id="cbreath" aria-hidden="true" hidden></p>
@@ -351,6 +367,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         <button class="stepbtn" id="kgplus" type="button" aria-label="More weight"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4.5 10h11M10 4.5v11"/></svg></button>
       </div>
     </div>
+    <button class="linkbtn endnext" id="endnext" type="button" hidden></button>
     <div class="prow">
       <button class="undobtn" id="back" type="button" aria-label="Undo" aria-disabled="true" title="Undo the last step"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M7.2 4.2 3.6 7.8l3.6 3.6"/><path d="M4 7.8h7.6a4.2 4.2 0 0 1 0 8.4H7.6"/></svg></button>
       <button class="primary" id="primary" type="button" hidden><span class="pic" id="pic" aria-hidden="true"></span><span id="plabel"></span></button>
@@ -390,6 +407,15 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       <h3 id="kptitle">Weight</h3>
       <label class="kpfield"><input class="kpin" id="kpin" type="text" inputmode="decimal" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" maxlength="7"><span class="u" id="kpu">kg</span></label>
       <div class="kpact"><button class="kpcancel" id="kpcancel" type="button">Cancel</button><button class="primary" id="kpset" type="button">Set</button></div>
+    </div>
+  </div>
+  <div class="sheet cardsheet" id="cardsheet" role="dialog" aria-modal="true" aria-labelledby="cardsheettitle" hidden>
+    <div class="sheetbox">
+      <h3 id="cardsheettitle"></h3>
+      <img class="cardsheetimg" id="cardsheetimg" alt="">
+      <p class="cardsheetnote" id="cardsheetnote" aria-live="polite"></p>
+      <div class="kpact"><button class="kpcancel" id="cardclose" type="button">Close</button><button class="undobtn" id="cardcopy" type="button" aria-label="Copy the image" title="Copy the image"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="9.5" height="9.5" rx="2"/><path d="M13 4.5H5.8A1.8 1.8 0 0 0 4 6.3V13"/></svg></button><button class="primary" id="cardshare" type="button"><span class="pic" aria-hidden="true"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="14.5" cy="4.8" r="2.2"/><circle cx="5.5" cy="10" r="2.2"/><circle cx="14.5" cy="15.2" r="2.2"/><path d="m7.4 8.9 5.2-3M7.4 11.1l5.2 3"/></svg></span><span>Share</span></button></div>
+      <button class="linkbtn" id="cardagain" type="button">Do this day again</button>
     </div>
   </div>
   <div class="sheet" id="optsheet" role="dialog" aria-modal="true" aria-labelledby="opttitle" hidden>
@@ -854,6 +880,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     go: '<svg class="fill" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M6.5 4.6v10.8l8.6-5.4z"/></svg>',
     stop: '<svg class="fill" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="5.2" y="5.2" width="9.6" height="9.6" rx="1.6"/></svg>',
     skip: '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="m5 5 6 5-6 5M14.5 5v10"/></svg>',
+    share: '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="14.5" cy="4.8" r="2.2"/><circle cx="5.5" cy="10" r="2.2"/><circle cx="14.5" cy="15.2" r="2.2"/><path d="m7.4 8.9 5.2-3M7.4 11.1l5.2 3"/></svg>',
+    copy: '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="9.5" height="9.5" rx="2"/><path d="M13 4.5H5.8A1.8 1.8 0 0 0 4 6.3V13"/></svg>',
   };
   const loadJSON = (p) => (MCE.loadJSON ? MCE.loadJSON(p)
     : fetch(p).then((r) => { if (!r.ok) throw new Error('fetch ' + p + ' ' + r.status); return r.json(); }));
@@ -1288,7 +1316,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const up = topAt(d, i) && k > 0 ? (V && V.ts && V.bt ? { light: false } : null) : bumpFor(d, i);
     const v = V && V.reps[k];
     if (deloadOn()) return clamp(R.lo, 0, REPS_MAX);
-    if (up) return clamp(up.light || !(v > 0) ? R.lo : clamp(v - 2, R.lo, R.hi), 0, REPS_MAX);
+    if (up) return clamp(up.light || up.harder || !(v > 0) ? R.lo : clamp(v - 2, R.lo, R.hi), 0, REPS_MAX); // (a harder version: the bottom)
     if (k === 0 && V && V.est) return clamp(R.hi, 0, REPS_MAX); // a first top set: its weight is worked out for the top of its range
     if (k === 0 && v > 0 && stallStep(d, i) === 1) return clamp(v + 1, 0, REPS_MAX); // (stuck: one more rep on set 1)
     return clamp(Number.isFinite(v) && v > 0 ? v : R.hi, 0, REPS_MAX);
@@ -1653,10 +1681,13 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       v.line = (x.entry.exercises ? x.entry.exercises + (x.entry.exercises === 1 ? ' exercise' : ' exercises') + MID : '') + x.entry.sets + (x.entry.sets === 1 ? ' set' : ' sets') + (x.entry.bike ? MID + x.entry.bike + ' min bike' : '');
       if (x.msg && t < x.msgUntil) { v.kicker = x.msg; v.kTone = 'warm'; }
       if (x.note) v.note = { text: x.note, tone: 'done', icon: true };
-      v.primary = { act: 'next', label: 'Next: ' + dayLabel(nd), icon: 'next', aria: 'Next: ' + dayLabel(nd).replace(MID, ', ') };
+      // the workout card is in the sky: Share it (the phone's share sheet), or copy it; the next day is the link above
+      v.primary = { act: 'share', label: 'Share', icon: 'share', aria: 'Share the workout card' };
+      if (!ui.adhoc) v.log = { act: 'copy', aria: 'Copy the workout card, to paste it' };
+      v.next = 'Next: ' + dayLabel(nd);
     }
     // a done line carried over to this step for a while ("Warm-up done"), or a word about what just happened ("Undone")
-    if (ui.note && t < ui.note.until && (ui.mode === 'set' || ui.mode === 'warm' || ui.mode === 'timer' || ui.mode === 'done')) v.note = Object.assign({ tone: 'done', icon: true }, ui.note);
+    if (ui.note && t < ui.note.until && (ui.mode === 'set' || ui.mode === 'warm' || ui.mode === 'timer' || ui.mode === 'done' || ui.mode === 'end')) v.note = Object.assign({ tone: 'done', icon: true }, ui.note);
     // a message for a moment in the kicker (e.g. "Next time: add weight" on the stretching screen; over a set's kind for that moment)
     if (ui.flash && t < ui.flash.until && (ui.mode === 'set' || (ui.mode === 'timer' && !v.kicker))) { v.kicker = ui.flash.text; v.kTone = 'warm'; }
     return v;
@@ -1700,6 +1731,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       else if (v.hint.rule && !cs.rule) note = { text: v.hint.rule, tone: 'guide' };
     }
     paintNote(note); paintSel(v.sel); paintPrimary(v.primary); paintLog(v.log); paintBack(); paintSess(); paintOpt();
+    { const en = $('endnext'), on = !!v.next; if (en.hidden === on) en.hidden = !on; if (on && en.textContent !== v.next) en.textContent = v.next; }
     // a control that had the keyboard's focus went away with the state (the selector in the rest): the focus
     // goes to the primary button, so a keyboard user stays in the action area
     if (hadFocus && hadFocus !== E.primary && (hadFocus.offsetParent === null || hadFocus.hidden)) { try { E.primary.focus({ preventScroll: true }); } catch (_) { /* fine */ } }
@@ -1753,7 +1785,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function paintLog(l) {
     const b = E.log, on = !!l, act = on ? l.act || 'log' : '';
     if (b.hidden === on) { b.hidden = !on; if (on) logLock = now() + LOCK_MS; }
-    if (on && b.dataset.act !== act) { b.dataset.act = act; b.innerHTML = act === 'skip' ? ICONS.skip : ICONS.check; logLock = now() + LOCK_MS; }
+    if (on && b.dataset.act !== act) { b.dataset.act = act; b.innerHTML = act === 'skip' ? ICONS.skip : act === 'copy' ? ICONS.copy : ICONS.check; logLock = now() + LOCK_MS; }
     if (on && b.getAttribute('aria-label') !== l.aria) { b.setAttribute('aria-label', l.aria); b.title = l.aria; }
   }
   // Undo is always in view: dim while there is nothing to take back, and it names the step it would take back (while the
@@ -1926,8 +1958,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     ui.adhoc = d < 0; ui.day = d;
     let p = d >= 0 ? S.prog[d] : null;
     if (p && !fresh(p)) { delete S.prog[d]; p = null; } // an old session: this visit starts the day fresh (saved with the next action)
-    const n = stepsOf(d).length, want = o.step != null ? o.step : p ? p.step : 0;
-    goStep(clamp(want | 0, 0, n - 1), { cut: true });
+    const n = stepsOf(d).length, want0 = clamp((o.step != null ? o.step : p ? p.step : 0) | 0, 0, n - 1);
+    // (a step taken out of the program since, e.g. a v9 day saved at its hammer curl: the next step still open)
+    const nx = isOff(d, want0) ? openFrom(d, 0, want0) : want0;
+    goStep(nx >= 0 ? nx : want0, { cut: true });
   }
   // what step i shows: done (revisited), its timer, its drop set (due right after its last set), its warm-up sets (before its
   // first set, when it has them and they are not done), or its next set
@@ -2220,6 +2254,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     ui.timers.clear(); saveTimers(); cancelRest(); cancelPace(); cancelGesture(); ui.go = null; ui.note = null;
     ui.end = { day: d, entry, prog, msg, msgUntil: msg ? now() + ACK_MS + 4500 : 0, note: note || null };
     ui.mode = 'end'; ui.step = L.length - 1;
+    if (!ui.adhoc) showCard(entry, 'end'); // (the workout card, drawn in the background)
     markTurn(); // the first day is done: the tip about turning has had its time
     showFigure(null, true);
     render(); kickLoop();
@@ -2338,7 +2373,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const st = i >= 0 ? stepsOf(d)[i] : null;
     if (!st || st.t !== 'sets' || setsOf(d, i).length || dropDue(d, i)) return [];
     const cur = exIdAt(d, i), base = levelOf(st.ex), out = [];
-    const used = new Set(stepsOf(d).map((s, j) => (j !== i && s.t === 'sets' ? exIdAt(d, j) : null)));
+    const used = new Set(stepsOf(d).map((s, j) => (j !== i && s.t === 'sets' && !s.off ? exIdAt(d, j) : null)));
     for (const id of [st.ex, base, ...exOf(st.ex).swap, ...exOf(base).swap, ...exOf(cur).swap]) if (id !== cur && isReady(id) && !used.has(id) && !out.includes(id)) out.push(id);
     return out;
   }
@@ -2352,7 +2387,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     O.splice(O.indexOf(i), 1); O.push(i); p.order = O; touchProg(p); S.current = d;
     const nx = openFrom(d, pos, i), said = name + ' moved to the end';
     p.step = nx;
-    if (resting) { ui.rest.next = nx; ui.rest.msg = said; ui.rest.msgUntil = now() + 3000; saveRest(); render(); prefetch(); }
+    if (resting) { ui.rest.next = nx; ui.rest.msg = said; ui.rest.msgUntil = now() + 3000; saveRest(); Alerts.schedule(); render(); prefetch(); }
     else { ui.note = { text: said, until: now() + 3000 }; goStep(nx, { cut: true, quiet: true }); }
     Save.persist(); haptic(10);
     announce(said + '. ' + (resting ? restNext(ui.rest) + '.' : stepSpeech()));
@@ -2366,7 +2401,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (id === levelOf(st.ex)) delete p.swap[i]; else p.swap[i] = id;
     delete p.warm[i]; touchProg(p); S.current = d;
     if (ui.sel && ui.sel.day === d && ui.sel.step === i) { ui.sel = null; saveSel(); }
-    if (resting) { ui.rest.msg = said; ui.rest.msgUntil = now() + 3000; saveRest(); render(); prefetch(); }
+    if (resting) { ui.rest.msg = said; ui.rest.msgUntil = now() + 3000; saveRest(); Alerts.schedule(); render(); prefetch(); }
     else { p.step = i; ui.note = { text: said, until: now() + 3000 }; goStep(i, { cut: true, quiet: true }); }
     Save.persist(); haptic(10);
     announce(said + '. ' + (resting ? restNext(ui.rest) + '.' : stepSpeech()));
@@ -2382,7 +2417,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (on) S.dl = { w: S.week, prev: S.dl ? S.dl.w : 0 };
     else S.dl = S.dl && S.dl.prev ? { w: S.dl.prev, prev: 0 } : null;
     // a rest before a set the deload week no longer has (half the sets are done already) leads to the next open step instead
-    if (ui.mode === 'rest' && ui.rest && isDone(ui.day, ui.rest.next)) { const nx = openAfter(ui.day, ui.rest.after); if (nx >= 0) { ui.rest.next = nx; if (S.prog[ui.day]) S.prog[ui.day].step = nx; saveRest(); } }
+    if (ui.mode === 'rest' && ui.rest && isDone(ui.day, ui.rest.next)) { const nx = openAfter(ui.day, ui.rest.after); if (nx >= 0) { ui.rest.next = nx; if (S.prog[ui.day]) S.prog[ui.day].step = nx; saveRest(); Alerts.schedule(); } }
     Save.persist();
     if (dialogOpen()) fillDays();
     else if (ui.mode === 'set' || ui.mode === 'warm' || ui.mode === 'drop' || ui.mode === 'done') goStep(ui.step, { quiet: true });
@@ -2724,6 +2759,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (!setMode() || ackOn() || ui.pace || kpOpen()) return;
     const d = ui.day, i = ui.step, id = exIdAt(d, i), e = exOf(id);
     Snd.unlock(); unturn(); dropNote();
+    // (Go is an action on the day: the workout's clock runs from it and the step is saved, so a reload comes back to this set)
+    if (!ui.adhoc) { const pp = ensureProg(d); touchProg(pp); pp.step = i; S.current = d; Save.persist(); }
     ui.pace = { day: d, step: i, k: setsOf(d, i).length, drop: ui.mode === 'drop', uni: e.unilateral, first: e.unilateral ? firstSide(d, i) : null, side: 0, stage: 'count',
       t0: now(), run0: 0, done: [], target: selValue(), kg: selKg(), brace: braceAt(d, i), beat: Math.ceil(COUNT_MS / 1000), seen: 0, tempo: tempoOf(id) };
     savePace(); paceStage(); paceBeeps(); haptic(30);
@@ -3149,9 +3186,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     else if (a === 'start' && ui.mode === 'timer' && !curTimer()) timerStart();
     else if (a === 'finish' && ui.mode === 'timer' && curTimer()) finishTimer(false);
     else if (a === 'continue' && ui.mode === 'done') continueDay();
-    else if (a === 'next' && ui.mode === 'end') continueEnd();
+    else if (a === 'share' && ui.mode === 'end' && ui.end) cardAct('share', ui.end.entry);
   }
   E.primary.addEventListener('click', primaryAct);
+  $('endnext').addEventListener('click', () => { wake.on(); if (ui.mode === 'end' && ui.end && !ackOn() && !dialogOpen()) continueEnd(); });
   // the check beside Go: the set (or the drop set) logged as the selectors say, no pacer
   E.log.addEventListener('click', () => {
     wake.on();
@@ -3160,6 +3198,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (ui.mode === 'set') logSet(selValue(), selKg(), 'done');
     else if (ui.mode === 'drop') logDrop(selValue(), selKg());
     else if (ui.mode === 'timer' && E.log.dataset.act === 'skip' && !curTimer()) finishTimer(false, null, true);
+    else if (ui.mode === 'end' && ui.end && E.log.dataset.act === 'copy') cardAct('copy', ui.end.entry);
   });
   E.minus.addEventListener('click', () => { wake.on(); stepSel(-1, 'button'); });
   E.plus.addEventListener('click', () => { wake.on(); stepSel(1, 'button'); });
@@ -3188,7 +3227,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   doc.addEventListener('keydown', (e) => {
     if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.key === 'Escape') {
-      if (kpOpen()) { e.preventDefault(); closeKeypad(); } else if (optOpen()) { e.preventDefault(); closeOpts(); } else if (sheetOpen()) { e.preventDefault(); closeSheet(); } else if (dialogOpen()) { e.preventDefault(); closeDays(); } else if (menuOpen()) { e.preventDefault(); closeMenu(true); } else cancelGesture(true);
+      if (kpOpen()) { e.preventDefault(); closeKeypad(); } else if (optOpen()) { e.preventDefault(); closeOpts(); } else if (cardOpen()) { e.preventDefault(); closeCardSheet(); } else if (sheetOpen()) { e.preventDefault(); closeSheet(); } else if (dialogOpen()) { e.preventDefault(); closeDays(); } else if (menuOpen()) { e.preventDefault(); closeMenu(true); } else cancelGesture(true);
       return;
     }
     if (kpOpen()) return; // (the weight field has the keys)
@@ -3289,7 +3328,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if (s.state === 'active') { const e = doc.createElement('span'), i = doc.createElement('i'); e.className = 'pg'; i.style.setProperty('--f', s.frac.toFixed(3)); e.append(i); b.append(e); }
       b.setAttribute('aria-label', 'Day ' + (k + 1) + ', ' + dd.name + (s.state === 'active' ? ', ' + s.text.replace(MID, ', ').toLowerCase() : s.speech ? ', ' + s.speech : ''));
       if (k === ui.day) b.setAttribute('aria-current', 'true');
-      b.addEventListener('click', () => chooseDay(k));
+      b.addEventListener('click', () => (s.state === 'done' ? openCardSheet(k) : chooseDay(k))); // (a finished day: its card)
       li.appendChild(b); list.appendChild(li);
     });
     renderWeek(); renderSaveNote(); Install.refresh();
@@ -3386,6 +3425,196 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     refresh();
     return { refresh, standalone: () => standalone(), shown: () => !btn.hidden };
   })();
+
+
+  // ---------------------------------------------------------------- the workout card (to share, e.g. on Strava)
+  // A finished day as a 1080 x 1350 picture in the app's look: the film horizon with its amber rim, the day's cover exercise
+  // standing on it with every muscle the day worked lit (a second, offscreen stage with the engine's muscleOverride; the day's
+  // cover still when there is no WebGL), the day and the date, its time, the weight lifted and the working sets, then each
+  // exercise's best set with what went up since last time (a PB: the best estimated 1RM yet, Epley) and the top set marked.
+  // Built once a day is done (the end screen shows it in the sky; a finished day's square on the overview opens it); Share
+  // hands the PNG and a short text to the phone's share sheet (Strava, Instagram, Photos...), Copy puts both on the clipboard
+  // (or saves the PNG where the browser can do neither).
+  const Card = (() => {
+    const W = 1080, Hh = 1350, ARC = 690;
+    let cur = null; // { at, promise, res: { blob, file, url, text, w, h } }
+    const fmtN = (n) => Math.round(n).toLocaleString('en-US');
+    const dateText = (t) => new Date(t).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+    const e1 = (r, x) => x * (1 + r / 30);
+    // what the card says about history entry h (the history before it: what went up, what is a best)
+    function data(h) {
+      const d = h.day, older = S.history.filter((x) => x.at < h.at), O = orderOf(d), L = stepsOf(d);
+      const topIds = new Set(); L.forEach((st) => { if (isTop(st) && !st.off) { topIds.add(st.ex); topIds.add(levelOf(st.ex)); for (const x of exOf(st.ex).swap) topIds.add(x); } });
+      const pos = (id) => { const i = O.findIndex((j) => L[j].t === 'sets' && (L[j].ex === id || levelOf(L[j].ex) === id || exOf(L[j].ex).swap.includes(id))); return i < 0 ? 99 : i; };
+      let vol = 0;
+      const rows = Object.keys(h.ex || {}).sort((a, b) => pos(a) - pos(b)).map((id) => {
+        const a = h.ex[id] || [], w = (h.kg && h.kg[id]) || [], lr = (h.lr && h.lr[id]) || [], uni = exOf(id).unilateral;
+        a.forEach((r, k) => { const x = w[k] > 0 ? w[k] : 0; vol += (lr[k] ? lr[k][0] + lr[k][1] : uni ? 2 * r : r) * x; });
+        const dr = h.dr && h.dr[id]; if (dr && dr[1] > 0) vol += dr[0] * dr[1] * (uni ? 2 : 1);
+        let bi = 0; a.forEach((r, k) => { const x = w[k] || 0, y = w[bi] || 0; if (x > y + 1e-9 || (Math.abs(x - y) <= 1e-9 && r > a[bi])) bi = k; });
+        const best = { r: a[bi] || 0, w: w[bi] > 0 ? w[bi] : 0 }, top = topIds.has(id) && bi === 0;
+        // vs the last session of this exercise, and every one before (a best estimated 1RM: PB)
+        const prev = older.find((x) => x.ex && x.ex[id] && x.ex[id].length);
+        let up = '', pb = false;
+        if (prev) {
+          const pw = (prev.kg && prev.kg[id]) || [], pa = prev.ex[id];
+          const tTop = Math.max(0, ...w.filter((x) => Number.isFinite(x))), pTop = Math.max(0, ...pw.filter((x) => Number.isFinite(x)));
+          const repsAt = (r, ww, m) => r.reduce((s, x, k) => s + (Math.abs((ww[k] || 0) - m) < 1e-6 ? x : 0), 0);
+          if (tTop > pTop + 1e-6) up = '+' + fmtU(tTop - pTop) + ' ' + uName();
+          else if (Math.abs(tTop - pTop) <= 1e-6) { const n = repsAt(a, w, tTop) - repsAt(pa, pw, pTop); if (n > 0) up = '+' + n + (n === 1 ? ' rep' : ' reps'); }
+          const ever = Math.max(0, ...older.filter((x) => x.ex && x.ex[id]).flatMap((x) => x.ex[id].map((r, k) => e1(r, ((x.kg && x.kg[id]) || [])[k] || 0))));
+          const today = Math.max(0, ...a.map((r, k) => e1(r, w[k] || 0)));
+          pb = today > 0 && today > ever + 1e-6;
+        }
+        return { id, name: exOf(id).name, best, top, up, pb, uni };
+      });
+      return { d, title: dayLabel(d), date: dateText(h.at), dur: h.dur || 0, sets: h.sets || 0, vol, bike: h.bike || 0, rows, cover: P.days[d].cover, week: h.week || S.week };
+    }
+    // the day's muscles (the animation files' working muscles of what was done) on its cover exercise, rendered offscreen
+    async function hero(D, h) {
+      if (engine !== 'ready' || !g.THREE || !MCE.Stage || !D.cover || !isReady(D.cover)) return null;
+      const files = await Promise.all(Object.keys(h.ex || {}).filter(isReady).map((id) => loadJSON('exercises/' + id + '.json').catch(() => null)));
+      const prim = new Set(); for (const EX of files) if (EX && EX.muscles) for (const m of EX.muscles.primary || []) prim.add(m);
+      const box2 = doc.createElement('div');
+      box2.style.cssText = 'position:fixed;left:-4000px;top:0;width:540px;height:720px;pointer-events:none;';
+      doc.body.appendChild(box2);
+      let st = null;
+      try {
+        st = MCE.Stage.create(box2, { finish: FINISH, preserveDrawingBuffer: true, grain: false, autoplay: false, workers: 1, cacheSize: 1, maxDpr: 2,
+          muscleOverride: prim.size ? { primary: [...prim], secondary: [] } : undefined });
+        const inf = await st.load(D.cover);
+        st.pause(); st.setPhase(inf.peak);
+        const c = doc.createElement('canvas'); c.width = st.glCanvas.width; c.height = st.glCanvas.height;
+        c.getContext('2d').drawImage(st.glCanvas, 0, 0);
+        return { canvas: c, arc: st.arc.y / st.size.h };
+      } catch (e) { console.info('Machine Program: no figure on the card', String(e && e.message || e)); return null; } finally { if (st) { try { st.destroy(); } catch (_) { /* gone */ } } box2.remove(); }
+    }
+    const still = (d) => new Promise((res) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = 'covers/day' + (d + 1) + '-still.webp'; });
+    function textOf(D) {
+      const L = [D.title + MID + (D.dur ? Math.max(1, Math.round(D.dur / 60)) + ' min' : D.date)];
+      L.push(D.sets + ' sets' + (D.vol > 0 ? MID + fmtN(toU(D.vol)) + ' ' + uName() + ' lifted' : '') + (D.bike ? MID + D.bike + ' min bike' : ''));
+      for (const r of D.rows) L.push(r.name + ' ' + (r.best.w > 0 ? r.best.r + ' × ' + fmtW(r.best.w) : repsWord(r.best.r)) + (r.top || r.pb || r.up ? ' (' + [r.top ? 'top set' : '', r.pb ? 'PB' : '', r.up].filter(Boolean).join(', ') + ')' : ''));
+      L.push('Machine Program');
+      return L.join('\n');
+    }
+    async function draw(h) {
+      const D = data(h);
+      try { if (doc.fonts) { await Promise.all([doc.fonts.load('300 72px Newsreader'), doc.fonts.load('500 30px "Instrument Sans"'), doc.fonts.load('400 24px "Instrument Sans"')]); await doc.fonts.ready; } } catch (_) { /* the fallback faces */ }
+      const hr = await hero(D, h), im = hr ? null : await still(D.d);
+      const cv = doc.createElement('canvas'); cv.width = W; cv.height = Hh;
+      const x = cv.getContext('2d'), arc = { x: W / 2, y: ARC, R: 1.25 * Hh };
+      // the horizon (the app's own backdrop) and its lit rim (the rim timer, full)
+      if (MCE.Backdrop) new MCE.Backdrop(cv, null).draw(W, Hh, 1, arc); else { x.fillStyle = '#101618'; x.fillRect(0, 0, W, Hh); }
+      if (MCE.RimTimer) { const rc = doc.createElement('canvas'); new MCE.RimTimer(rc).draw(W, Hh, 1, arc, 1, { head: false, k: 0.9 }); x.save(); x.globalCompositeOperation = 'screen'; x.drawImage(rc, 0, 0); x.restore(); }
+      // the figure on the horizon (scaled so the stage's arc lands on the card's)
+      if (hr) {
+        const s = 0.72, cw = hr.canvas.width * s, ch = hr.canvas.height * s, top = ARC - hr.arc * ch;
+        x.drawImage(hr.canvas, (W - cw) / 2, top, cw, ch);
+      } else if (im) {
+        const s = Math.min(560 / im.height, 760 / im.width); x.save(); x.globalAlpha = 0.95; x.drawImage(im, (W - im.width * s) / 2, ARC - im.height * s + 30, im.width * s, im.height * s); x.restore();
+      }
+      // the planet below: the words
+      const ink = '#ece7de', ink2 = '#aeb5b8', ink3 = '#818b90', amber = '#e0a060', serif = 'Newsreader, Georgia, serif', sans = '"Instrument Sans", Arial, sans-serif';
+      const fade = x.createLinearGradient(0, ARC + 10, 0, ARC + 120); fade.addColorStop(0, 'rgba(14,14,14,0)'); fade.addColorStop(1, 'rgba(14,14,14,0.55)');
+      x.fillStyle = fade; x.fillRect(0, ARC + 10, W, Hh - ARC - 10);
+      x.textBaseline = 'alphabetic';
+      x.fillStyle = ink3; x.font = '600 22px ' + sans; if ('letterSpacing' in x) x.letterSpacing = '4px';
+      x.fillText('MACHINE PROGRAM' + MID + 'WEEK ' + D.week, 72, 96);
+      if ('letterSpacing' in x) x.letterSpacing = '0px';
+      let y = ARC + 100;
+      x.fillStyle = ink; x.font = '300 76px ' + serif; x.fillText(D.title, 72, y);
+      y += 52; x.fillStyle = ink2; x.font = '500 30px ' + sans; x.fillText(D.date, 72, y);
+      // three numbers: the time, the weight lifted (or the ride), the working sets
+      y += 96;
+      const stats = [[D.dur ? String(Math.max(1, Math.round(D.dur / 60))) : '–', 'min'], D.vol > 0 ? [fmtN(toU(D.vol)), uName() + ' lifted'] : [String(D.bike || 0), 'min bike'], [String(D.sets), 'working sets']];
+      stats.forEach(([n, u], k) => {
+        const sx = 72 + k * 330;
+        x.fillStyle = ink; x.font = '300 68px ' + serif; x.fillText(n, sx, y);
+        x.fillStyle = ink3; x.font = '500 24px ' + sans; x.fillText(u, sx, y + 36);
+      });
+      // each exercise's best set; what went up, in amber
+      y += 96;
+      x.strokeStyle = 'rgba(236,231,222,.14)'; x.lineWidth = 2; x.beginPath(); x.moveTo(72, y - 34); x.lineTo(W - 72, y - 34); x.stroke();
+      const rows = D.rows.slice(0, 7), lh = rows.length > 6 ? 46 : 52;
+      for (const r of rows) {
+        const val = r.best.w > 0 ? r.best.r + ' × ' + fmtW(r.best.w) : repsWord(r.best.r), tag = [r.top ? 'Top set' : '', r.pb ? 'PB' : '', r.up].filter(Boolean).join('  ');
+        x.textAlign = 'left'; x.fillStyle = ink; x.font = '500 30px ' + sans; x.fillText(r.name, 72, y);
+        x.textAlign = 'right'; x.fillStyle = ink; x.font = '500 30px ' + sans; x.fillText(val, W - 72, y);
+        if (tag) { const vw = x.measureText(val).width; x.fillStyle = amber; x.font = '600 24px ' + sans; x.fillText(tag, W - 72 - vw - 22, y); }
+        y += lh;
+      }
+      x.textAlign = 'left';
+      if (D.rows.length > rows.length) { x.fillStyle = ink3; x.font = '500 24px ' + sans; x.fillText('+ ' + (D.rows.length - rows.length) + ' more', 72, y); }
+      const blob = await new Promise((res) => cv.toBlob(res, 'image/png'));
+      const name = 'machine-program-day' + (D.d + 1) + '-' + new Date(h.at).toISOString().slice(0, 10) + '.png';
+      return { blob, file: blob ? new File([blob], name, { type: 'image/png' }) : null, url: blob ? URL.createObjectURL(blob) : '', text: textOf(D), w: W, h: Hh, name, data: D, hero: hr ? 'figure' : im ? 'still' : 'none' };
+    }
+    // the card of history entry h, built once (a new entry: a new card)
+    function of(h) {
+      if (!h) return null;
+      if (cur && cur.at === h.at && cur.unit === prefs.unit) return cur;
+      if (cur && cur.res && cur.res.url) { try { URL.revokeObjectURL(cur.res.url); } catch (_) { /* fine */ } }
+      const c = { at: h.at, unit: prefs.unit, res: null, promise: null };
+      c.promise = draw(h).then((res) => { c.res = res; return res; }, (e) => { console.info('Machine Program: the card could not be drawn', String(e && e.message || e)); return null; });
+      cur = c;
+      return c;
+    }
+    // Share: the phone's share sheet with the PNG and the text; else the PNG saved and the text copied
+    async function share(h) {
+      const c = of(h); if (!c) return 'none';
+      const r = c.res || (await c.promise); if (!r || !r.file) return 'none';
+      const nav = g.navigator;
+      if (nav.share && (!nav.canShare || nav.canShare({ files: [r.file] }))) {
+        try { await nav.share({ files: [r.file], text: r.text, title: r.data.title }); return 'shared'; } catch (e) { if (e && e.name === 'AbortError') return 'cancelled'; }
+      }
+      save(r); try { await nav.clipboard.writeText(r.text); } catch (_) { /* fine */ }
+      return 'saved';
+    }
+    // Copy: the PNG (and the text) on the clipboard, to paste; else the PNG saved
+    async function copy(h) {
+      const c = of(h); if (!c) return 'none';
+      const r = c.res || (await c.promise); if (!r || !r.blob) return 'none';
+      const nav = g.navigator;
+      if (nav.clipboard && nav.clipboard.write && g.ClipboardItem) {
+        try { await nav.clipboard.write([new g.ClipboardItem({ 'image/png': r.blob, 'text/plain': new Blob([r.text], { type: 'text/plain' }) })]); return 'copied'; } catch (_) { /* image alone */ }
+        try { await nav.clipboard.write([new g.ClipboardItem({ 'image/png': r.blob })]); return 'copied'; } catch (_) { /* no image clipboard */ }
+      }
+      save(r); return 'saved';
+    }
+    function save(r) { const a = doc.createElement('a'); a.href = r.url; a.download = r.name; doc.body.appendChild(a); a.click(); a.remove(); }
+    return { of, share, copy, current: () => cur };
+  })();
+  // the card on the end screen (in the sky) and on its sheet (a finished day's square on the overview)
+  const cardImg = $('cardimg'), cardSheet = $('cardsheet');
+  const cardOpen = () => !cardSheet.hidden;
+  let cardEntry = null;
+  function showCard(h, where) {
+    const c = Card.of(h);
+    const el = where === 'sheet' ? $('cardsheetimg') : cardImg;
+    el.removeAttribute('data-on');
+    if (!c) return;
+    c.promise.then((r) => { if (r && Card.current() === c) { el.src = r.url; el.alt = r.text.split('\n').join('. '); el.setAttribute('data-on', ''); } });
+  }
+  function openCardSheet(k) {
+    const h = doneIn(k) || S.history.find((x) => x.day === k); if (!h) return;
+    cardEntry = h; showCard(h, 'sheet');
+    $('cardsheettitle').textContent = dayLabel(k);
+    cardSheet.hidden = false;
+    try { $('cardshare').focus({ preventScroll: true }); } catch (_) { /* fine */ }
+  }
+  function closeCardSheet() { if (cardSheet.hidden) return; cardSheet.hidden = true; cardEntry = null; }
+  async function cardAct(how, h) {
+    if (!h) return;
+    const out = how === 'share' ? await Card.share(h) : await Card.copy(h);
+    const text = out === 'copied' ? 'Image copied: paste it in Strava' : out === 'saved' ? 'Image saved' + (how === 'share' ? '; the text is copied' : '') : out === 'none' ? 'The card could not be made here' : '';
+    if (text) { ui.note = { text, tone: 'plain', until: now() + 3500 }; if (cardOpen()) $('cardsheetnote').textContent = text; render(); kickLoop(); announce(text + '.'); }
+  }
+  $('cardshare').addEventListener('click', () => cardAct('share', cardEntry));
+  $('cardcopy').addEventListener('click', () => cardAct('copy', cardEntry));
+  $('cardclose').addEventListener('click', closeCardSheet);
+  $('cardagain').addEventListener('click', () => { const k = cardEntry ? cardEntry.day : null; closeCardSheet(); if (k != null) chooseDay(k); });
+  cardSheet.addEventListener('click', (e) => { if (e.target === cardSheet) closeCardSheet(); });
+  cardSheet.addEventListener('keydown', (e) => trapTab(cardSheet, e));
 
   // ---------------------------------------------------------------- the workout menu (the three dots)
   const menu = $('menu'), more = $('morebtn');
@@ -3596,7 +3825,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function startTarget() {
     const qd = +Q.get('day'), qex = Q.get('ex');
     if (qex) { // the step that shows it (a set, else a timed step: the bike is the warm-up), on ?day= when that day has it
-      const at = (d) => { const L = P.days[d].steps, i = L.findIndex((s) => s.ex === qex && s.t === 'sets'); return i >= 0 ? i : L.findIndex((s) => s.ex === qex); };
+      const at = (d) => { const L = P.days[d].steps, i = L.findIndex((s) => s.ex === qex && s.t === 'sets' && !s.off); return i >= 0 ? i : L.findIndex((s) => s.ex === qex && !s.off); };
       const d = qd >= 1 && qd <= P.days.length && at(qd - 1) >= 0 ? qd - 1 : P.days.findIndex((_, k) => at(k) >= 0);
       if (d >= 0) return { day: d, step: at(d) };
       ADHOC.steps = [{ t: 'sets', ex: qex, n: 3, lo: 10, hi: 12 }]; // outside the program (authoring / verify pages): on its own
@@ -3723,7 +3952,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         pace: (() => { const pc = paceNow(t); return pc ? { stage: pc.stage, secs: pc.secs || null, count: pc.count == null ? null : pc.count, side: pc.side, target: pc.target, k: pc.ph ? pc.ph.k : null, phase: pc.phase == null ? null : +pc.phase.toFixed(4), first: ui.pace.first, done: ui.pace.done.slice(), kg: ui.pace.kg, drop: ui.pace.drop } : null; })(),
         log: !E.log.hidden, opt: !E.opt.hidden, optOpen: optOpen(), unit: prefs.unit, sound: prefs.sound, sounds: Object.assign({}, Snd.played), mirrored, side: sideNow(),
         breath: E.cbreath.hidden ? '' : E.cbreath.textContent, wake: wake.state(), alerts: Alerts.state(), amend: amendOn(),
-        clockTone: E.clock.dataset.tone || '', lastLog,
+        clockTone: E.clock.dataset.tone || '', lastLog, cardSheet: cardOpen(), endNext: $('endnext').hidden ? '' : $('endnext').textContent,
+        card: (() => { const c = Card.current(); return c ? { ready: !!c.res, w: c.res ? c.res.w : 0, h: c.res ? c.res.h : 0, hero: c.res ? c.res.hero : null, text: c.res ? c.res.text : '', shown: cardImg.hasAttribute('data-on') || $('cardsheetimg').hasAttribute('data-on') } : null; })(),
       };
     },
     // one clock: the pacer at the instant the stage drew its frame, against the stage's own phase; the card's phase label as
@@ -3735,9 +3965,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       return { t, run0: pc.run0, dur: ui.pace.tempo.dur, stageDur: live ? stage.cur.motion.duration : null, playing: live && stage.isPlaying(), resyncs, pace: pc.phase,
         stage: live ? { phase: stagePhaseAt(t), drawn: stage.phase, id: stage.cur.id } : null,
         label: { k: E.cphase.dataset.k, verb: E.cverb.textContent, at: phaseAt, pace: pl && pl.stage === 'run' ? pl.ph.k : null, paceSeg: pl && pl.ph ? pl.ph.seg : null },
-        count: pc.count, clock: E.clock.textContent, mirrored, breath: E.cbreath.hidden ? '' : E.cbreath.textContent };
+        count: pc.count, painted: pl && pl.stage === 'run' ? pl.count : null, clock: E.clock.textContent, mirrored, breath: E.cbreath.hidden ? '' : E.cbreath.textContent };
     },
     doc: () => clone(S),
+    // the current workout card as a PNG data URL (the tests save and look at it)
+    cardPng: () => { const c = Card.current(); return c ? c.promise.then((r) => (r && r.blob ? new Promise((res) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(r.blob); }) : null)) : null; },
     go: (i) => jumpTo(i), day: (d) => chooseDay(d),
   };
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -11,7 +11,7 @@ Open it, and download it to your phone (the **Download app** button is on its fi
 
 - The app opens on the seven days as squares, under the week you are in ("Week 3 · 2 of 7 days done"). Each square shows its
   exercise moving; the days you finished this week are ticked with the time they took; the one you are in the middle of says
-  Resume. Tap a square to open that day.
+  Resume. Tap a square to open that day (a finished day opens its workout card; "Do this day again" starts it over).
 - Every screen has one button at the bottom: Go, Stop, Skip rest, Start, Next. The round button on its left is Undo.
 - A set starts with **Go**: a 5 second countdown (big numbers, a beep and a buzz each second), then the figure starts at the
   bottom of its rep and the app counts your reps as you follow it (a rep counts once its lift is done, with a soft tick).
@@ -51,6 +51,10 @@ Open it, and download it to your phone (the **Download app** button is on its fi
   lets it through: on a Xiaomi, set Chrome and the app to Battery saver "No restrictions").
 - The screen stays on while the app is open.
 - The clock at the top right times the workout, from your first action to the last set. The finished day shows its time.
+- A finished day shows its **workout card**: the figure with every muscle the day worked lit, the day and date, the time, the
+  weight lifted, the sets, each exercise's best set, the top set, what went up since last time and new bests (PB). **Share**
+  opens the phone's share sheet (Strava, Instagram, Photos…) with the picture (1080 × 1350) and a short text for the
+  description; the button beside it copies both, to paste.
 - Made a mistake? Undo takes back the last step, and again for the one before. The three dots at the top right also hold
   Restart workout (it starts the day over, and Undo brings it back) and All workouts.
 - A machine is taken? **Options** (top right) holds **Do it later** (the exercise moves to the end of the day) and **Swap**
