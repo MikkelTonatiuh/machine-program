@@ -295,7 +295,7 @@
       const p = this.dataP = (wait ? new Promise((r) => setTimeout(r, wait)) : Promise.resolve())
         .then(() => Promise.all(['data/rig.json', 'data/body.json', 'data/muscles.json'].map((f) => MCE.loadJSON(f, this.opts.base))))
         .then(([rig, body, muscles]) => ({ rig, body: MCE.prepBody(body), muscles: MCE.prepMuscles(muscles) }))
-        .then((D) => (this.opts.body === 'mpfb' ? this._figure(D) : D));
+        .then((D) => (this.opts.body === 'mpfb' ? this._figure(D).catch((e) => { console.warn('MCE: the static figure did not load, using the sculpted body', e); this.opts.body = 'sdf'; return D; }) : D));
       p.then(() => { this._dataFails = 0; this._dataRetryAt = 0; }, () => {
         if (this.dataP === p) this.dataP = null;
         this._dataFails = (this._dataFails || 0) + 1; this._dataRetryAt = MCE.now() + Math.min(15000, 600 * 2 ** (this._dataFails - 1));
