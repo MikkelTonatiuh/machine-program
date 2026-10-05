@@ -54,7 +54,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .seg i { width: calc(var(--f, 0) * 100%); background: rgba(236,231,222,.9); transition: width .45s var(--ease); }
 .seg:focus-visible { outline-offset: -2px; border-radius: 4px; }
 .bar { display: flex; align-items: center; justify-content: space-between; height: 36px; margin-top: -2px; gap: 8px; }
-.daybtn { pointer-events: auto; display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 10px 0 0; font: 500 13px/1 var(--sans); color: var(--ink2); letter-spacing: .01em; min-width: 0; white-space: nowrap; }
+.daybtn { pointer-events: auto; display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 10px 0 0; overflow: hidden; flex: 0 1 auto; font: 500 13px/1 var(--sans); color: var(--ink2); letter-spacing: .01em; min-width: 0; white-space: nowrap; }
+#daylabel { min-width: 0; overflow: hidden; text-overflow: ellipsis; } /* (a long workout clock and Options leave the day less room on a narrow screen) */
 .daybtn svg, .resetview svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; opacity: .8; }
 .barr { display: flex; align-items: center; flex: none; gap: 2px; }
 .resetview { pointer-events: auto; width: 36px; height: 36px; display: grid; place-items: center; color: var(--ink2); }
@@ -257,7 +258,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .endnext { pointer-events: auto; margin: -4px 0 6px; }
 .cardsheet .sheetbox { display: flex; flex-direction: column; align-items: center; max-height: 100%; overflow-y: auto; }
 .cardsheet h3 { align-self: flex-start; }
-.cardsheetimg { display: block; width: auto; max-width: 100%; height: min(62vh, 520px); aspect-ratio: 4 / 5; object-fit: contain; margin: 4px 0 6px; border-radius: 14px; background: #101618;
+.cardsheetimg { display: block; width: min(100%, calc(min(62vh, 520px) * .8)); height: auto; aspect-ratio: 4 / 5; object-fit: contain; margin: 4px 0 6px; border-radius: 14px; background: #101618;
   box-shadow: 0 0 0 1px rgba(236,231,222,.14); opacity: 0; transition: opacity .4s var(--ease); }
 .cardsheetimg[data-on] { opacity: 1; }
 .cardsheetnote { min-height: 20px; margin: 0 0 8px !important; text-align: center; font: 500 14px/1.4 var(--sans) !important; color: var(--ink2); }
@@ -276,6 +277,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .app.compact .cspeed { font-size: 14.5px; }
 .app.compact .ccue { font-size: 15.5px; line-height: 1.28; }
 .app.compact .crule { display: none; }
+.app.compact .coach:has(.cbreath:not([hidden])) .cphase { grid-row: 1 / span 2; } /* (the phase beside the cue and the breathing line) */
+.app.compact .ccue, .app.compact .cbreath { grid-column: 2; }
+.app.compact .cbreath { font-size: 13.5px; }
 .app.side .info { left: var(--tx0); right: 0; top: var(--top); bottom: calc(var(--actb, 14px) + 112px); justify-content: flex-end; justify-content: safe flex-end; align-items: flex-start; text-align: left; padding: 0 var(--sr) 0 12px; }
 .app.side[data-view="set"] .info, .app.side[data-view="drop"] .info, .app.side[data-view="rest"] .info { bottom: calc(var(--actb, 14px) + 180px); }
 .app.side .name { font-size: clamp(28px, 4.3vw, 54px); }
@@ -3517,7 +3521,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if (MCE.RimTimer) { const rc = doc.createElement('canvas'); new MCE.RimTimer(rc).draw(W, Hh, 1, arc, 1, { head: false, k: 0.9 }); x.save(); x.globalCompositeOperation = 'screen'; x.drawImage(rc, 0, 0); x.restore(); }
       // the figure on the horizon (scaled so the stage's arc lands on the card's)
       if (hr) {
-        const s = 0.72, cw = hr.canvas.width * s, ch = hr.canvas.height * s, top = ARC - hr.arc * ch;
+        const s = 0.68, cw = hr.canvas.width * s, ch = hr.canvas.height * s, top = ARC - hr.arc * ch; // (the figure's top stays under the header line)
         x.drawImage(hr.canvas, (W - cw) / 2, top, cw, ch);
       } else if (im) {
         const s = Math.min(560 / im.height, 760 / im.width); x.save(); x.globalAlpha = 0.95; x.drawImage(im, (W - im.width * s) / 2, ARC - im.height * s + 30, im.width * s, im.height * s); x.restore();
