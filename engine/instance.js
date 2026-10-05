@@ -65,7 +65,10 @@
       this.H = this.skel.H;
       this.group = new THREE.Group(); this.group.name = 'figure:' + id;
       this.group.add(this.skel.root);
-      this.machine = new MCE.Machine((EX.machine && EX.machine.parts) || [], this.skel, stage.mats, EX.machine && EX.machine.fade);
+      // the static figure's fit table (data/figure_mpfb_fit.json): machine parts moved by a vector (H, rest-pose frame) so the pads
+      // meet this body where they met the sculpted one; { exerciseId: { partId: [dx, dy, dz] | { at|from|to|pivot: [dx, dy, dz] } } }
+      const fit = D.figure && D.figure.fit && D.figure.fit[id], shift = (p) => { const v = fit[p.id]; if (!v) return p; const q = { ...p }; for (const k of ['at', 'from', 'to', 'pivot']) { const d = Array.isArray(v) ? v : v[k]; if (d && q[k]) q[k] = q[k].map((x, i) => x + d[i]); } return q; };
+      this.machine = new MCE.Machine(fit ? ((EX.machine && EX.machine.parts) || []).map(shift) : (EX.machine && EX.machine.parts) || [], this.skel, stage.mats, EX.machine && EX.machine.fade);
       this.group.add(this.machine.root);
       this.motion = new MCE.Motion(EX);
       // the static figure (Stage option body: 'mpfb', engine/figure.js): its bone indices for this skeleton, and the pads
@@ -438,7 +441,7 @@
       gm.setAttribute('aG1', new THREE.BufferAttribute(R.g1, 3));
       if (R.uv) gm.setAttribute('uv', new THREE.BufferAttribute(R.uv, 2));
       gm.setIndex(new THREE.BufferAttribute(R.idx, 1));
-      this.mat = MCE.shading.skinMaterial(this.U, this.stage.opts.debugMode || 'skin', F ? { pads: true, normalMap: F.normalTex || null, normalScale: F.normalScale } : null);
+      this.mat = MCE.shading.skinMaterial(this.U, this.stage.opts.debugMode || 'skin', F ? { pads: true, normalMap: F.normalTex || null, normalScale: F.normalScale, knee: F.knee, keep: F.keep, roughness: F.roughness } : null);
       this.skinMesh = new THREE.Mesh(gm, this.mat); this.skinMesh.frustumCulled = false; this.skinMesh.name = 'skin';
       this.group.add(this.skinMesh);
       // CPU sample of the skin (every n-th vertex) for framing and fill measurement

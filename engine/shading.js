@@ -158,8 +158,11 @@
   // fig (the static figure, engine/figure.js): { pads: true (the pad press), normalMap: texture (definition), normalScale }
   function skinMaterial(U, mode = 'skin', fig = null) {
     const THREE = g.THREE, C = glowColors();
-    const F = finishOf(U), fname = (U && U.finish) || 'satin';
-    const mat = new THREE.MeshStandardMaterial({ color: F.color, roughness: fig && fig.normalMap ? Math.min(F.roughness, F.figRoughness ?? F.roughness) : F.roughness, metalness: 0.0, envMapIntensity: F.env });
+    // the static figure may adjust the finish's highlight roll-off and roughness (the definition map needs the shading to keep
+    // its contrast: the clay roll-off compresses everything above its knee to a quarter)
+    const F0 = finishOf(U), fname = (U && U.finish) || 'satin';
+    const F = fig && (fig.knee != null || fig.keep != null) ? { ...F0, knee: fig.knee ?? F0.knee, keep: fig.keep ?? F0.keep } : F0;
+    const mat = new THREE.MeshStandardMaterial({ color: F.color, roughness: fig && fig.roughness != null ? fig.roughness : F.roughness, metalness: 0.0, envMapIntensity: F.env });
     if (fig && fig.normalMap) { mat.normalMap = fig.normalMap; const ns = fig.normalScale ?? 1; mat.normalScale = new THREE.Vector2(ns, ns); }
     mat.onBeforeCompile = (sh) => {
       Object.assign(sh.uniforms, U);
@@ -217,7 +220,7 @@
     if (mode === 'heads') mat.defines = { MODE_HEADS: 1 };
     if (mode === 'field') mat.defines = { MODE_FIELD: 1 };
     if (fig && fig.pads) mat.defines = Object.assign(mat.defines || {}, { PADS: 1 });
-    mat.customProgramCacheKey = () => 'mce-skin-' + mode + '-' + fname + (fig ? '-fig' + (fig.normalMap ? 'n' : '') : '');
+    mat.customProgramCacheKey = () => 'mce-skin-' + mode + '-' + fname + (fig ? '-fig' + (fig.normalMap ? 'n' : '') + (fig.knee != null ? 'k' + fig.knee : '') + (fig.keep != null ? 'p' + fig.keep : '') : '');
     return mat;
   }
 

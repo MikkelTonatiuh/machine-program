@@ -312,8 +312,13 @@
       });
       // engine/figure.js is loaded here on first use, so a page that never asks for the figure needs no change
       const lib = MCE.Figure ? Promise.resolve() : new Promise((res, rej) => { const el = document.createElement('script'); el.src = base + 'engine/figure.js'; el.onload = res; el.onerror = () => rej(new Error('engine/figure.js did not load')); document.head.appendChild(el); });
-      return Promise.all([lib.then(() => MCE.Figure.load(base + 'data/figure_mpfb.glb')), map]).then(([fig, tex]) => {
-        if (tex) { tex.anisotropy = Math.min(4, this.renderer.capabilities.getMaxAnisotropy()); fig.normalTex = tex; fig.normalScale = 1; }
+      const fit = MCE.loadJSON('data/figure_mpfb_fit.json', base).catch(() => ({}));
+      return Promise.all([lib.then(() => MCE.Figure.load(base + 'data/figure_mpfb.glb')), map, fit]).then(([fig, tex, fitTable]) => {
+        fig.fit = fitTable;
+        if (tex) { tex.anisotropy = Math.min(4, this.renderer.capabilities.getMaxAnisotropy()); fig.normalTex = tex; }
+        // look of the figure (Stage option figure: { normalScale, knee, keep, roughness }; the defaults are the tuned ones)
+        const look = Object.assign({ normalScale: 1.6, knee: 0.17, keep: 0.45, roughness: null }, this.opts.figure || {});
+        fig.normalScale = look.normalScale; fig.knee = look.knee; fig.keep = look.keep; fig.roughness = look.roughness;
         const rig = { ...D.rig, grip: { ...D.rig.grip, ...fig.grip }, landmarks: { ...D.rig.landmarks, ...fig.landmarks } };
         return { ...D, rig, figure: fig };
       });
