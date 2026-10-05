@@ -5,7 +5,7 @@
 (function (g) {
   'use strict';
   const MCE = g.MCE;
-  const NB_MAX = 24, NM_MAX = 32;
+  const NB_MAX = 24, NM_MAX = 32, PAD_MAX = 8;
 
   // brief palette, linear RGB (sRGB -> linear)
   const lin = (hex) => { const c = new g.THREE.Color(hex); return c; }; // ColorManagement.legacyMode=false converts on set
@@ -88,13 +88,25 @@
       uQd: { value: Array.from({ length: NB_MAX }, () => new THREE.Vector4()) },
       uHB: { value: Array.from({ length: NM_MAX }, () => new THREE.Vector2()) }, // per head: x = swell (m), y = activation
       uGlow: { value: 1.0 },
+      // pads pressing into the static figure (engine/figure.js): figure space -> pad local, and the pad's shape
+      // (rounded box: half sizes + corner radius; cylinder along local Y: r, half height, 0, -1)
+      uPadM: { value: Array.from({ length: PAD_MAX }, () => new THREE.Matrix4()) },
+      uPadP: { value: Array.from({ length: PAD_MAX }, () => new THREE.Vector4()) },
+      uPadN: { value: 0 }, uPadK: { value: 0.007 },
       uKeyV: { value: new THREE.Vector3(0.4, 0.6, 0.7) },
     };
   }
 
   const DQ_PARS = `uniform vec4 uQr[${NB_MAX}]; uniform vec4 uQd[${NB_MAX}]; uniform vec2 uHB[${NM_MAX}];
     attribute vec4 aSkI; attribute vec4 aSkW; attribute vec4 aMus; attribute vec4 aBm; attribute vec3 aG0; attribute vec3 aG1; attribute vec2 aHd; attribute float aAO;
-    varying vec4 vMus; varying vec2 vAct; varying float vAO; varying vec3 vWN; varying float vHd;`;
+    varying vec4 vMus; varying vec2 vAct; varying float vAO; varying vec3 vWN; varying float vHd;
+    #ifdef PADS
+    uniform mat4 uPadM[${PAD_MAX}]; uniform vec4 uPadP[${PAD_MAX}]; uniform int uPadN; uniform float uPadK;
+    float padSdf(vec3 lp, vec4 pp) {
+      if (pp.w >= 0.0) { vec3 q = abs(lp) - pp.xyz + pp.w; return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0) - pp.w; }
+      vec2 d = vec2(length(lp.xz) - pp.x, abs(lp.y) - pp.y); return min(max(d.x, d.y), 0.0) + length(max(d, 0.0));
+    }
+    #endif`;
   const DQ_MAIN = `
     float bA0 = uHB[int(aBm.x + 0.5)].x, bA1 = uHB[int(aBm.z + 0.5)].x;
     vec3 bnrm = normalize(normal - bA0 * aG0 - bA1 * aG1);
@@ -109,6 +121,23 @@
     vec3 dqPos = bpos + 2.0 * cross(qr.xyz, cross(qr.xyz, bpos) + qr.w * bpos)
                + 2.0 * (qr.w * qd.xyz - qd.w * qr.xyz + cross(qr.xyz, qd.xyz));
     vec3 dqNrm = bnrm + 2.0 * cross(qr.xyz, cross(qr.xyz, bnrm) + qr.w * bnrm);
+    #ifdef PADS
+    // pad press: skin inside a pad goes out to its surface (a smooth max with 0, so the skin just around the contact
+    // bulges a little, like soft tissue), and the pressed skin turns to face the pad
+    for (int i = 0; i < ${PAD_MAX}; i++) {
+      if (i >= uPadN) break;
+      vec3 lp = (uPadM[i] * vec4(dqPos, 1.0)).xyz; vec4 pp = uPadP[i];
+      float d = padSdf(lp, pp);
+      if (d < uPadK) {
+        const float e = 0.001;
+        vec3 pg = vec3(padSdf(lp + vec3(e, 0, 0), pp) - padSdf(lp - vec3(e, 0, 0), pp), padSdf(lp + vec3(0, e, 0), pp) - padSdf(lp - vec3(0, e, 0), pp), padSdf(lp + vec3(0, 0, e), pp) - padSdf(lp - vec3(0, 0, e), pp));
+        mat3 pr = mat3(uPadM[i]); vec3 gw = normalize(pg * pr); // the pad matrix is rigid: back to figure space by its transpose
+        float h = max(uPadK - abs(d), 0.0) / uPadK, dn = max(d, 0.0) + h * h * uPadK * 0.25;
+        dqPos += gw * (dn - d);
+        dqNrm = normalize(mix(dqNrm, -gw, 0.75 * (1.0 - smoothstep(-uPadK, 0.0, d))));
+      }
+    }
+    #endif
     vMus = aMus; vAO = aAO; vHd = aHd.x;
     vAct = vec2(uHB[int(aHd.x + 0.5)].y, uHB[int(aHd.y + 0.5)].y);
     // perceptual curve: 0.55 at stretch reads clearly dimmer than 1.0 at peak; secondaries peak at ~0.46x the primary glow
@@ -126,10 +155,12 @@
   }
 
   // mode: 'skin' (normal), 'mask' (audit: R = primary mask, G = secondary mask, dilated), 'heads' (authoring colours)
-  function skinMaterial(U, mode = 'skin') {
+  // fig (the static figure, engine/figure.js): { pads: true (the pad press), normalMap: texture (definition), normalScale }
+  function skinMaterial(U, mode = 'skin', fig = null) {
     const THREE = g.THREE, C = glowColors();
     const F = finishOf(U), fname = (U && U.finish) || 'satin';
-    const mat = new THREE.MeshStandardMaterial({ color: F.color, roughness: F.roughness, metalness: 0.0, envMapIntensity: F.env });
+    const mat = new THREE.MeshStandardMaterial({ color: F.color, roughness: fig && fig.normalMap ? Math.min(F.roughness, F.figRoughness ?? F.roughness) : F.roughness, metalness: 0.0, envMapIntensity: F.env });
+    if (fig && fig.normalMap) { mat.normalMap = fig.normalMap; const ns = fig.normalScale ?? 1; mat.normalScale = new THREE.Vector2(ns, ns); }
     mat.onBeforeCompile = (sh) => {
       Object.assign(sh.uniforms, U);
       sh.vertexShader = sh.vertexShader
@@ -185,7 +216,8 @@
     if (mode === 'mask') mat.defines = { MODE_MASK: 1 };
     if (mode === 'heads') mat.defines = { MODE_HEADS: 1 };
     if (mode === 'field') mat.defines = { MODE_FIELD: 1 };
-    mat.customProgramCacheKey = () => 'mce-skin-' + mode + '-' + fname;
+    if (fig && fig.pads) mat.defines = Object.assign(mat.defines || {}, { PADS: 1 });
+    mat.customProgramCacheKey = () => 'mce-skin-' + mode + '-' + fname + (fig ? '-fig' + (fig.normalMap ? 'n' : '') : '');
     return mat;
   }
 
@@ -230,5 +262,5 @@
     return M;
   }
 
-  MCE.shading = { makeEnvironment, makeLights, skinUniforms, skinMaterial, machineMaterials, NB_MAX, NM_MAX, glowColors, FINISHES, setFinish };
+  MCE.shading = { makeEnvironment, makeLights, skinUniforms, skinMaterial, machineMaterials, NB_MAX, NM_MAX, PAD_MAX, glowColors, FINISHES, setFinish };
 })(typeof window !== 'undefined' ? window : globalThis);

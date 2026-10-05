@@ -68,6 +68,13 @@
       this.machine = new MCE.Machine((EX.machine && EX.machine.parts) || [], this.skel, stage.mats, EX.machine && EX.machine.fade);
       this.group.add(this.machine.root);
       this.motion = new MCE.Motion(EX);
+      // the static figure (Stage option body: 'mpfb', engine/figure.js): its bone indices for this skeleton, and the pads
+      // that press into it (a vertex-shader push, engine/shading.js; the meshed body carves them instead)
+      this.figure = D.figure || null;
+      if (this.figure) {
+        this.figIdx = MCE.Figure.bindToSkeleton(this.figure, this.skel);
+        this.pads = Object.values(this.machine.parts).filter((r) => r.mesh && (r.def.carve ?? (r.def.mat === 'pad' || r.def.mat === 'plate'))).slice(0, MCE.shading.PAD_MAX);
+      }
       this.cam = Object.assign({ az: 90, el: 6, dAz: 0, dEl: 0, fill: 0.58 }, EX.camera || {}, so.cameraOverride || {});
       this.yaw = (this.cam.az + (this.cam.dAz || 0)) * D2R;
       this.el = (this.cam.el + (this.cam.dEl || 0)) * D2R;
@@ -224,6 +231,7 @@
       return ((con[0].t0 + con[con.length - 1].t1) / 2) / this.motion.duration;
     }
     compileJob() {
+      if (this.figure) return this._figureJob();
       const THREE = g.THREE, sk = this.skel, H = this.H, B = this.D.body;
       this.solve(this.bindPhase());
       for (const h of this.heads) { h.path = this._headPath(h); h.Lb = this._pathLen(h.path); }
@@ -302,25 +310,49 @@
       J.steps = new Int16Array(B.steps.length * 3);
       B.steps.forEach((s, i) => { J.steps[i * 3] = bi(s[0]); J.steps[i * 3 + 1] = bi(s[1]); J.steps[i * 3 + 2] = pairIdx(s[2] || s[0], s[1]); });
       J.rootSlot = bi(B.root);
-      // muscle groups: guide points in bind (figure) space, per side
+      J.groups = this._jobGroups(bi, worldOf);
+      // restore the frame pose (clearance changed the arms)
+      return J;
+    }
+    // muscle groups: guide points in bind (figure) space, per side
+    _jobGroups(bi, worldOf) {
       const groups = new Map();
       for (const h of this.heads) {
         const key = h.group.id + '|' + h.side;
         if (!groups.has(key)) groups.set(key, { gr: h.group, side: h.side, heads: [] });
         groups.get(key).heads.push(h);
       }
-      J.groups = [];
+      const out = [];
       for (const { gr, side, heads } of groups.values()) {
         const guides = this._groupGuides(gr, side);
         const M = guides.map((gd) => gd.length), off = []; let n = 0; for (const m of M) { off.push(n); n += m; }
         const pts = new Float64Array(n * 3); let o = 0;
         for (const gd of guides) for (const [bone, p] of gd) { const w = worldOf(bone, p); pts[o++] = w.x; pts[o++] = w.y; pts[o++] = w.z; }
         const gb = [...new Set(guides.flat().map(([bone]) => bi(bone)).concat((gr.bones || []).map((b) => bi(side > 0 ? b : mirId(b)))))];
-        J.groups.push({ id: gr.id + (side > 0 ? '_l' : '_r'), K: guides.length, M, off, pts, tol: gr.tol || 0.009, sub: gr.sub || 3, merge: gr.merge || 'smooth', bones: gb,
+        out.push({ id: gr.id + (side > 0 ? '_l' : '_r'), K: guides.length, M, off, pts, tol: gr.tol || 0.009, sub: gr.sub || 3, merge: gr.merge || 'smooth', bones: gb,
           heads: heads.map((h) => { const d = h.def; return { hi: h.hi, tier: h.tier, vc: d.v[0], hw: d.v[1], u0: d.u[0], u1: d.u[1], pk: d.peak ?? 0.5, t0: d.taper[0], t1: d.taper[1], r0: d.round[0], r1: d.round[1], sp: d.spindle ?? 0.7, sheet: d.profile === 'sheet', fade: d.fade ?? 0.62, sk: d.skew ?? 0 }; }) });
       }
-      // restore the frame pose (clearance changed the arms)
-      return J;
+      return out;
+    }
+    // The static figure's job: the skeleton in the figure's bind pose (its world rotations and the root position from the
+    // file; FK with the rig's own segments puts every joint where the figure was built), then only the muscle paint.
+    _figureJob() {
+      const THREE = g.THREE, sk = this.skel, F = this.figure, H = this.H;
+      this.group.rotation.y = 0; this.group.position.set(0, 0, 0);
+      const wq = {};
+      for (const b of sk.list) wq[b.id] = new THREE.Quaternion(...F.bind[b.id].q);
+      for (const b of sk.list) b.obj.quaternion.copy(b.parent ? wq[b.parent].clone().invert().multiply(wq[b.id]) : wq[b.id]);
+      sk.root.position.set(...F.bind.pelvis.p);
+      this.group.updateMatrixWorld(true);
+      for (const h of this.heads) { h.path = this._headPath(h); h.Lb = this._pathLen(h.path); }
+      for (const b of sk.list) { this.bindQ[b.idx] = b.obj.getWorldQuaternion(new THREE.Quaternion()); this.bindP[b.idx] = b.obj.getWorldPosition(new THREE.Vector3()); }
+      const n = sk.list.length; // forearm twist helpers: bound with their forearm
+      for (const [k, s] of [[n, 'l'], [n + 1, 'r']]) { this.bindQ[k] = this.bindQ[sk.bones['fore_' + s].idx].clone(); this.bindP[k] = this.bindP[sk.bones['fore_' + s].idx].clone(); }
+      const bi = (id) => { const b = sk.bones[id]; if (!b) throw new Error('figure: no bone ' + id); return b.idx; };
+      const worldOf = (boneId, p) => { const b = sk.bones[boneId]; return sk.V(p).sub(b.at).applyMatrix4(b.obj.matrixWorld); };
+      const W = F.welded;
+      return { H, nb: this.figIdx.nb, stripe: this.D.muscles.stripe, groups: this._jobGroups(bi, worldOf), renderVerts: F.NV,
+        figure: { pos: W.pos, nor: W.nor, idx: W.idx, skI: this.figIdx.wskI, skW: W.skW } };
     }
     // head length path (for the volume-preserving swell): the guide closest to the head's centre line
     _headPath(h) {
@@ -385,7 +417,13 @@
     }
     // ---------------- skin mesh from a build result
     attachSkin(R) {
-      const THREE = g.THREE;
+      const THREE = g.THREE, F = this.figure;
+      if (F && R.NW) { // the static figure: its shared arrays, with the painted welded fields expanded to the render vertices
+        const NV = F.NV, wd = F.weld;
+        const ex = (src, n) => { const o = new Float32Array(NV * n); for (let v = 0; v < NV; v++) { const w = wd[v] * n; for (let k = 0; k < n; k++) o[v * n + k] = src[w + k]; } return o; };
+        R = { NV, pos: F.pos, nor: F.nor, idx: F.idx, skI: this.figIdx.skI, skW: F.skW, ao: F.ao, uv: F.uv,
+          musA: ex(R.musA, 4), hd: ex(R.hd, 2), bm: ex(R.bm, 4), g0: ex(R.g0, 3), g1: ex(R.g1, 3), stats: R.stats };
+      }
       this.skin = R;
       const gm = new THREE.BufferGeometry();
       gm.setAttribute('position', new THREE.BufferAttribute(R.pos, 3));
@@ -398,8 +436,9 @@
       gm.setAttribute('aBm', new THREE.BufferAttribute(R.bm, 4));
       gm.setAttribute('aG0', new THREE.BufferAttribute(R.g0, 3));
       gm.setAttribute('aG1', new THREE.BufferAttribute(R.g1, 3));
+      if (R.uv) gm.setAttribute('uv', new THREE.BufferAttribute(R.uv, 2));
       gm.setIndex(new THREE.BufferAttribute(R.idx, 1));
-      this.mat = MCE.shading.skinMaterial(this.U, this.stage.opts.debugMode || 'skin');
+      this.mat = MCE.shading.skinMaterial(this.U, this.stage.opts.debugMode || 'skin', F ? { pads: true, normalMap: F.normalTex || null, normalScale: F.normalScale } : null);
       this.skinMesh = new THREE.Mesh(gm, this.mat); this.skinMesh.frustumCulled = false; this.skinMesh.name = 'skin';
       this.group.add(this.skinMesh);
       // CPU sample of the skin (every n-th vertex) for framing and fill measurement
@@ -419,6 +458,7 @@
         U.uQr.value[b.idx].set(r.x, r.y, r.z, r.w);
         U.uQd.value[b.idx].set(0.5 * (t.x * r.w + t.y * r.z - t.z * r.y), 0.5 * (-t.x * r.z + t.y * r.w + t.z * r.x), 0.5 * (t.x * r.y - t.y * r.x + t.z * r.w), -0.5 * (t.x * r.x + t.y * r.y + t.z * r.z));
       }
+      if (this.figure) this._figureUniforms();
       const act = st.act, gain = this.ex.swellGain ?? 2.6;
       for (const h of this.heads) {
         let a = act;
@@ -431,6 +471,34 @@
           U.uHB.value[h.hi].x = (h.def.thick || 0.01) * this.H * (gain * vol + 0.9 * (a - 0.775)) * (h.tier === 1 ? 1 : 0.6);
         }
       }
+    }
+    // The static figure's extra skin uniforms: the forearm twist helpers (a share of the hand's turn about the forearm
+    // since the bind pose, so the forearm skin twists along its length instead of all at the wrist), and the pads in figure
+    // space (this runs inside frame(), after the solve and before the render yaw).
+    _figureUniforms() {
+      const THREE = g.THREE, sk = this.skel, U = this.U, n = sk.list.length;
+      const T = this._ft || (this._ft = { qf: new THREE.Quaternion(), qh: new THREE.Quaternion(), qa: new THREE.Quaternion(), qb: new THREE.Quaternion(), p: new THREE.Vector3(), t: new THREE.Vector3(), y: new THREE.Vector3(0, 1, 0) });
+      const share = (this.figure.twist && this.figure.twist.share) ?? 0.55;
+      for (const [k, s] of [[n, 'l'], [n + 1, 'r']]) {
+        const fore = sk.bones['fore_' + s], hand = sk.bones['hand_' + s];
+        fore.obj.getWorldQuaternion(T.qf); hand.obj.getWorldQuaternion(T.qh);
+        T.qa.copy(T.qf).invert().multiply(T.qh);                                                   // hand in the forearm frame now
+        T.qb.copy(this.bindQ[fore.idx]).invert().multiply(this.bindQ[hand.idx]).invert();       // ... and at the bind pose (inverse)
+        T.qa.multiply(T.qb);
+        let th = 2 * Math.atan2(T.qa.y, T.qa.w); if (th > Math.PI) th -= 2 * Math.PI; if (th < -Math.PI) th += 2 * Math.PI;
+        const r = T.qa.setFromAxisAngle(T.y, th * share).premultiply(T.qf).multiply(T.qb.copy(this.bindQ[k]).invert());
+        fore.obj.getWorldPosition(T.p); T.t.copy(this.bindP[k]).applyQuaternion(r); const t = T.p.sub(T.t);
+        U.uQr.value[k].set(r.x, r.y, r.z, r.w);
+        U.uQd.value[k].set(0.5 * (t.x * r.w + t.y * r.z - t.z * r.y), 0.5 * (-t.x * r.z + t.y * r.w + t.z * r.x), 0.5 * (t.x * r.y - t.y * r.x + t.z * r.w), -0.5 * (t.x * r.x + t.y * r.y + t.z * r.z));
+      }
+      let np = 0;
+      for (const pr of this.pads || []) {
+        const ud = pr.mesh.userData; pr.mesh.updateMatrixWorld(true);
+        U.uPadM.value[np].copy(pr.mesh.matrixWorld).invert();
+        if (ud.kind === 'box') U.uPadP.value[np].set(ud.hs[0], ud.hs[1], ud.hs[2], ud.rr); else U.uPadP.value[np].set(ud.r, ud.hh, 0, -1);
+        np++;
+      }
+      U.uPadN.value = np; U.uPadK.value = (this.D.body.kc ?? 0.004) * this.H;
     }
     // Render transform: the authored yaw about the world origin, plus the viewer's turn (uYaw, radians; engine/stage.js
     // orbit view) about the vertical axis through `pivot` ([x, z] in world space at the authored yaw, the lathe axis):
@@ -451,6 +519,7 @@
     samplePositions(buf, o = 0) {
       const R = this.skin, U = this.U; if (!R || !this.sampleIds) return o;
       const m = this.group.matrixWorld.elements, Qr = U.uQr.value, Qd = U.uQd.value, skI = R.skI, skW = R.skW, pos = R.pos;
+      const np = this.figure ? U.uPadN.value : 0; // the static figure: the shader's pad press, here too (framing, probes)
       for (const id of this.sampleIds) {
         const r0 = Qr[skI[id * 4]];
         let q0 = 0, q1 = 0, q2 = 0, q3 = 0, d0 = 0, d1 = 0, d2 = 0, d3 = 0;
@@ -464,15 +533,34 @@
         const px = pos[id * 3], py = pos[id * 3 + 1], pz = pos[id * 3 + 2];
         // p' = p + 2 q.xyz x (q.xyz x p + w p) + 2 (w d.xyz - dw q.xyz + q.xyz x d.xyz)
         const cx = y * pz - z * py + w * px, cy = z * px - x * pz + w * py, cz = x * py - y * px + w * pz;
-        const ox = px + 2 * (y * cz - z * cy) + 2 * (w * dx - dw * x + (y * dz - z * dy));
-        const oy = py + 2 * (z * cx - x * cz) + 2 * (w * dy - dw * y + (z * dx - x * dz));
-        const oz = pz + 2 * (x * cy - y * cx) + 2 * (w * dz - dw * z + (x * dy - y * dx));
+        let ox = px + 2 * (y * cz - z * cy) + 2 * (w * dx - dw * x + (y * dz - z * dy));
+        let oy = py + 2 * (z * cx - x * cz) + 2 * (w * dy - dw * y + (z * dx - x * dz));
+        let oz = pz + 2 * (x * cy - y * cx) + 2 * (w * dz - dw * z + (x * dy - y * dx));
+        if (np) { const q = this._padPress(ox, oy, oz, np); ox = q[0]; oy = q[1]; oz = q[2]; }
         // the group's world matrix is affine (no perspective row)
         buf[o++] = m[0] * ox + m[4] * oy + m[8] * oz + m[12];
         buf[o++] = m[1] * ox + m[5] * oy + m[9] * oz + m[13];
         buf[o++] = m[2] * ox + m[6] * oy + m[10] * oz + m[14];
       }
       return o;
+    }
+    // engine/shading.js PADS on one figure-space point (allocation-free but for the returned triple)
+    _padPress(x, y, z, np) {
+      const U = this.U, K = U.uPadK.value, e = 0.001;
+      const sdf = (P, M, lx0, ly0, lz0) => {
+        const lx = M[0] * lx0 + M[4] * ly0 + M[8] * lz0 + M[12], ly = M[1] * lx0 + M[5] * ly0 + M[9] * lz0 + M[13], lz = M[2] * lx0 + M[6] * ly0 + M[10] * lz0 + M[14];
+        if (P.w >= 0) { const qx = Math.abs(lx) - P.x + P.w, qy = Math.abs(ly) - P.y + P.w, qz = Math.abs(lz) - P.z + P.w; return Math.hypot(Math.max(qx, 0), Math.max(qy, 0), Math.max(qz, 0)) + Math.min(Math.max(qx, qy, qz), 0) - P.w; }
+        const dx = Math.hypot(lx, lz) - P.x, dy = Math.abs(ly) - P.y; return Math.min(Math.max(dx, dy), 0) + Math.hypot(Math.max(dx, 0), Math.max(dy, 0));
+      };
+      for (let i = 0; i < np; i++) {
+        const M = U.uPadM.value[i].elements, P = U.uPadP.value[i], d = sdf(P, M, x, y, z);
+        if (d >= K) continue;
+        let gx = sdf(P, M, x + e, y, z) - sdf(P, M, x - e, y, z), gy = sdf(P, M, x, y + e, z) - sdf(P, M, x, y - e, z), gz = sdf(P, M, x, y, z + e) - sdf(P, M, x, y, z - e);
+        const gl = Math.hypot(gx, gy, gz) || 1; gx /= gl; gy /= gl; gz /= gl;
+        const h = Math.max(K - Math.abs(d), 0) / K, push = Math.max(d, 0) + h * h * K * 0.25 - d;
+        x += gx * push; y += gy * push; z += gz * push;
+      }
+      return [x, y, z];
     }
     // the same points as Vector3s pushed to out[] (probes: fill)
     sampledPoints(out) {

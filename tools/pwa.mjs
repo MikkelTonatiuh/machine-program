@@ -21,7 +21,7 @@ const old = JSON.parse(first.slice('const BUILD = '.length).replace(/;$/, ''));
 
 // what the app ships: the page, the manifest, the icons, the engine, the data, the exercises, the day pictures
 const list = (dir, ext) => (existsSync(join(ROOT, dir)) ? readdirSync(join(ROOT, dir)).filter((f) => f.endsWith(ext)).sort().map((f) => dir + '/' + f) : []);
-const wanted = ['index.html', 'manifest.webmanifest', ...list('icons', '.png'), ...list('engine', '.js'), ...list('data', '.json'), ...list('exercises', '.json'), ...list('covers', '.webp')];
+const wanted = ['index.html', 'manifest.webmanifest', ...list('icons', '.png'), ...list('engine', '.js'), ...list('data', '.json'), ...list('data', '.glb'), ...list('data', '.webp'), ...list('exercises', '.json'), ...list('covers', '.webp')];
 // files the record already knew keep their place; new ones follow
 const known = old.files.map((f) => f[0]).filter((p) => wanted.includes(p));
 const paths = [...known, ...wanted.filter((p) => !known.includes(p))];

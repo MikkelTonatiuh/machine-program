@@ -773,8 +773,44 @@
       for (let v = 0; v < NV; v++) { musA[v * 4] = fP[v]; musA[v * 4 + 1] = fS[v]; musA[v * 4 + 2] = fib[v]; musA[v * 4 + 3] = stA[v]; }
       return { musA, hd, bm, g0, g1 };
     }
-    function buildSkin(J) { const it = buildSkinGen(J); for (;;) { const r = it.next(); if (r.done) return r.value; } }
-    return { buildSkin, buildSkinGen, makeField };
+    // The static figure (engine/figure.js): the working muscles painted onto its welded mesh. Guides snap to the mesh
+    // itself: the signed distance to the tangent plane of the nearest vertex owned (weight >= 0.5) by the group's bones.
+    function* paintFigureGen(J) {
+      const T0 = now(), H = J.H, F = J.figure, NV = F.pos.length / 3, P = F.pos, N = F.nor, idx = F.idx, skI = F.skI, skW = F.skW;
+      const deg = new Int32Array(NV + 1);
+      for (let t = 0; t < idx.length; t++) deg[idx[t] + 1] += 2;
+      for (let v = 0; v < NV; v++) deg[v + 1] += deg[v];
+      const adj = new Int32Array(deg[NV]), fill = deg.slice(0, NV);
+      for (let t = 0; t < idx.length; t += 3) { const a = idx[t], b = idx[t + 1], c = idx[t + 2]; adj[fill[a]++] = b; adj[fill[a]++] = c; adj[fill[b]++] = a; adj[fill[b]++] = c; adj[fill[c]++] = a; adj[fill[c]++] = b; }
+      // vertex hash grid
+      const cs = 0.02 * H, key = (i, j, k) => ((i * 73856093) ^ (j * 19349663) ^ (k * 83492791)) | 0, grid = new Map();
+      for (let v = 0; v < NV; v++) { const k = key(Math.floor(P[v * 3] / cs), Math.floor(P[v * 3 + 1] / cs), Math.floor(P[v * 3 + 2] / cs)); let L = grid.get(k); if (!L) grid.set(k, L = []); L.push(v); }
+      let allowB = null; const gr = [0, 0, 0];
+      const owned = (v) => { if (!allowB) return true; let w = 0; for (let k = 0; k < 4; k++) if (allowB[skI[v * 4 + k]]) w += skW[v * 4 + k]; return w >= 0.5; };
+      const nearest = (x, y, z, any) => {
+        const ci = Math.floor(x / cs), cj = Math.floor(y / cs), ck = Math.floor(z / cs);
+        let best = -1, bd = BIG;
+        for (let r = 0; r <= 6; r++) {
+          for (let i = ci - r; i <= ci + r; i++) for (let j = cj - r; j <= cj + r; j++) for (let k = ck - r; k <= ck + r; k++) {
+            if (Math.max(Math.abs(i - ci), Math.abs(j - cj), Math.abs(k - ck)) !== r) continue;
+            const L = grid.get(key(i, j, k)); if (!L) continue;
+            for (const v of L) { if (!any && !owned(v)) continue; const dx = x - P[v * 3], dy = y - P[v * 3 + 1], dz = z - P[v * 3 + 2], d = dx * dx + dy * dy + dz * dz; if (d < bd) { bd = d; best = v; } }
+          }
+          if (best >= 0 && Math.sqrt(bd) < r * cs) break;
+        }
+        return best;
+      };
+      const gradAt = (x, y, z) => {
+        let v = nearest(x, y, z, false); if (v < 0) v = nearest(x, y, z, true);
+        if (v < 0) { gr[0] = 0; gr[1] = 1; gr[2] = 0; return 0; }
+        gr[0] = N[v * 3]; gr[1] = N[v * 3 + 1]; gr[2] = N[v * 3 + 2];
+        return (x - P[v * 3]) * gr[0] + (y - P[v * 3 + 1]) * gr[1] + (z - P[v * 3 + 2]) * gr[2];
+      };
+      const mus = yield* paint(J, P, N, NV, deg, adj, (b) => { allowB = b; }, gradAt, gr, skI, skW);
+      return { ...mus, NW: NV, stats: { verts: J.renderVerts || NV, tris: idx.length / 3, paintMs: +(now() - T0).toFixed(0), totalMs: +(now() - T0).toFixed(0), figure: true } };
+    }
+    function buildSkin(J) { const it = J.figure ? paintFigureGen(J) : buildSkinGen(J); for (;;) { const r = it.next(); if (r.done) return r.value; } }
+    return { buildSkin, buildSkinGen, paintFigureGen, makeField };
   }
   g.MCE = g.MCE || {};
   g.MCE.SKIN_MODULE = MCE_SKIN_MODULE;
