@@ -31,7 +31,7 @@ sculpted body. If the figure files fail to load, the stage falls back to the scu
 3. Shape the body in Blender (writes every base-mesh vertex and the add-on's fitted rig as JSON):
    `blender -b -P mpfb_build.py -- shaped/body.json '{"weight":0.35,"stature":1.78}'`
 4. Map it to the engine's skeleton, faceless head, weights, ambient occlusion, GLB:
-   `node figure_out.mjs --shaped shaped/body.json --targets targets_athletic.json --name figure --headT0 0.2 --nippleR 0.045 --nippleIters 120`
+   `node figure_out.mjs --shaped shaped/body.json --targets targets_athletic.json --name figure --headT0 0.2 --nippleR 0.05 --nippleIters 400`
    (`targets_athletic.json`: local MPFB targets mixed in node on top of the shaped body; `figure_backfill.json`: the deeper
    back that makes the torso meet the machines' back pads where the sculpted body did).
 5. Bake the definition map: `node bake_definition.mjs --name figure --relief 1.6`, then encode `out/figure/nrm.png` as WebP
