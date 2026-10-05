@@ -56,6 +56,11 @@ workspace (`engine/probe.js`) with the figure's pad press, a pad-fit probe and t
   `python compose.py out/simlook sheet.png 440 emu` lays the tiles out as the preview contact sheet.
 - `node sim_joints.mjs out/joints` and `python compose_joints.py out/joints sheet.png`: close-ups of the groin, armpit, knee and
   elbow of the four preview exercises (both bodies, one camera per joint, machine hidden, same skin shading emulation).
+- `node regress_default.mjs <repo root>`: builds every exercise's skin with the sculpted body and poses it at five phases, and hashes
+  the skin arrays and the dual-quaternion uniforms; run it on a `git archive` of the base commit and on this tree and compare
+  (the default body is identical for all 28 exercises: the figure option changes nothing unless it is asked for).
+- `node shader_check.mjs`: builds the skin material's shader text the way the browser does for every option combination and checks
+  it for unresolved interpolations and unbalanced blocks (the GLSL itself is only compiled in a browser).
 - `node cpu_frame.mjs`: per-frame CPU time (solve and skin uniforms), triangle and vertex counts and scene build time, both bodies.
 - `node sim_probe.mjs chest_press,leg_press mpfb [--skin] [--fit none|file]`: reach, pins, pad contacts, skin penetration and
   clearance checks, ROM, for the figure (`mpfb`) or the sculpted body (`sdf`); all 28 exercises take about 11 s.
