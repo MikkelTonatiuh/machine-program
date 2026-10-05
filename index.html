@@ -269,6 +269,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .app[data-view="rest"] .note { margin-bottom: 6px; }
 .app[data-view="rest"] .mus:not([hidden]) { display: block !important; margin-top: 2px; color: var(--ink2); } /* (the next exercise's plan: on every screen size) */
 @media (max-height: 699px) { .app[data-view="rest"]:not(.side) .note { display: none; } .app[data-view="rest"] .clock { font-size: 40px; } } /* (a short screen: the selectors say what was logged) */
+.app.crowded:not(.side) .mus { display: none !important; } /* (the script measured the text block over the controls: the muscles line goes, then the rest's kicker and clock shrink) */
+.app[data-view="rest"].crowded2:not(.side) .clock { font-size: 36px; }
+.app[data-view="rest"].crowded2:not(.side) .kicker { display: none; }
 .barr:has(.optbtn:not([hidden])) .turntip { display: none; } /* (the first-visit tip makes room for Options) */
 .app.side .note { margin-top: 6px; }
 .app.compact .coach { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: center; column-gap: 16px; width: min(calc(var(--bw) - var(--sl) - 12px), 460px); padding: 8px 14px 9px; }
@@ -897,7 +900,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // ---------------------------------------------------------------- elements
   const app = $('app'), box = $('stagebox'), stageEl = $('stage'), soon = $('soon');
   const E = {
-    kicker: $('kicker'), name: $('name'), clock: $('clock'), line: $('line'), mus: $('mus'),
+    info: $('info'), kicker: $('kicker'), name: $('name'), clock: $('clock'), line: $('line'), mus: $('mus'),
     act: $('act'), note: $('note'), nicon: $('nicon'), notet: $('notet'),
     sel: $('sel'), minus: $('minus'), plus: $('plus'), reps: $('reps'), repsn: $('repsn'),
     kgminus: $('kgminus'), kgplus: $('kgplus'), kg: $('kg'), kgn: $('kgn'), kgu: $('kgu'),
@@ -1530,7 +1533,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     let fs = parseFloat(getComputedStyle(el).fontSize);
     while (el.scrollWidth > el.clientWidth + 1 && fs > 26) { fs = Math.max(26, fs - 1.5); el.style.fontSize = fs + 'px'; }
   }
-  if (doc.fonts && doc.fonts.ready) doc.fonts.ready.then(fitName);
+  if (doc.fonts && doc.fonts.ready) doc.fonts.ready.then(() => { fitName(); crowd(); });
 
   const setText = (el, s) => { s = s || ''; if (el.textContent !== s) el.textContent = s; el.hidden = !s; };
   // the title, with the end of the day's check before it
@@ -1746,7 +1749,25 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     renderTop(); renderTip();
     stageEl.setAttribute('aria-label', stageLabel());
     dimFor();
+    crowd();
     if (menuOpen()) paintMenu();
+  }
+  // The text block and the controls under it never overlap. The layout leaves the text room for its fullest screen at the normal text
+  // size; a larger system font or an unusual screen can need more, so a measured overlap takes the muscles line away (.crowded) and, on
+  // the rest screen, then makes the clock smaller and drops its kicker (.crowded2). Always measured in the plain state.
+  function crowd() {
+    try {
+      const L = app.classList;
+      L.remove('crowded', 'crowded2');
+      if (L.contains('side') || E.act.hidden || E.info.hidden) return;
+      const vis = (e) => !!e && !e.hidden && e.offsetParent !== null;
+      const over = () => {
+        const kids = [E.kicker, E.name, E.clock, E.line, E.mus].filter(vis), ctl = [E.note, E.sel, $('endnext'), E.act.querySelector('.prow')].filter(vis);
+        if (!kids.length || !ctl.length) return 0;
+        return Math.max(...kids.map((e) => e.getBoundingClientRect().bottom)) - Math.min(...ctl.map((e) => e.getBoundingClientRect().top));
+      };
+      if (over() > 0) { L.add('crowded'); if (app.dataset.view === 'rest' && over() > 0) L.add('crowded2'); }
+    } catch (_) { /* no layout here */ }
   }
   function paintNote(n) {
     const el = E.note;
@@ -3769,7 +3790,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       } else s.removeProperty('--actb');
       app.classList.toggle('side', c.mode === 'side');
       app.classList.toggle('compact', !!c.compact);
-      fitName();
+      fitName(); crowd();
     }
     if (edge && edge.top && edge.bottom) {
       const rgb = (a) => 'rgb(' + a.join(',') + ')';
@@ -3975,7 +3996,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         pace: (() => { const pc = paceNow(t); return pc ? { stage: pc.stage, secs: pc.secs || null, count: pc.count == null ? null : pc.count, side: pc.side, target: pc.target, k: pc.ph ? pc.ph.k : null, phase: pc.phase == null ? null : +pc.phase.toFixed(4), first: ui.pace.first, done: ui.pace.done.slice(), kg: ui.pace.kg, drop: ui.pace.drop } : null; })(),
         log: !E.log.hidden, opt: !E.opt.hidden, optOpen: optOpen(), unit: prefs.unit, sound: prefs.sound, sounds: Object.assign({}, Snd.played), mirrored, side: sideNow(),
         breath: E.cbreath.hidden ? '' : E.cbreath.textContent, wake: wake.state(), alerts: Alerts.state(), amend: amendOn(),
-        clockTone: E.clock.dataset.tone || '', lastLog, cardSheet: cardOpen(), endNext: $('endnext').hidden ? '' : $('endnext').textContent,
+        clockTone: E.clock.dataset.tone || '', crowded: app.classList.contains('crowded') ? (app.classList.contains('crowded2') ? 2 : 1) : 0, lastLog, cardSheet: cardOpen(), endNext: $('endnext').hidden ? '' : $('endnext').textContent,
         card: (() => { const c = Card.current(); return c ? { ready: !!c.res, w: c.res ? c.res.w : 0, h: c.res ? c.res.h : 0, hero: c.res ? c.res.hero : null, text: c.res ? c.res.text : '', shown: cardImg.hasAttribute('data-on') || $('cardsheetimg').hasAttribute('data-on') } : null; })(),
       };
     },
@@ -3993,7 +4014,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     doc: () => clone(S),
     // the current workout card as a PNG data URL (the tests save and look at it)
     cardPng: () => { const c = Card.current(); return c ? c.promise.then((r) => (r && r.blob ? new Promise((res) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(r.blob); }) : null)) : null; },
-    go: (i) => jumpTo(i), day: (d) => chooseDay(d),
+    go: (i) => jumpTo(i), day: (d) => chooseDay(d), render: () => render(),
   };
 })(typeof window !== 'undefined' ? window : globalThis);
 //# sourceURL=engine/app.js
