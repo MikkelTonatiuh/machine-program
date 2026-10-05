@@ -41,6 +41,19 @@ if (BACKFILL !== 'none') {
     const y = P[i * 3 + 1], z = P[i * 3 + 2], dy = (y - Pp[1]) * 100, zm = zmid(y); if (zm === null) continue;
     D[i] = g(dy) / 100 * sstep(zm - BF.mid, zm - BF.full, z);
   }
+  if (BF.legs) { // the same for each thigh: posterior fill relative to the thigh's own mid-plane (table in cm below the pelvis origin)
+    const lt = BF.legs, gl = (dy) => { if (dy >= lt[0][0]) return lt[0][1]; for (let i = 1; i < lt.length; i++) if (dy >= lt[i][0]) { const t = (dy - lt[i - 1][0]) / (lt[i][0] - lt[i - 1][0]); return lt[i - 1][1] + (lt[i][1] - lt[i - 1][1]) * t; } return lt[lt.length - 1][1]; };
+    for (const sd of ['_l', '_r']) {
+      const xc = bind['thigh' + sd].P[0], e2 = new Map();
+      for (let i = 0; i < NB; i++) if (Math.abs(P[i * 3] - xc) < 0.04 && P[i * 3 + 1] < Pp[1] - 0.02) { const k = Math.round((P[i * 3 + 1] - Pp[1]) * 100 / 2); const e = e2.get(k) || [9, -9]; e[0] = Math.min(e[0], P[i * 3 + 2]); e[1] = Math.max(e[1], P[i * 3 + 2]); e2.set(k, e); }
+      const zm2 = (y) => { const k = (y - Pp[1]) * 100 / 2; let s = 0, w = 0; for (let d = -2; d <= 2; d++) { const e = e2.get(Math.round(k) + d); if (e) { const wt = 3 - Math.abs(d); s += (e[0] + e[1]) / 2 * wt; w += wt; } } return w ? s / w : null; };
+      for (let i = 0; i < NB; i++) {
+        if (Math.abs(P[i * 3] - xc) > 0.075 || P[i * 3 + 1] > Pp[1] - 0.01) continue;
+        const y = P[i * 3 + 1], dy = (y - Pp[1]) * 100, zm = zm2(y); if (zm === null) continue;
+        D[i] = Math.max(D[i], gl(dy) / 100 * sstep(zm - (BF.legMid ?? 0.01), zm - (BF.legFull ?? 0.05), P[i * 3 + 2]));
+      }
+    }
+  }
   { // the displacement field smoothed over the mesh graph (a soft shoulder instead of a ledge)
     const adj = Array.from({ length: NB }, () => new Set());
     for (const f of base.faces) for (let k = 0; k < f.length; k++) { const a = f[k], b = f[(k + 1) % f.length]; if (a < NB && b < NB) { adj[a].add(b); adj[b].add(a); } }
@@ -201,10 +214,12 @@ const grip = {};
 }
 // landmarks: each old landmark moved along the old surface normal onto the new surface (same offset from the surface)
 const OLD = restField(BODYJ, RIG);
+const KEEP = arg('keep', 'ischia_c,sacrum,thorax_back').split(',');
 const landmarks = { note: 'rig.json landmarks re-measured on this figure: each moved along the old body surface normal onto this surface, keeping its offset from the surface' };
 for (const [name, v] of Object.entries(RIG.landmarks)) {
   if (name === 'note') continue;
   for (const [nm, bone, p] of [[name, v[0], v[1]], ...(/_l$/.test(name) ? [[name.replace(/_l$/, '_r'), v[0].replace(/_l$/, '_r'), [-v[1][0], v[1][1], v[1][2]]]] : [])]) {
+    if (KEEP.includes(nm.replace(/_[lr]$/, ''))) { if (!/_r$/.test(nm)) landmarks[nm] = [bone, p]; log('  landmark', nm.padEnd(16), 'kept (a pin: the sculpted body value places the pelvis as every exercise was authored)'); continue; }
     const f = OLD.at(p), g = OLD.grad(p), B = bind[bone], atB = ebones.find((b) => b.id === bone).at;
     const o = M.add(B.P, M.mv(B.R, M.sub(M.mul(p, H), atB))), d = M.mv(B.R, g);
     let best = null;
