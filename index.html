@@ -269,9 +269,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .app[data-view="rest"] .note { margin-bottom: 6px; }
 .app[data-view="rest"] .mus:not([hidden]) { display: block !important; margin-top: 2px; color: var(--ink2); } /* (the next exercise's plan: on every screen size) */
 @media (max-height: 699px) { .app[data-view="rest"]:not(.side) .note { display: none; } .app[data-view="rest"] .clock { font-size: 40px; } } /* (a short screen: the selectors say what was logged) */
-.app.crowded:not(.side) .mus { display: none !important; } /* (the script measured the text block over the controls: the muscles line goes, then the rest's kicker and clock shrink) */
+.app.crowded:not(.side) .mus { display: none !important; } /* (the script measured the text block over the controls: the muscles line goes, then the kicker, and the rest's clock shrinks) */
+.app.crowded2:not(.side) .kicker { display: none; }
 .app[data-view="rest"].crowded2:not(.side) .clock { font-size: 36px; }
-.app[data-view="rest"].crowded2:not(.side) .kicker { display: none; }
 .barr:has(.optbtn:not([hidden])) .turntip { display: none; } /* (the first-visit tip makes room for Options) */
 .app.side .note { margin-top: 6px; }
 .app.compact .coach { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: center; column-gap: 16px; width: min(calc(var(--bw) - var(--sl) - 12px), 460px); padding: 8px 14px 9px; }
@@ -1753,8 +1753,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (menuOpen()) paintMenu();
   }
   // The text block and the controls under it never overlap. The layout leaves the text room for its fullest screen at the normal text
-  // size; a larger system font or an unusual screen can need more, so a measured overlap takes the muscles line away (.crowded) and, on
-  // the rest screen, then makes the clock smaller and drops its kicker (.crowded2). Always measured in the plain state.
+  // size; a larger system font or an unusual screen can need more, so a measured overlap takes the muscles line away (.crowded), then
+  // the kicker too and, on the rest screen, makes the clock smaller (.crowded2). Always measured in the plain state.
   function crowd() {
     try {
       const L = app.classList;
@@ -1766,7 +1766,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         if (!kids.length || !ctl.length) return 0;
         return Math.max(...kids.map((e) => e.getBoundingClientRect().bottom)) - Math.min(...ctl.map((e) => e.getBoundingClientRect().top));
       };
-      if (over() > 0) { L.add('crowded'); if (app.dataset.view === 'rest' && over() > 0) L.add('crowded2'); }
+      if (over() > 0) { L.add('crowded'); if (over() > 0) L.add('crowded2'); }
     } catch (_) { /* no layout here */ }
   }
   function paintNote(n) {
