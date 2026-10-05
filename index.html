@@ -2829,8 +2829,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function paceStop() {
     const p = ui.pace; if (!p || !paceHere() || ackOn()) return;
     const pc = paceNow();
-    // (before any rep was counted, on the only or the first side: nothing happened, nothing is logged)
-    if (pc.stage === 'count' || (pc.stage === 'run' && pc.count === 0 && p.side === 0)) { cancelPace(); render(); haptic(10); announce('Stopped. Nothing logged.'); return; }
+    // (before any rep was counted, on either side: nothing happened, nothing is logged; the set can be done again)
+    if (pc.stage === 'count' || (pc.stage === 'run' && pc.count === 0)) { cancelPace(); render(); haptic(10); announce('Stopped. Nothing logged.'); return; }
     if (pc.stage === 'switch') { paceSecondNow(); return; }
     if (p.uni && p.side === 0) {
       p.done = [pc.count]; p.side = 1; p.stage = 'switch'; p.t0 = now(); p.beat = Math.ceil(SWITCH_MS / 1000); p.seen = 0;
@@ -2849,6 +2849,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const p = ui.pace; if (!p) return;
     let lr = null, reps = n;
     if (p.uni) { const a = p.done[0], b = n; lr = p.first === 'l' ? [a, b] : [b, a]; reps = Math.min(a, b); }
+    if (!(reps >= 1)) { cancelPace(); render(); announce('Stopped. Nothing logged.'); return; } // (no rep on a side: not a set)
     if (how === 'match') { Snd.play('match'); haptic([60, 50, 60]); }
     if (p.drop) logDrop(reps, p.kg); else logSet(reps, p.kg, 'pace', lr);
   }
