@@ -98,9 +98,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .ticks i.glow { animation: glow 1.6s var(--ease) both; }
 @keyframes glow { 0%, 40% { background: #ffcf9e; box-shadow: 0 0 12px 3px rgba(255,108,40,.9); } 100% { background: rgba(236,231,222,.86); box-shadow: 0 0 0 0 rgba(255,108,40,0); } }
 .mus { margin-top: 5px; font: 400 13.5px/1.3 var(--sans); color: var(--ink3); }
-.app[data-view="rest"] .line { margin-top: 8px; }
-.app[data-view="rest"] .clock { font-size: clamp(56px, 18.5vw, 76px); }
-.app[data-view="rest"] .kicker { margin-bottom: 3px; }
+.app[data-view="rest"] .line { margin-top: 4px; }
+.app[data-view="rest"] .clock { font-size: clamp(44px, 12vw, 56px); } /* (the rest also holds the logged set's numbers and the next exercise's plan) */
+.app[data-view="rest"] .kicker { margin-bottom: 2px; }
 .act { position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; flex-direction: column; align-items: center;
   padding: 0 var(--sr) 12px var(--sl); pointer-events: none; }
 .note { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; column-gap: 8px; max-width: min(100%, 30rem); min-height: 21px; margin: 0 0 8px;
@@ -248,8 +248,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .optlist button { display: block; width: 100%; padding: 15px 14px; border-radius: 12px; text-align: left; font: 500 16px/1.2 var(--sans); color: var(--ink); background: rgba(236,231,222,.06); touch-action: manipulation; }
 .optlist button:active { background: rgba(236,231,222,.15); }
 /* the workout card: in the sky of the end screen, and on its own sheet from the overview */
-.cardimg { position: absolute; z-index: 3; left: calc(var(--bx0) + var(--bw) / 2); top: calc(var(--top) + 8px); height: calc(var(--arc) - var(--top) - 30px); max-width: calc(var(--bw) - 2 * var(--gut));
-  aspect-ratio: 4 / 5; object-fit: contain; transform: translateX(-50%); border-radius: 16px; box-shadow: 0 18px 48px rgba(0,0,0,.6), 0 0 0 1px rgba(236,231,222,.16);
+.cardimg { position: absolute; z-index: 3; left: calc(var(--bx0) + var(--bw) / 2); top: calc(var(--top) + 10px); height: auto; aspect-ratio: 4 / 5;
+  width: min(calc(var(--bw) - 2 * var(--gut)), calc((var(--arc) - var(--top) - 34px) * .8));
+  transform: translateX(-50%); border-radius: 16px; box-shadow: 0 18px 48px rgba(0,0,0,.6), 0 0 0 1px rgba(236,231,222,.16);
   opacity: 0; transition: opacity .5s var(--ease); pointer-events: none; }
 .cardimg[data-on] { opacity: 1; }
 .app:not([data-mode="end"]) .cardimg { display: none; }
@@ -262,9 +263,12 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .cardsheetnote { min-height: 20px; margin: 0 0 8px !important; text-align: center; font: 500 14px/1.4 var(--sans) !important; color: var(--ink2); }
 .cardsheet .kpact { width: 100%; align-items: center; }
 .cardsheet .kpact .primary { flex: 1 1 auto; }
-.app[data-view="rest"] .num { font-size: 34px; line-height: 40px; }
-.app[data-view="rest"] .sel { margin-bottom: 8px; }
-.app[data-view="rest"] .mus { display: block; color: var(--ink2); }
+.app[data-view="rest"] .num { font-size: 32px; line-height: 38px; }
+.app[data-view="rest"] .sel { margin-bottom: 6px; }
+.app[data-view="rest"] .note { margin-bottom: 6px; }
+.app[data-view="rest"] .mus:not([hidden]) { display: block !important; margin-top: 2px; color: var(--ink2); } /* (the next exercise's plan: on every screen size) */
+@media (max-height: 699px) { .app[data-view="rest"]:not(.side) .note { display: none; } .app[data-view="rest"] .clock { font-size: 40px; } } /* (a short screen: the selectors say what was logged) */
+.barr:has(.optbtn:not([hidden])) .turntip { display: none; } /* (the first-visit tip makes room for Options) */
 .app.side .note { margin-top: 6px; }
 .app.compact .coach { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: center; column-gap: 16px; width: min(calc(var(--bw) - var(--sl) - 12px), 460px); padding: 8px 14px 9px; }
 .app.compact .cphase { flex-direction: column; align-items: flex-start; gap: 2px; padding-bottom: 8px; }
@@ -273,7 +277,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .app.compact .ccue { font-size: 15.5px; line-height: 1.28; }
 .app.compact .crule { display: none; }
 .app.side .info { left: var(--tx0); right: 0; top: var(--top); bottom: calc(var(--actb, 14px) + 112px); justify-content: flex-end; justify-content: safe flex-end; align-items: flex-start; text-align: left; padding: 0 var(--sr) 0 12px; }
-.app.side[data-view="set"] .info, .app.side[data-view="drop"] .info { bottom: calc(var(--actb, 14px) + 180px); }
+.app.side[data-view="set"] .info, .app.side[data-view="drop"] .info, .app.side[data-view="rest"] .info { bottom: calc(var(--actb, 14px) + 180px); }
 .app.side .name { font-size: clamp(28px, 4.3vw, 54px); }
 .app.side .clock { font-size: clamp(56px, 8.5vw, 104px); }
 .app.side .info > * { max-width: 30rem; }
@@ -2744,7 +2748,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // clock; its own loop again after it. (The stage's public setPhase / play / pause: no change to the engine.)
   let resyncs = 0;
   function paceStage(t) {
-    if (!stage || VERIFY || !stage.cur) return;
+    if (!stage || VERIFY || !stage.cur || (doc.hidden && ui.pace)) return; // (a hidden page draws nothing: it picks the clock up when it is shown)
     t = t == null ? now() : t;
     const pc = paceNow(t);
     if (!pc) { if (!stage.isPlaying() && !figHidden) stage.play(); return; }
@@ -2800,7 +2804,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function paceStop() {
     const p = ui.pace; if (!p || !paceHere() || ackOn()) return;
     const pc = paceNow();
-    if (pc.stage === 'count') { cancelPace(); render(); announce('Stopped. Nothing logged.'); return; }
+    // (before any rep was counted, on the only or the first side: nothing happened, nothing is logged)
+    if (pc.stage === 'count' || (pc.stage === 'run' && pc.count === 0 && p.side === 0)) { cancelPace(); render(); haptic(10); announce('Stopped. Nothing logged.'); return; }
     if (pc.stage === 'switch') { paceSecondNow(); return; }
     if (p.uni && p.side === 0) {
       p.done = [pc.count]; p.side = 1; p.stage = 'switch'; p.t0 = now(); p.beat = Math.ceil(SWITCH_MS / 1000); p.seen = 0;
@@ -3475,19 +3480,23 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if (engine !== 'ready' || !g.THREE || !MCE.Stage || !D.cover || !isReady(D.cover)) return null;
       const files = await Promise.all(Object.keys(h.ex || {}).filter(isReady).map((id) => loadJSON('exercises/' + id + '.json').catch(() => null)));
       const prim = new Set(); for (const EX of files) if (EX && EX.muscles) for (const m of EX.muscles.primary || []) prim.add(m);
-      const box2 = doc.createElement('div');
-      box2.style.cssText = 'position:fixed;left:-4000px;top:0;width:540px;height:720px;pointer-events:none;';
-      doc.body.appendChild(box2);
-      let st = null;
-      try {
-        st = MCE.Stage.create(box2, { finish: FINISH, preserveDrawingBuffer: true, grain: false, autoplay: false, workers: 1, cacheSize: 1, maxDpr: 2,
-          muscleOverride: prim.size ? { primary: [...prim], secondary: [] } : undefined });
-        const inf = await st.load(D.cover);
-        st.pause(); st.setPhase(inf.peak);
-        const c = doc.createElement('canvas'); c.width = st.glCanvas.width; c.height = st.glCanvas.height;
-        c.getContext('2d').drawImage(st.glCanvas, 0, 0);
-        return { canvas: c, arc: st.arc.y / st.size.h };
-      } catch (e) { console.info('Machine Program: no figure on the card', String(e && e.message || e)); return null; } finally { if (st) { try { st.destroy(); } catch (_) { /* gone */ } } box2.remove(); }
+      // (the engine lights at most 32 muscle heads: a day with more than that lights the first ones it finds)
+      for (const lim of [99, 9]) {
+        const box2 = doc.createElement('div');
+        box2.style.cssText = 'position:fixed;left:-4000px;top:0;width:540px;height:720px;pointer-events:none;';
+        doc.body.appendChild(box2);
+        let st = null;
+        try {
+          st = MCE.Stage.create(box2, { finish: FINISH, preserveDrawingBuffer: true, grain: false, autoplay: false, workers: 1, cacheSize: 1, maxDpr: 2,
+            muscleOverride: prim.size ? { primary: [...prim].slice(0, lim), secondary: [] } : undefined });
+          const inf = await st.load(D.cover);
+          st.pause(); st.setPhase(inf.peak);
+          const c = doc.createElement('canvas'); c.width = st.glCanvas.width; c.height = st.glCanvas.height;
+          c.getContext('2d').drawImage(st.glCanvas, 0, 0);
+          return { canvas: c, arc: st.arc.y / st.size.h };
+        } catch (e) { console.info('Machine Program: no figure on the card', String(e && e.message || e)); } finally { if (st) { try { st.destroy(); } catch (_) { /* gone */ } } box2.remove(); }
+      }
+      return null;
     }
     const still = (d) => new Promise((res) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = 'covers/day' + (d + 1) + '-still.webp'; });
     function textOf(D) {
