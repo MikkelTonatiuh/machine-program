@@ -5,7 +5,8 @@ from PIL import Image, ImageDraw, ImageFont
 
 src, out = sys.argv[1], sys.argv[2]
 T = int(sys.argv[3]) if len(sys.argv) > 3 else 400
-EX = [('chest_press', 'Chest press'), ('leg_press', '45\u00b0 leg press (deep)'), ('lateral_raise', 'Cable lateral raise'), ('hip_thrust', 'Hip thrust')]
+EMU = len(sys.argv) > 4 and sys.argv[4] == 'emu'
+EX = [('chest_press', 'Chest press'), ('leg_press', '45\u00b0 leg press\n(deep)'), ('lateral_raise', 'Cable lateral\nraise'), ('hip_thrust', 'Hip thrust')]
 COLS = [('sdf', 'stretch', 'Current body \u00b7 stretch'), ('mpfb', 'stretch', 'MPFB body \u00b7 stretch'), ('sdf', 'peak', 'Current body \u00b7 contraction'), ('mpfb', 'peak', 'MPFB body \u00b7 contraction')]
 def font(sz):
     for f in ['C:/Windows/Fonts/segoeui.ttf', 'C:/Windows/Fonts/arial.ttf']:
@@ -40,7 +41,7 @@ def crop_box(ex, w, h):
     return (int(bx), int(by), int(bx + side), int(by + side))
 for i, (ex, name) in enumerate(EX):
     y = TH + i * T
-    d.text((12, y + T // 2 - 14), name, fill=(235, 235, 235), font=F1)
+    d.multiline_text((12, y + T // 2 - 14 * (1 + name.count('\n'))), name, fill=(235, 235, 235), font=F1, spacing=6)
     for j, (body, ph, _) in enumerate(COLS):
         p = os.path.join(src, f'{ex}_{body}_{ph}.png')
         if os.path.exists(p):
@@ -53,6 +54,9 @@ for i, (ex, name) in enumerate(EX):
     d.line([(LW, y), (W, y)], fill=(40, 46, 52))
 for j in range(1, len(COLS)):
     d.line([(LW + j * T, TH), (LW + j * T, TH + T * len(EX))], fill=(60, 66, 72) if j == 2 else (34, 40, 46), width=3 if j == 2 else 1)
-d.text((12, Hh - 30), 'Stretch = loop start, contraction = peak hold. Same engine, camera, clay finish and glow. MPFB body = CC0 MakeHuman mesh.', fill=(140, 146, 150), font=F2)
+if EMU:
+    d.text((12, Hh - 30), 'Software render of the app engine\'s own solve, skin, pads and glow data, with the clay shading emulated (not a GPU frame). Stretch = loop start, contraction = peak hold. MPFB body = CC0 MakeHuman mesh.', fill=(140, 146, 150), font=F2)
+else:
+    d.text((12, Hh - 30), 'Stretch = loop start, contraction = peak hold. Same engine, camera, clay finish and glow. MPFB body = CC0 MakeHuman mesh.', fill=(140, 146, 150), font=F2)
 img.save(out)
 print('wrote', out, img.size)

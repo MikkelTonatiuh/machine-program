@@ -162,8 +162,8 @@ export function boundsInView(mesh, az, el) {
 import { renderEngineLike, readPNG } from './engine_shade.mjs';
 let _tex = null;
 export function engineTile(S, phase, view, size, opts = {}) {
-  const { inst } = S, sk = skinPose(S, phase), R = inst.skin, mt = machineTris(S);
+  const { inst } = S, sk = skinPose(S, phase), R = inst.skin, mt = opts.machine === false ? [] : machineTris(S);
   if (S.body === 'mpfb' && !_tex) { const f = opts.nrm || join(REPO, 'data', 'figure_mpfb_nrm.webp'); _tex = opts.texPng ? readPNG(opts.texPng) : null; }
   const fig = { P: sk.P, N: sk.N, uv: S.body === 'mpfb' ? R.uv : null, ao: R.ao, musA: R.musA, hd: R.hd, idx: R.idx, HB: inst.U.uHB.value };
-  return renderEngineLike(fig, mt, view, size, { ...opts, tex: S.body === 'mpfb' ? (opts.texPng ? (_tex || (_tex = readPNG(opts.texPng))) : null) : null, yawDeg: inst.cam.az + (inst.cam.dAz || 0) });
+  return renderEngineLike(fig, mt, view, size, { ...opts, tex: S.body === 'mpfb' ? (opts.texPng ? (_tex || (_tex = readPNG(opts.texPng))) : null) : null, yawDeg: opts.yawDeg ?? (inst.cam.az + (inst.cam.dAz || 0)) });
 }

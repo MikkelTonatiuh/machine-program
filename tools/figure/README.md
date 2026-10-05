@@ -53,6 +53,10 @@ workspace (`engine/probe.js`) with the figure's pad press, a pad-fit probe and t
 - `node sim_look.mjs` / `node sim_looks_close.mjs <exercise> <phase>`: the four preview exercises, or a close view of the torso under
   several finish settings, with the app's skin shading emulated in software (`engine_shade.mjs`: the clay finish, the definition map, the
   glow, ACES tone mapping; its skin luminance matches a headless-Chrome render of the engine to within a few per cent).
+  `python compose.py out/simlook sheet.png 440 emu` lays the tiles out as the preview contact sheet.
+- `node sim_joints.mjs out/joints` and `python compose_joints.py out/joints sheet.png`: close-ups of the groin, armpit, knee and
+  elbow of the four preview exercises (both bodies, one camera per joint, machine hidden, same skin shading emulation).
+- `node cpu_frame.mjs`: per-frame CPU time (solve and skin uniforms), triangle and vertex counts and scene build time, both bodies.
 - `node sim_probe.mjs chest_press,leg_press mpfb [--skin] [--fit none|file]`: reach, pins, pad contacts, skin penetration and
   clearance checks, ROM, for the figure (`mpfb`) or the sculpted body (`sdf`); all 28 exercises take about 11 s.
 - `node fit_offline.mjs all [--dry]`: moves the pads the figure does not meet toward it (by the gap along the pad's normal) and
