@@ -42,6 +42,22 @@ Checks without a browser: `pose_preview.mjs` (an exercise's key poses by FK, dua
 `glow_preview.mjs` (where the glow lands), `nm_preview.mjs` (the normal map decoded the way three.js does, next to the
 geometry), `mesh_views.mjs`, `depth_rest.mjs` (torso depth against the sculpted body).
 
+## The engine in node (no browser)
+
+`engine_sim.mjs` runs the app's own engine files (core, rig, motion, machine, shading, skinbuild, instance, figure) on
+`three_shim.mjs`, a small stand-in for the parts of three.js the solve path uses, with the same data. It reproduces the
+browser's verify numbers exactly (the authoring workspace's reports for hip thrust, leg curl and preacher curl match to the
+last digit: joint angles, hand and pin errors, pad contact distances). `probe.js` is the verification probe of the authoring
+workspace (`engine/probe.js`) with the figure's pad press, a pad-fit probe and the pad normal of failing skin checks added.
+
+- `node sim_probe.mjs chest_press,leg_press mpfb [--skin] [--fit none|file]`: reach, pins, pad contacts, skin penetration and
+  clearance checks, ROM, for the figure (`mpfb`) or the sculpted body (`sdf`); all 28 exercises take about 11 s.
+- `node fit_offline.mjs all [--dry]`: moves the pads the figure does not meet toward it (by the gap along the pad's normal) and
+  checks again; writes `data/figure_mpfb_fit.json`.
+- `node sim_sheet.mjs <exercises> out/sim` and `python compose.py out/sim sheet.png`: both bodies at the stretch and the peak,
+  software-rendered next to the machine parts (geometry, contact and glow placement, not the app's shading); `sim_close.mjs`
+  renders a joint close up.
+
 ## Licence
 
 MakeHuman's base mesh, targets, rig definitions, weights and UVs are CC0 (the base mesh file says so; the weights file says
