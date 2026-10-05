@@ -132,6 +132,11 @@ The app says little: each line is there because it changes what you do. Where th
 Jeff's videos were read from transcripts, mostly on mirror sites rather than YouTube itself, so check anything you plan to rely on
 against the source. Nothing here comes from his paid programs.
 
+The animations show the ranges the research supports: the leg press bends the knees to about 95° on a back pad reclined to 15°
+([Larsen 2025](https://pubmed.ncbi.nlm.nih.gov/40113586/)), the leg extension leans back to a 50° hip
+([Larsen 2025](https://doi.org/10.1080/02640414.2024.2444713)), the cable lateral raise and the Bayesian curl pull from a pulley
+at hand height so the stretch is loaded, and the incline press grips about 1.5× shoulder width.
+
 ## Credits
 
 A custom program, built on ideas from Jeff Nippard's free videos and published research. The 7-day routine is not his. Not
