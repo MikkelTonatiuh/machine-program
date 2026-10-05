@@ -157,3 +157,13 @@ export function boundsInView(mesh, az, el) {
   for (let v = 0; v < mesh.P.length; v += 3) { const x = mesh.P[v] * r[0] + mesh.P[v + 1] * r[1] + mesh.P[v + 2] * r[2], y = mesh.P[v] * u[0] + mesh.P[v + 1] * u[1] + mesh.P[v + 2] * u[2]; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
   return { x0, x1, y0, y1, r, u };
 }
+
+// engine-like shading of a posed scene (tools/engine_shade.mjs): figure + machine, one tile
+import { renderEngineLike, readPNG } from './engine_shade.mjs';
+let _tex = null;
+export function engineTile(S, phase, view, size, opts = {}) {
+  const { inst } = S, sk = skinPose(S, phase), R = inst.skin, mt = machineTris(S);
+  if (S.body === 'mpfb' && !_tex) { const f = opts.nrm || join(REPO, 'data', 'figure_mpfb_nrm.webp'); _tex = opts.texPng ? readPNG(opts.texPng) : null; }
+  const fig = { P: sk.P, N: sk.N, uv: S.body === 'mpfb' ? R.uv : null, ao: R.ao, musA: R.musA, hd: R.hd, idx: R.idx, HB: inst.U.uHB.value };
+  return renderEngineLike(fig, mt, view, size, { ...opts, tex: S.body === 'mpfb' ? (opts.texPng ? (_tex || (_tex = readPNG(opts.texPng))) : null) : null, yawDeg: inst.cam.az + (inst.cam.dAz || 0) });
+}

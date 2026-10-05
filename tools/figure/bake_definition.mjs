@@ -80,30 +80,35 @@ const R = SK.buildSkin(job);
 console.log('painted', groups.length, 'groups,', hi, 'heads in', ((Date.now() - t0) / 1000).toFixed(1), 's');
 
 // ------------------------------------------------------------------ height per fine vertex (metres, + = raised)
-// mound per head from its belly weight; two heads meeting dip to a groove; a muscle's free border slopes to the base; plus the
-// mannequin's relief lines (linea alba, intersections, V-lines, ...) laid onto this skin
-const hgt = new Float32Array(NF);
+// mound per head from its belly weight; two heads meeting dip to a groove; a muscle's free border slopes to the base. The mounds
+// come from the painter's per-vertex fields, so they are smoothed over the mesh graph (welded vertices: continuous across the
+// UV seams) before they are rasterised. The mannequin's relief lines (linea alba, intersections, V-lines, ...) are laid onto
+// this skin and evaluated exactly per texel below.
+const hHead = new Float32Array(NF);
 const sm = (x) => { const t = Math.max(0, Math.min(1, x)); return t * t * (3 - 2 * t); };
 const BELLY = +arg('belly', 0.9);
 for (let v = 0; v < NF; v++) {
   const w0 = R.bm[v * 4 + 1], w1 = R.bm[v * 4 + 3], f = R.musA[v * 4];
   const m0 = sm(w0 / BELLY), m1 = sm(w1 / BELLY);
-  hgt[v] = DEPTH * Math.max(0, 1 - (1 - m0) * (1 - 0.65 * m1) - 0.55 * m0 * m1) * sm((f + 0.25) / 0.5);
+  hHead[v] = DEPTH * Math.max(0, 1 - (1 - m0) * (1 - 0.65 * m1) - 0.55 * m0 * m1) * sm((f + 0.25) / 0.5);
+}
+{
+  const adj = Array.from({ length: NF }, () => []);
+  for (let t = 0; t < fineIdx.length; t += 3) for (let k = 0; k < 3; k++) { const a2 = fineIdx[t + k], b2 = fineIdx[t + (k + 1) % 3]; adj[a2].push(b2); adj[b2].push(a2); }
+  for (let it = 0; it < +arg('hsmooth', 6); it++) { const H2 = hHead.slice(); for (let v = 0; v < NF; v++) { let s2 = hHead[v] * 2, n2 = 2; for (const j of adj[v]) { s2 += hHead[j]; n2++; } H2[v] = s2 / n2; } hHead.set(H2); }
 }
 const REL = +arg('relief', 1);
-const nWeld = mesh.NB, relMesh = { P: Float64Array.from(P), idx: Uint32Array.from(mesh.idxW) };
+const relMesh = { P: Float64Array.from(P), idx: Uint32Array.from(mesh.idxW) };
 const EXTRA = arg('extra', join(PARAMS, 'figure_relief_extra.json'));
-const extra = EXTRA === 'none' ? null : JSON.parse(readFileSync(resolve(HERE, EXTRA), 'utf8')).prims;
-const rel = makeRelief({ X }, relMesh, { extra });
+const EX_J = EXTRA === 'none' ? null : JSON.parse(readFileSync(resolve(HERE, EXTRA), 'utf8')), extra = EX_J ? EX_J.prims : null;
+const rel = makeRelief({ X }, relMesh, { extra, scale: EX_J ? EX_J.scale : null });
 console.log('relief primitives', rel.n);
-const hRel = new Float32Array(NF);
-for (let v = 0; v < NF; v++) hRel[v] = REL * rel.at(pos[v * 3], pos[v * 3 + 1], pos[v * 3 + 2]);
-let rmin = 0, rmax = 0; for (let v = 0; v < NF; v++) { rmin = Math.min(rmin, hRel[v]); rmax = Math.max(rmax, hRel[v]); }
-console.log('relief range (mm)', (rmin * 1000).toFixed(2), (rmax * 1000).toFixed(2));
-for (let v = 0; v < NF; v++) hgt[v] += hRel[v];
+// (for the displaced-mesh preview only) the same heights per fine vertex
+const hgt = new Float32Array(NF);
+for (let v = 0; v < NF; v++) hgt[v] = hHead[v] + REL * rel.at(pos[v * 3], pos[v * 3 + 1], pos[v * 3 + 2]);
 
 // ------------------------------------------------------------------ rasterise into the UV atlas
-const S = SIZE, HT = new Float32Array(S * S), COV = new Uint8Array(S * S), GU = new Float32Array(S * S * 3), GV = new Float32Array(S * S * 3), NRM = new Float32Array(S * S * 3), MX = new Float32Array(S * S), MV = new Float32Array(S * S);
+const S = SIZE, HT = new Float32Array(S * S), POS = new Float32Array(S * S * 3), COV = new Uint8Array(S * S), GU = new Float32Array(S * S * 3), GV = new Float32Array(S * S * 3), NRM = new Float32Array(S * S * 3), MX = new Float32Array(S * S), MV = new Float32Array(S * S);
 const tri3 = (w) => [pos[w * 3], pos[w * 3 + 1], pos[w * 3 + 2]];
 for (const tr of rTri) {
   const p = tr.map((c) => tri3(c.w)), e1 = [0, 1, 2].map((k) => p[1][k] - p[0][k]), e2 = [0, 1, 2].map((k) => p[2][k] - p[0][k]);
@@ -124,13 +129,15 @@ for (const tr of rTri) {
     MX[i] = lu; MV[i] = lv;
   }
 }
+// the relief lines, exactly, per texel (they are narrow: the mesh would sample them too coarsely)
+{ let n = 0; for (let i = 0; i < S * S; i++) if (COV[i]) { HT[i] += REL * rel.at(POS[i * 3], POS[i * 3 + 1], POS[i * 3 + 2]); n++; } console.log('relief evaluated at', n, 'texels'); }
 // smooth the height inside the islands (masked Gaussian, two passes of a 5-tap binomial each way), then the gradient
 const blur = (A) => { const T = new Float32Array(A.length), Wt = [1, 4, 6, 4, 1];
   for (const dir of [[1, 0], [0, 1]]) { const src = dir[0] ? A : T, dst = dir[0] ? T : A;
     for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) { const i = y * S + x; if (!COV[i]) { dst[i] = src[i]; continue; } let s = 0, w = 0;
       for (let k = -2; k <= 2; k++) { const xx = x + k * dir[0], yy = y + k * dir[1]; if (xx < 0 || yy < 0 || xx >= S || yy >= S) continue; const j = yy * S + xx; if (!COV[j]) continue; s += src[j] * Wt[k + 2]; w += Wt[k + 2]; }
       dst[i] = s / w; } } };
-for (let it = 0; it < +arg('blur', 10); it++) blur(HT);
+for (let it = 0; it < +arg('blur', 3); it++) blur(HT);
 const img = Buffer.alloc(S * S * 3);
 let maxSlope = 0;
 for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {

@@ -22,7 +22,7 @@ function prepBody() {
 }
 
 // tris: { P: positions (Float64/32, metres, bind frame), idx } the figure's welded mesh, for snapping
-export function makeRelief(F, tris, { snapReach = 0.07, extra = null } = {}) {
+export function makeRelief(F, tris, { snapReach = 0.07, extra = null, scale = null } = {}) {
   const SK = skinModule(), RIG = rig(), H = RIG.height, B0 = prepBody();
   // extra lines (same schema as body.json primitives) are mirrored by the engine's own prepBody
   const B = extra ? { prims: [...B0.prims, ...globalThis.MCE.prepBody({ prims: extra, pairs: [], union: { steps: [], root: 'pelvis' }, k: {}, cell: 0.0054, ao: [] }).prims] } : B0;
@@ -44,8 +44,11 @@ export function makeRelief(F, tris, { snapReach = 0.07, extra = null } = {}) {
     return best === null ? p : M.add(p, M.mul(dir, best));
   };
   const list = [], names = [];
-  for (const d of B.prims) {
+  // per-family scale of the lines (cone radii = width, k = depth): { inter: { w: 0.65, d: 1.4 } } matches names starting with inter
+  const fam = (n) => { if (!scale) return null; for (const [k, v] of Object.entries(scale)) if (n.startsWith(k)) return v; return null; };
+  for (let d of B.prims) {
     if (!(d.k < 0)) continue;
+    const fm = fam(d.n); if (fm) d = { ...d, ...(d.ra != null ? { ra: d.ra * (fm.w ?? 1), rb: d.rb * (fm.w ?? 1) } : {}), ...(d.r ? { r: d.r.map((x) => x * (fm.w ?? 1)) } : {}), k: d.k * (fm.d ?? 1) };
     const bn = d.bone, b = bind[bn], front = !/^(cleft|spine)/.test(d.n);
     const sdir = M.mv(b.R, [0, 0, front ? 1 : -1]);
     const isRef = (e) => Array.isArray(e) && typeof e[0] === 'string';

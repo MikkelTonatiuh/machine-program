@@ -50,6 +50,9 @@ browser's verify numbers exactly (the authoring workspace's reports for hip thru
 last digit: joint angles, hand and pin errors, pad contact distances). `probe.js` is the verification probe of the authoring
 workspace (`engine/probe.js`) with the figure's pad press, a pad-fit probe and the pad normal of failing skin checks added.
 
+- `node sim_look.mjs` / `node sim_looks_close.mjs <exercise> <phase>`: the four preview exercises, or a close view of the torso under
+  several finish settings, with the app's skin shading emulated in software (`engine_shade.mjs`: the clay finish, the definition map, the
+  glow, ACES tone mapping; its skin luminance matches a headless-Chrome render of the engine to within a few per cent).
 - `node sim_probe.mjs chest_press,leg_press mpfb [--skin] [--fit none|file]`: reach, pins, pad contacts, skin penetration and
   clearance checks, ROM, for the figure (`mpfb`) or the sculpted body (`sdf`); all 28 exercises take about 11 s.
 - `node fit_offline.mjs all [--dry]`: moves the pads the figure does not meet toward it (by the gap along the pad's normal) and
