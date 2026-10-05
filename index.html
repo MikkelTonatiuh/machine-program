@@ -3445,7 +3445,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // hands the PNG and a short text to the phone's share sheet (Strava, Instagram, Photos...), Copy puts both on the clipboard
   // (or saves the PNG where the browser can do neither).
   const Card = (() => {
-    const W = 1080, Hh = 1350, ARC = 690;
+    const W = 1080, Hh = 1350, ARC = 670, FIGH = 540; // (the horizon's y, the figure's height on the card)
     let cur = null; // { at, promise, res: { blob, file, url, text, w, h } }
     const fmtN = (n) => Math.round(n).toLocaleString('en-US');
     const dateText = (t) => new Date(t).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -3497,7 +3497,9 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
           st.pause(); st.setPhase(inf.peak);
           const c = doc.createElement('canvas'); c.width = st.glCanvas.width; c.height = st.glCanvas.height;
           c.getContext('2d').drawImage(st.glCanvas, 0, 0);
-          return { canvas: c, arc: st.arc.y / st.size.h };
+          // (the figure's framing: its height as a fraction of the stage, where its own lowest point is: the machine fades under it)
+          const F = st.cur && st.cur.fits ? st.cur.fits[st.size.w + 'x' + st.size.h] : null, fill = st.cur && st.cur.cam && st.cur.cam.fill;
+          return { canvas: c, arc: st.arc.y / st.size.h, fill: fill > 0.2 && fill < 1 ? fill : 0.58, bottom: F && Number.isFinite(F.figBottom) ? F.figBottom / st.size.h : null };
         } catch (e) { console.info('Machine Program: no figure on the card', String(e && e.message || e)); } finally { if (st) { try { st.destroy(); } catch (_) { /* gone */ } } box2.remove(); }
       }
       return null;
@@ -3521,8 +3523,16 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if (MCE.RimTimer) { const rc = doc.createElement('canvas'); new MCE.RimTimer(rc).draw(W, Hh, 1, arc, 1, { head: false, k: 0.9 }); x.save(); x.globalCompositeOperation = 'screen'; x.drawImage(rc, 0, 0); x.restore(); }
       // the figure on the horizon (scaled so the stage's arc lands on the card's)
       if (hr) {
-        const s = 0.68, cw = hr.canvas.width * s, ch = hr.canvas.height * s, top = ARC - hr.arc * ch; // (the figure's top stays under the header line)
-        x.drawImage(hr.canvas, (W - cw) / 2, top, cw, ch);
+        // (scaled so the figure stands FIGH tall, its feet on the horizon: its top stays under the header line; under its lowest point
+        // the machine fades out, so nothing of it reaches the words)
+        const s = Math.min(0.9, FIGH / (hr.fill * hr.canvas.height)), cw = hr.canvas.width * s, ch = hr.canvas.height * s, top = ARC - hr.arc * ch;
+        const low = hr.bottom != null ? top + hr.bottom * ch : ARC + 40, y1 = Math.min(ARC + 62, Math.max(low + 56, ARC + 30)), y0 = Math.min(Math.max(low + 6, ARC + 8), y1 - 20);
+        const lay = doc.createElement('canvas'); lay.width = W; lay.height = Hh;
+        const lx = lay.getContext('2d');
+        lx.drawImage(hr.canvas, (W - cw) / 2, top, cw, ch);
+        lx.globalCompositeOperation = 'destination-in';
+        const m = lx.createLinearGradient(0, y0, 0, y1); m.addColorStop(0, '#000'); m.addColorStop(1, 'rgba(0,0,0,0)'); lx.fillStyle = m; lx.fillRect(0, 0, W, Hh);
+        x.drawImage(lay, 0, 0);
       } else if (im) {
         const s = Math.min(560 / im.height, 760 / im.width); x.save(); x.globalAlpha = 0.95; x.drawImage(im, (W - im.width * s) / 2, ARC - im.height * s + 30, im.width * s, im.height * s); x.restore();
       }
@@ -3534,7 +3544,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       x.fillStyle = ink3; x.font = '600 22px ' + sans; if ('letterSpacing' in x) x.letterSpacing = '4px';
       x.fillText('MACHINE PROGRAM' + MID + 'WEEK ' + D.week, 72, 96);
       if ('letterSpacing' in x) x.letterSpacing = '0px';
-      let y = ARC + 100;
+      let y = 790;
       x.fillStyle = ink; x.font = '300 76px ' + serif; x.fillText(D.title, 72, y);
       y += 52; x.fillStyle = ink2; x.font = '500 30px ' + sans; x.fillText(D.date, 72, y);
       // three numbers: the time, the weight lifted (or the ride), the working sets
@@ -3548,7 +3558,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       // each exercise's best set; what went up, in amber
       y += 96;
       x.strokeStyle = 'rgba(236,231,222,.14)'; x.lineWidth = 2; x.beginPath(); x.moveTo(72, y - 34); x.lineTo(W - 72, y - 34); x.stroke();
-      const rows = D.rows.slice(0, 7), lh = rows.length > 6 ? 46 : 52;
+      const many = D.rows.length > 7, rows = many ? D.rows.slice(0, 6) : D.rows, lh = D.rows.length > 6 ? 46 : 52;
       for (const r of rows) {
         const val = r.best.w > 0 ? r.best.r + ' × ' + fmtW(r.best.w) : repsWord(r.best.r), tag = [r.top ? 'Top set' : '', r.pb ? 'PB' : '', r.up].filter(Boolean).join('  ');
         x.textAlign = 'left'; x.fillStyle = ink; x.font = '500 30px ' + sans; x.fillText(r.name, 72, y);
@@ -3557,7 +3567,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         y += lh;
       }
       x.textAlign = 'left';
-      if (D.rows.length > rows.length) { x.fillStyle = ink3; x.font = '500 24px ' + sans; x.fillText('+ ' + (D.rows.length - rows.length) + ' more', 72, y); }
+      if (many) { x.fillStyle = ink3; x.font = '500 24px ' + sans; x.fillText('+ ' + (D.rows.length - rows.length) + ' more', 72, y); }
       const blob = await new Promise((res) => cv.toBlob(res, 'image/png'));
       const name = 'machine-program-day' + (D.d + 1) + '-' + new Date(h.at).toISOString().slice(0, 10) + '.png';
       return { blob, file: blob ? new File([blob], name, { type: 'image/png' }) : null, url: blob ? URL.createObjectURL(blob) : '', text: textOf(D), w: W, h: Hh, name, data: D, hero: hr ? 'figure' : im ? 'still' : 'none' };
