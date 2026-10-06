@@ -84,6 +84,11 @@ for (let grew = true; grew;) {
 for (const [id, e] of Object.entries(P.ex)) {
   if (!used.has(id)) problems.push('"' + id + '" has an entry but no step, swap or harder variant uses it');
   if (e.swap !== undefined && !(Array.isArray(e.swap) && e.swap.every((x) => typeof x === 'string' && x !== id))) problems.push('"' + id + '": swap must be a list of other exercises');
+  if (e.alts !== undefined) {
+    // other machines for the same movement (text only, best first): [{ id, n, cue? }]
+    const ok = Array.isArray(e.alts) && e.alts.length <= 8 && e.alts.every((a) => a && /^[a-z0-9_]{1,40}$/.test(a.id) && typeof a.n === 'string' && a.n.length > 0 && a.n.length <= 60 && (a.cue === undefined || (typeof a.cue === 'string' && a.cue.length <= 80)));
+    if (!ok || new Set(e.alts.map((a) => a.id)).size !== e.alts.length) problems.push('"' + id + '": alts must be up to 8 of { id (a-z, 0-9, _), n (the name), cue? }, with different ids');
+  }
   if (e.reps !== undefined && !(Array.isArray(e.reps) && e.reps.length === 2 && e.reps[0] >= 1 && e.reps[1] >= e.reps[0])) problems.push('"' + id + '": reps must be [lo, hi]');
   // a no-weight exercise (kg0 0) is straight sets in its own range wherever it is done (a swap into a top-set step, a harder version)
   if (e.kg0 === 0) {
@@ -106,6 +111,8 @@ P.days.forEach((d, k) => {
   out.push('');
 });
 const sets = P.days.map((d) => d.steps.filter((s) => s.t === 'sets' && !s.off).reduce((a, s) => a + s.n, 0));
+const altLines = Object.values(P.ex).filter((e) => e.alts && e.alts.length).map((e) => '- ' + e.name + ': ' + e.alts.map((a) => a.n).join(', '));
+if (altLines.length) out.push('Other machines (Options; text only: the figure of the exercise stays, its weights are kept apart):', '', ...altLines, '');
 out.push('Working sets a day: ' + sets.map((n, k) => 'day ' + (k + 1) + ': ' + n).join(', ') + '. In a week: ' + sets.reduce((a, b) => a + b, 0) + '.', '');
 const LIST = out.join('\n');
 
@@ -131,6 +138,8 @@ Around the list, the app adds what is not a working set (the counts below leave 
 - **Each arm**: the weaker arm first, then the other arm does the same reps; the set counts the weaker arm's reps.
 - **Swap** for a busy machine (Options): the exercise named after "swap" takes the step's place for the day (same sets, reps
   and rest; the first one listed is the best).
+- **Other machines** (Options): text-only alternatives, listed after the program. The exercise's figure stays and so do its sets and
+  rest; the machine's weights are kept apart (the first time it starts from the exercise's last weight: "start lighter").
 - **Deload week**, when you choose it (the app suggests it after 6 weeks or when several lifts stall): half the sets, same
   weights, every set 3–4 reps short of failure.
 - **No weight** (knee raise, leg raise, 45° back extension): reps first; once every set reaches the top, the knee raise moves on

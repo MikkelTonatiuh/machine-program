@@ -48,7 +48,7 @@ Around the list, the app adds what is not a working set (the counts below leave 
 
 1. Bike intervals: 8 min easy, building up (up to 140), 4 × 4 min hard (160, then 170–179) with 3 min easy (115–130) between, 5 min easy (115–130)
 2. Cable crunch: 3 × 10–12, every set to failure + drop set, rest 90 s; swap: Machine crunch
-3. Knee raise: 3 × 10–20, every set to failure, rest 90 s; next: Leg raise
+3. Knee raise: 3 × 10–20, every set to failure, rest 90 s; swap: Machine crunch, Cable crunch; next: Leg raise
 4. Stretching (optional): 10 min
 
 ### Day 4 · Push
@@ -84,8 +84,36 @@ Around the list, the app adds what is not a working set (the counts below leave 
 
 1. Bike: 40–45 min easy bike, pulse 120–140 bpm
 2. Machine crunch: 3 × 10–12, every set to failure + drop set, rest 90 s; swap: Cable crunch
-3. Knee raise: 3 × 10–20, every set to failure, rest 90 s; next: Leg raise
+3. Knee raise: 3 × 10–20, every set to failure, rest 90 s; swap: Machine crunch, Cable crunch; next: Leg raise
 4. Stretching (optional): 10 min
+
+Other machines (Options; text only: the figure of the exercise stays, its weights are kept apart):
+
+- 45° back extension: Smith Romanian deadlift, Cable pull-through
+- Bayesian cable curl: Cable bar curl
+- Standing calf raise: Leg-press calf raise, Smith calf raise on a step
+- Chest press: Smith flat press, Assisted dip machine
+- Chest-supported row: Seated cable row, Chest-supported T-bar row, Single-arm row
+- Hack squat: Pendulum squat, Smith squat, feet forward, Belt or V-squat
+- Rope hammer curl: Preacher hammer curl, Cable reverse-grip curl
+- Seated hip abduction: Standing cable abduction, Cable or machine kickback
+- Seated hip adduction: Standing cable adduction, Smith sumo squat
+- Hip thrust: Smith hip thrust, Glute kickback
+- Incline press: Machine incline press, Low-to-high cable fly
+- Knee raise: Hanging knee raise
+- Lat pulldown: Single-arm cable pulldown, Assisted pull-up machine, Machine or cable pullover
+- Cable lateral raise: Machine lateral raise, Cable Y-raise, Wide-grip cable upright row
+- Seated leg curl: Lying leg curl, Standing single-leg curl, Smith Romanian deadlift
+- Leg extension: Cable knee extension, Pendulum squat
+- Leg press: Pendulum squat, Smith squat, feet forward
+- Leg raise: Hanging knee raise
+- Overhead extension: Cross-body cable extension, Smith JM press
+- Pec deck: Seated cable fly, Cable crossover
+- Machine preacher curl: Cable preacher curl, Cable bar curl
+- Cable pushdown: Cable triceps kickback, Smith JM press
+- Reverse fly: Reverse cable crossover, Single-arm cable rear fly, Rope face pull
+- Seated calf raise: Smith seated calf raise, Leg-press calf raise
+- Shoulder press: Smith seated press
 
 Working sets a day: day 1: 18, day 2: 20, day 3: 6, day 4: 18, day 5: 18, day 6: 19, day 7: 6. In a week: 105.
 

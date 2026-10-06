@@ -59,7 +59,13 @@ Open it, and download it to your phone (the **Download app** button is on its fi
   Restart workout (it starts the day over, and Undo brings it back) and All workouts.
 - A machine is taken? **Options** (top right) holds **Do it later** (the exercise moves to the end of the day) and **Swap**
   (another machine for the same muscles takes its place for today, best first, with the same sets and reps; its sets are
-  logged to it). The three dots hold them too.
+  logged to it). The three dots hold them too. **Other machines** below them lists text-only alternatives (a Smith flat press for the
+  chest press, a single-arm cable pulldown for the lat pulldown...): the exercise's figure stays, with its sets, reps and rest, the
+  title shows the machine ("Figure: Chest press" under it), and the machine keeps its own weights and history (its first time it
+  starts from the exercise's last weight: "New machine: start lighter").
+- **Week review**: "Start a new week" (or a workout chosen once all seven days are done) first shows what went up since the week
+  before ("Chest press 61 → 62 kg", "Lat pulldown +1 rep"), what is stuck (3 sessions with no progress) and the next step of the
+  stall ladder, and a deload when one is due. One button, "Start week 4", starts the week.
 - **Deload week** (also in the three dots): half the sets, the same weights, every set 3–4 reps short of failure, for that
   week. The overview suggests one after 6 weeks of training, or when 3 lifts have not gone up in their last 3 workouts.
 - Recovery days: Day 3 is a bike interval ride (8 min easy, 4 × 4 min hard with 3 min easy between, 5 min easy; a beep and a
@@ -208,7 +214,9 @@ takes: `"off": true` on a step (taken out of the program: it keeps its place so 
 `order` leaves it at the end, nothing shows it; add a new step at the end of its day and place it with `order`), `restTop` (the
 rest after a top set), `phases` on a timed step (`[{ sec, name, verb, pulse, cue, hard }]`: a beep and a buzz at each change),
 `optional` (a timed step that can be skipped), and on an exercise `breath` (its breathing cue), `brace` (its own line for a heavy
-top set; the program's is `breath.brace`) and `inc` (its step up in percent, instead of the rule above).
+top set; the program's is `breath.brace`), `inc` (its step up in percent, instead of the rule above) and `alts` (other machines for the
+same movement, text only, best first: `[{ "id": "smith_flat_press", "n": "Smith flat press", "cue": "..." }]`; `id` names the machine's
+own record, so keep it once chosen; Options lists them under "Other machines", so adding one is a change to this data only).
 
 - `node tools/covers.mjs` draws the overview's pictures (`covers/`) from the app's own figure engine: an animation and a
   still frame for each day's cover exercise (`cover` in the program inside `index.html`). Run it when an exercise's
