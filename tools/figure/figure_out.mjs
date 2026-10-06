@@ -41,6 +41,14 @@ if (BACKFILL !== 'none') {
     const y = P[i * 3 + 1], z = P[i * 3 + 2], dy = (y - Pp[1]) * 100, zm = zmid(y); if (zm === null) continue;
     D[i] = g(dy) / 100 * sstep(zm - BF.mid, zm - BF.full, z);
   }
+  if (BF.lumbar) { // the small of the back: the lordotic hollow filled so the lumbar meets a back pad (cm: height above the pelvis origin, half height, half width, depth)
+    const L = BF.lumbar;
+    for (let i = 0; i < NB; i++) {
+      const y = P[i * 3 + 1], zm = zmid(y); if (zm === null || P[i * 3 + 2] > zm - 0.02) continue;
+      const wy = Math.max(0, 1 - Math.abs((y - Pp[1]) * 100 - L.y) / L.ry), wx = Math.max(0, 1 - Math.abs(P[i * 3] - Pp[0]) * 100 / L.rx);
+      D[i] += L.amt / 100 * sstep(0, 1, wy) * sstep(0, 1, wx);
+    }
+  }
   if (BF.legs) { // the same for each thigh: posterior fill relative to the thigh's own mid-plane (table in cm below the pelvis origin)
     const lt = BF.legs, gl = (dy) => { if (dy >= lt[0][0]) return lt[0][1]; for (let i = 1; i < lt.length; i++) if (dy >= lt[i][0]) { const t = (dy - lt[i - 1][0]) / (lt[i][0] - lt[i - 1][0]); return lt[i - 1][1] + (lt[i][1] - lt[i - 1][1]) * t; } return lt[lt.length - 1][1]; };
     for (const sd of ['_l', '_r']) {

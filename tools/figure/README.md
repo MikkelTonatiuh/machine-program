@@ -33,7 +33,7 @@ sculpted body. If the figure files fail to load, the stage falls back to the scu
 4. Map it to the engine's skeleton, faceless head, weights, ambient occlusion, GLB:
    `node figure_out.mjs --shaped shaped/body.json --targets targets_athletic.json --name figure --headT0 0.2 --nippleR 0.05 --nippleIters 400`
    (`targets_athletic.json`: local MPFB targets mixed in node on top of the shaped body; `figure_backfill.json`: the deeper
-   back that makes the torso meet the machines' back pads where the sculpted body did).
+   back, with a lumbar fill, that makes the torso meet the machines' back pads where the sculpted body did).
 5. Bake the definition map: `node bake_definition.mjs --name figure --relief 1.6`, then encode `out/figure/nrm.png` as WebP
    (`PIL.Image.save(..., 'WEBP', quality=90, method=6)`).
 6. Copy `out/figure/figure.glb` to `data/figure_mpfb.glb` and the WebP to `data/figure_mpfb_nrm.webp`, then `node tools/pwa.mjs`.
@@ -66,6 +66,12 @@ workspace (`engine/probe.js`) with the figure's pad press, a pad-fit probe and t
   clearance checks, ROM, for the figure (`mpfb`) or the sculpted body (`sdf`); all 28 exercises take about 11 s.
 - `node fit_offline.mjs all [--dry]`: moves the pads the figure does not meet toward it (by the gap along the pad's normal) and
   checks again; writes `data/figure_mpfb_fit.json`.
+- `node fit_search.mjs <exercise> <spec,...> [--write]`: for what `fit_offline` leaves (parts on a hinge or a slide, pads fixed to a
+  bone, a bar the fist presses into, a handle out of reach, an elbow past its range) a coordinate descent on the shift of a group of
+  parts (`a`, `a+b` together, `a:b` a mirror pair, `a[0/0.5]` a segment whose ends move by a share of the vector) until every
+  check passes. `python probe_all.py [mpfb|sdf]` runs the offline checks on all exercises and lists what fails (the sculpted body
+  passes 28 of 28, the figure with its fit table 28 of 28). `node guarded.mjs <maxMB> <minFreeMB> <cmd>` runs a command with a
+  memory cap, for a PC that is busy with something else.
 - `node sim_sheet.mjs <exercises> out/sim` and `python compose.py out/sim sheet.png`: both bodies at the stretch and the peak,
   software-rendered next to the machine parts (geometry, contact and glow placement, not the app's shading); `sim_close.mjs`
   renders a joint close up.
