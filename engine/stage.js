@@ -216,9 +216,10 @@
       // engine/app.js); see MCE.shading.FINISHES
       this.opts = Object.assign({ base: '', maxDpr: 2, fill: 0.58, autoplay: true, workers: Math.min(2, Math.max(1, (navigator.hardwareConcurrency || 2) - 1)),
         cacheSize: 8, grain: true, preserveDrawingBuffer: false, debugMode: 'skin', arc: null, compose: null, finish: 'satin', exercisePath: (id) => 'exercises/' + id + '.json' }, opts);
-      // body: 'sdf' (the sculpted body meshed per exercise, the default) or 'mpfb' (the static MakeHuman / MPFB figure,
-      // engine/figure.js); a page that passes nothing can try the figure with ?body=mpfb in its address
-      if (!this.opts.body) this.opts.body = (typeof location !== 'undefined' && /[?&]body=mpfb(&|$)/.test(location.search)) ? 'mpfb' : 'sdf';
+      // body: 'mpfb' (the static MakeHuman / MPFB figure, engine/figure.js; the default) or 'sdf' (the sculpted body meshed per
+      // exercise); a page that passes nothing gets the figure, and ?body=sdf in its address asks for the sculpted body. If the
+      // figure's files do not load the stage falls back to the sculpted body by itself.
+      if (!this.opts.body) this.opts.body = (typeof location !== 'undefined' && /[?&]body=sdf(&|$)/.test(location.search)) ? 'sdf' : 'mpfb';
       this.opts.reducedMotion = rmAuto ? !!(mq && mq.matches) : !!opts.reducedMotion;
       this.container = container;
       this.listeners = {};
