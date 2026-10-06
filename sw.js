@@ -1,4 +1,4 @@
-const BUILD = {"version":"5b2f55bd9e5f","files":[["index.html","94jbZFJo0/wc9IuTUtFM54HXvd+IbnoEX9+26TtTJmA="],["manifest.webmanifest","JBViAXvEksoGkGvREao8CRmPQyMKDN2g6ljGDPNcei8="],["icons/icon-192.png","/o2A85KEtw/pwFIPA9rRufY1IwKMavSPWmWhF4DUlNA="],["icons/icon-512.png","7YMuJgQhBU71XVpduwe+sacFJpIrkY5l1yqIACppE+s="],["icons/icon-maskable-512.png","v7iGuXVD1FTnju6gUpjGRiTclKTFWfVlMqRCH9rpvFs="],["icons/apple-touch-icon.png","pt2pcveYPPiJfbHCufTXcqre4bObbMkawAiNr1DQm2o="],["icons/favicon-32.png","6qa2oxdbgsOdbq2xbjELzZadhrZ4YMCXsXcgm2v5Wr0="],["engine/rig.js","5vuvQiKdtRcnFMMO/FMJV7tRDN8l5dBxqC0F6TZFRNo="],["engine/motion.js","hNX3APVTiuHmB8hRN9aKUCm85XlD8W2lmsUYwQctzMg="],["engine/machine.js","o3F89ZmYeu9+Ory2kXG5H6zjRN4SoGlEV77TmMvUZn8="],["engine/shading.js","xIaDMS0kwLzes/ILI6ZRSk68rPUi41SJP2vgdxJpnRE="],["engine/skinbuild.js","J5RuO1RZPH3oVYgWSNLuFeyILQa/cM6GT2cpg134SBA="],["engine/instance.js","g6z12tSS6keS4IAlTYG/PKio5I6oY3q//Qs7hdOvF8c="],["engine/stage.js","nyP4uRttfoq5LYtEWbAtBgNIsOJD9acyLMoQHraU4U8="],["data/rig.json","HNh4U07miD8Hp6ukqu0+oPxpsgK1iQ9jhQXB3/X9nE8="],["data/body.json","e1UdD9SMTDzN2O3ERYUGyaXCH1X7+XOB5KoWJ/jy2T8="],["data/muscles.json","+y7+JyGFVuZAfFScUIpOWacHPPjFcSgxkWrdsgDEqQM="],["exercises/bayesian_curl.json","/A4mwrnNTdSLL2PVer+7wabYAUyRacxHu+dLw39QHKM="],["exercises/bike.json","xy9i6dS1pqiq/Qh607PHixhWAfjiDODnd/DeMAoeiHs="],["exercises/cable_crunch.json","vYPzFv2+kD1TadAOvId2bXt5hPecvDzCcSqvgnT0cBk="],["exercises/calf_raise.json","LdhoTdrzN8/mEK+9m3YU2Ow3OBNDbx9hf7ADfEjXpuM="],["exercises/chest_press.json","suExBCBXXRTJ8LoOtYArIMPzG2yvK8oOf00IByR+4xY="],["exercises/chest_row.json","CHiCEamAGGSsKsFkNQkmQwnaUrgfMjDMWnUmgt8KN1I="],["exercises/hack_squat.json","QdS2ex9W2PRmf0ZpJ5uOvIILxDnmJEzXdf0+1hKkpIU="],["exercises/hip_abduction.json","e360uindegheBXLoHH4jcGvWsT12Egt2Bsk0K9LnXw0="],["exercises/hip_thrust.json","b0HZpuT3bnAymibc0EWC6VLhGHO4izRmBar5TMiknOM="],["exercises/incline_press.json","Wa+d2fhLaf1qBK6mDwwHKLudUMJ2jgrpr584Oj9Xf7o="],["exercises/knee_raise.json","0c1wHwmNoNrvzm1gc5kdZkVCXnNy39idUYI2EMkaqos="],["exercises/lat_pulldown.json","rOYEh+nQGaQOLcJOIGo8xXUdSQ/7Pq8a1tdZ6zqkitE="],["exercises/lateral_raise.json","57MpjyIcDQz29o/pHWpqsJYhzlhMn9QIJBc0m/GFn9I="],["exercises/leg_curl.json","etZSEHlaqIJiOiPZwCA7h1yX4OCqR0FjpeDPZh4/upo="],["exercises/leg_extension.json","5aVZJk9/leOf2mg9hcFAKBz8eML5wRLeSu6ve25S5xk="],["exercises/leg_press.json","70FhYV1OjGvV1JcD7ZRefWF9RsE6FGxIlIpwrecs7xw="],["exercises/overhead_ext.json","ziD9MOTZu8X2q+q2odSrcjk5KtMfjelsqEzopalasuo="],["exercises/pec_deck.json","tXrDXGZmHeK7JYAcagEj0GaDk63C2DZFw6UQ5XEW36w="],["exercises/preacher_curl.json","Zs6nR6NtN5Es5uGASF/QjQEHDSli6q+nt8d0cfPR71E="],["exercises/pushdown.json","LwRswv/Gl4xZ2Zgb4UDEk4gHbPbGOuKXW3Cqou1Hzv4="],["exercises/reverse_fly.json","JBEChjj4WrCynbzpe4LeSpNwCqRspdZyULAoucu39IA="],["exercises/shoulder_press.json","MNa2Bc4+CbtMN9SR0qmm1z7o2Gv1i+xfa3nPttXGrHY="],["covers/day1-still.webp","NXy144/xxOP711ZG7UrPDJ3K/8FPPvN41avk7NbFsyg="],["covers/day1.webp","CAIlcfn8dKmtHzb9IPW/tzCkfKrYUGpgmLONj9cdAKc="],["covers/day2-still.webp","GU8v9tzhcXoHKnBgvRVSAx8tBh+Y/T5Db3L7qtXz8iQ="],["covers/day2.webp","8gFLSThTy98g5CRcai/+yZC5y3BOI58jMNp3ffmLIfs="],["covers/day3-still.webp","oKz/+UI7j2eCH45FpJEp93KoPYg2A7alWhDTVu0GT+s="],["covers/day3.webp","Kh60ufAj4mIoTsF5WiyXwA/1+z7M+PgBUTj/gsiVPpA="],["covers/day4-still.webp","qENnTw0rvPydJkf7igdQ6yV09LMZ+MLPwI90ocivG8s="],["covers/day4.webp","fSgHZh4l1R1k3tEnyeQAI+Bnkf/8okcbMM3aKVo8Sck="],["covers/day5-still.webp","RWY+X5RkBmVll8DZE3tYWZWQhABITWKtsOwKfJcPhUs="],["covers/day5.webp","If/ciAPiWXiZQbQrmZxdS7uW5GCi9vRbpXEwX0gZ3Fo="],["covers/day6-still.webp","8sYVEX0uJhrbsuoTbbJYzWOOazEcBvCIBtbAq30gTL8="],["covers/day6.webp","t+rIrZKYIH0zF3mp85kR7v6o0r9434yXnYa/yMSe7jw="],["covers/day7-still.webp","boCBcO16ThQOVaOTUp4rb7UQro+p+mpz0xYCj+ZUIM8="],["covers/day7.webp","rKysjXIe1ksEKuaQXH5n+b2Jji0UfAnMS6JkRaqAx1s="],["exercises/hip_adduction.json","XfuZBmnnYfvqIZ9D7r9t/v4l9s8uSs9SXPi01eaHg/k="],["exercises/back_extension.json","G7pmvn5dnDlolc/tdM6R+TyLXrWJ8eFLYMt+2Qkv6U8="],["exercises/hammer_curl.json","9jRGEMNgOK50INqRSrr0nq/6EedYD6uOuC7dsCVTmXQ="],["exercises/leg_raise.json","fl74Cuv0hGuX1Cln6Pbt2O1MtKS/fPJVezMFvJMYTzA="],["exercises/machine_crunch.json","okld9CJygId8B5JGjAD0LiHlx4S79SEgQNiJF44OVRg="],["exercises/seated_calf_raise.json","a3qg1BUCMROF+6Vfs8WC6NecfYMw/ABQhzgrZJDrFbk="],["engine/figure.js","ZUvAFrWko6a3YLMVUVVSNmhtDttbVPt5xjEyPIIIIFo="],["data/figure_mpfb.glb","QkB+wbIAnLVkWNwGiH9TC0UQk3uE1s9/KzhimOdV1F4="],["data/figure_mpfb_nrm.webp","azkZux6OEl3N6PWfnWP94av0KvJ24fdruA2/fNY1nTg="],["data/figure_mpfb_fit.json","A7/5LuodVJaSKTC1TZi044/BZUo/kZHuUxXHX+UYNtY="]],"cdn":{"three":"https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js","fonts":"https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@87.5..100,400..500&family=Newsreader:ital,opsz,wght@0,6..72,300..400;1,6..72,300&display=swap"}};
+const BUILD = {"version":"713ef20d3488","files":[["index.html","GblloFA892Aia2KpmaQrZ0mf4uHh1gG6MODZdFVcZck="],["manifest.webmanifest","JBViAXvEksoGkGvREao8CRmPQyMKDN2g6ljGDPNcei8="],["icons/icon-192.png","/o2A85KEtw/pwFIPA9rRufY1IwKMavSPWmWhF4DUlNA="],["icons/icon-512.png","7YMuJgQhBU71XVpduwe+sacFJpIrkY5l1yqIACppE+s="],["icons/icon-maskable-512.png","v7iGuXVD1FTnju6gUpjGRiTclKTFWfVlMqRCH9rpvFs="],["icons/apple-touch-icon.png","pt2pcveYPPiJfbHCufTXcqre4bObbMkawAiNr1DQm2o="],["icons/favicon-32.png","6qa2oxdbgsOdbq2xbjELzZadhrZ4YMCXsXcgm2v5Wr0="],["engine/rig.js","5vuvQiKdtRcnFMMO/FMJV7tRDN8l5dBxqC0F6TZFRNo="],["engine/motion.js","hNX3APVTiuHmB8hRN9aKUCm85XlD8W2lmsUYwQctzMg="],["engine/machine.js","o3F89ZmYeu9+Ory2kXG5H6zjRN4SoGlEV77TmMvUZn8="],["engine/shading.js","xIaDMS0kwLzes/ILI6ZRSk68rPUi41SJP2vgdxJpnRE="],["engine/skinbuild.js","J5RuO1RZPH3oVYgWSNLuFeyILQa/cM6GT2cpg134SBA="],["engine/instance.js","g6z12tSS6keS4IAlTYG/PKio5I6oY3q//Qs7hdOvF8c="],["engine/stage.js","nyP4uRttfoq5LYtEWbAtBgNIsOJD9acyLMoQHraU4U8="],["data/rig.json","dWPOmduJZdiepphUxqcWxGufJ8nZhVudHGRcieQtxB0="],["data/body.json","e1UdD9SMTDzN2O3ERYUGyaXCH1X7+XOB5KoWJ/jy2T8="],["data/muscles.json","+y7+JyGFVuZAfFScUIpOWacHPPjFcSgxkWrdsgDEqQM="],["exercises/bayesian_curl.json","WaadPdSJ6+aof+Gn9w4LConUTUQhzeuEf50pXLMYaLA="],["exercises/bike.json","xy9i6dS1pqiq/Qh607PHixhWAfjiDODnd/DeMAoeiHs="],["exercises/cable_crunch.json","vYPzFv2+kD1TadAOvId2bXt5hPecvDzCcSqvgnT0cBk="],["exercises/calf_raise.json","LdhoTdrzN8/mEK+9m3YU2Ow3OBNDbx9hf7ADfEjXpuM="],["exercises/chest_press.json","suExBCBXXRTJ8LoOtYArIMPzG2yvK8oOf00IByR+4xY="],["exercises/chest_row.json","mMiRuSQ4YuIo/r7g4m2K0zFWeqxMy6VxxRyQ2lKXAzw="],["exercises/hack_squat.json","QdS2ex9W2PRmf0ZpJ5uOvIILxDnmJEzXdf0+1hKkpIU="],["exercises/hip_abduction.json","PJ70CLGmobCL0pZqskmOxcWuWzbFvyWyyerNt6KjAfA="],["exercises/hip_thrust.json","b0HZpuT3bnAymibc0EWC6VLhGHO4izRmBar5TMiknOM="],["exercises/incline_press.json","NdKl56qxVQ6j4abJvh0zeZnKSreIIiSKLPFDs4vAK5Q="],["exercises/knee_raise.json","0c1wHwmNoNrvzm1gc5kdZkVCXnNy39idUYI2EMkaqos="],["exercises/lat_pulldown.json","rOYEh+nQGaQOLcJOIGo8xXUdSQ/7Pq8a1tdZ6zqkitE="],["exercises/lateral_raise.json","+lopJ+/KB20ls1F3NLffGSzD/kgkowGQXsF9EcbRCZQ="],["exercises/leg_curl.json","etZSEHlaqIJiOiPZwCA7h1yX4OCqR0FjpeDPZh4/upo="],["exercises/leg_extension.json","Q7SQdSqzVOdWyFPa9giTDyCFlrTYZJR8TmPAtyxwDt4="],["exercises/leg_press.json","rMsYIVULwKixp2sT3taoqH+azhlzjYy4hLMvqVWRIYs="],["exercises/overhead_ext.json","ziD9MOTZu8X2q+q2odSrcjk5KtMfjelsqEzopalasuo="],["exercises/pec_deck.json","tXrDXGZmHeK7JYAcagEj0GaDk63C2DZFw6UQ5XEW36w="],["exercises/preacher_curl.json","Zs6nR6NtN5Es5uGASF/QjQEHDSli6q+nt8d0cfPR71E="],["exercises/pushdown.json","LwRswv/Gl4xZ2Zgb4UDEk4gHbPbGOuKXW3Cqou1Hzv4="],["exercises/reverse_fly.json","JBEChjj4WrCynbzpe4LeSpNwCqRspdZyULAoucu39IA="],["exercises/shoulder_press.json","PSrRt5bQB2+KbpLOYm1jKtnQBBsFozDSNaU943A31dY="],["covers/day1-still.webp","NXy144/xxOP711ZG7UrPDJ3K/8FPPvN41avk7NbFsyg="],["covers/day1.webp","CAIlcfn8dKmtHzb9IPW/tzCkfKrYUGpgmLONj9cdAKc="],["covers/day2-still.webp","GU8v9tzhcXoHKnBgvRVSAx8tBh+Y/T5Db3L7qtXz8iQ="],["covers/day2.webp","8gFLSThTy98g5CRcai/+yZC5y3BOI58jMNp3ffmLIfs="],["covers/day3-still.webp","oKz/+UI7j2eCH45FpJEp93KoPYg2A7alWhDTVu0GT+s="],["covers/day3.webp","Kh60ufAj4mIoTsF5WiyXwA/1+z7M+PgBUTj/gsiVPpA="],["covers/day4-still.webp","qENnTw0rvPydJkf7igdQ6yV09LMZ+MLPwI90ocivG8s="],["covers/day4.webp","fSgHZh4l1R1k3tEnyeQAI+Bnkf/8okcbMM3aKVo8Sck="],["covers/day5-still.webp","RWY+X5RkBmVll8DZE3tYWZWQhABITWKtsOwKfJcPhUs="],["covers/day5.webp","If/ciAPiWXiZQbQrmZxdS7uW5GCi9vRbpXEwX0gZ3Fo="],["covers/day6-still.webp","8sYVEX0uJhrbsuoTbbJYzWOOazEcBvCIBtbAq30gTL8="],["covers/day6.webp","t+rIrZKYIH0zF3mp85kR7v6o0r9434yXnYa/yMSe7jw="],["covers/day7-still.webp","boCBcO16ThQOVaOTUp4rb7UQro+p+mpz0xYCj+ZUIM8="],["covers/day7.webp","rKysjXIe1ksEKuaQXH5n+b2Jji0UfAnMS6JkRaqAx1s="],["exercises/hip_adduction.json","+EkhLaXu2QpdjMuYwCPr4RSio4ZE7t73m2h6TYzPv2U="],["exercises/back_extension.json","G7pmvn5dnDlolc/tdM6R+TyLXrWJ8eFLYMt+2Qkv6U8="],["exercises/hammer_curl.json","9jRGEMNgOK50INqRSrr0nq/6EedYD6uOuC7dsCVTmXQ="],["exercises/leg_raise.json","fl74Cuv0hGuX1Cln6Pbt2O1MtKS/fPJVezMFvJMYTzA="],["exercises/machine_crunch.json","okld9CJygId8B5JGjAD0LiHlx4S79SEgQNiJF44OVRg="],["exercises/seated_calf_raise.json","a3qg1BUCMROF+6Vfs8WC6NecfYMw/ABQhzgrZJDrFbk="],["engine/figure.js","ZUvAFrWko6a3YLMVUVVSNmhtDttbVPt5xjEyPIIIIFo="],["data/figure_mpfb_fit.json","A7/5LuodVJaSKTC1TZi044/BZUo/kZHuUxXHX+UYNtY="],["data/figure_mpfb.glb","QkB+wbIAnLVkWNwGiH9TC0UQk3uE1s9/KzhimOdV1F4="],["data/figure_mpfb_nrm.webp","azkZux6OEl3N6PWfnWP94av0KvJ24fdruA2/fNY1nTg="]],"cdn":{"three":"https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js","fonts":"https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@87.5..100,400..500&family=Newsreader:ital,opsz,wght@0,6..72,300..400;1,6..72,300&display=swap"}};
 // Machine Program service worker: offline use and updates. The build (tools/pwa.mjs) writes BUILD on the first line:
 // { version, files: [[path, sha256 base64], ...], cdn: { three, fonts } }.
 // - install: this version's files (the page, the engine, the data, the exercises, the icons, the manifest) go into
@@ -10,6 +10,10 @@ const BUILD = {"version":"5b2f55bd9e5f","files":[["index.html","94jbZFJo0/wc9IuT
 //   cached page
 // - updates: a new version installs in the background and waits; the next time the app is opened (or reloaded while no
 //   other window of it is open) it takes over at once; activating deletes the older versions' caches
+// - the end of a rest: the page posts { type: 'rest', at } (at 0: none) when a rest starts, is skipped, undone or restored, and
+//   when the app goes out of sight; the worker holds the time in event.waitUntil (Chromium keeps a worker alive for an event up
+//   to 5 min, and a rest is shorter) and then shows "Rest over" only if no window of the app is in sight (in sight, the page
+//   beeps and buzzes itself); a tap on it brings the app back. { type: 'rest', test: true } always shows (the menu's test).
 'use strict';
 const APP = 'mp-app-' + BUILD.version, CDN = 'mp-cdn';
 const CDN_HOSTS = ['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'];
@@ -86,12 +90,51 @@ self.addEventListener('activate', (event) => {
   })());
 });
 
+// the one rest the worker waits for (and the menu's test, in a slot of its own): a newer message replaces it (and lets the old
+// wait end at once)
+const alarms = { rest: { timer: 0, done: null }, test: { timer: 0, done: null } };
+function restDisarm(a) { if (a.timer) clearTimeout(a.timer); a.timer = 0; if (a.done) a.done(); a.done = null; }
+function restArm(event, d) {
+  const a = alarms[d.test ? 'test' : 'rest'];
+  restDisarm(a);
+  const at = +d.at || 0, wait = at - Date.now();
+  if (!(at > 0) || wait > 270000) return; // (none, or longer than one event may last: the page's own timer is all there is)
+  event.waitUntil(new Promise((resolve) => {
+    a.done = resolve;
+    a.timer = setTimeout(async () => {
+      a.timer = 0; a.done = null;
+      try {
+        const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+        if (d.test || !wins.some((w) => w.visibilityState === 'visible')) {
+          await self.registration.showNotification(String(d.title || 'Rest over').slice(0, 80), {
+            body: String(d.body || '').slice(0, 160), tag: 'rest', renotify: true, vibrate: [200, 100, 200], timestamp: at,
+            icon: new URL('icons/icon-192.png', SCOPE).href, data: { url: SCOPE },
+          });
+        }
+      } catch (_) { /* no permission, or nothing to show it on */ }
+      resolve();
+    }, Math.max(0, wait));
+  }));
+}
+
 self.addEventListener('message', (event) => {
   const d = event.data;
   if (!d || typeof d !== 'object') return;
   // from the version before this one, when the app is opened again: take over now
   if (d.type === 'skip-waiting') self.skipWaiting();
   else if (d.type === 'keep' && Array.isArray(d.urls)) event.waitUntil(keepCdn(d.urls));
+  else if (d.type === 'rest') restArm(event, d);
+});
+
+// a tap on the notification: the app's window, or the app opened
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil((async () => {
+    const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const w of wins) if (w.url.startsWith(SCOPE) && 'focus' in w) return w.focus();
+    if (self.clients.openWindow) return self.clients.openWindow((event.notification.data && event.notification.data.url) || SCOPE);
+    return null;
+  })());
 });
 
 self.addEventListener('fetch', (event) => {
