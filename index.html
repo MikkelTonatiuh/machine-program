@@ -1670,6 +1670,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       v.lTone = go ? 'go' : '';
       v.ticks = { n, done: k, go, glow: gw ? gw.k : null, t0: gw ? gw.t0 : null };
       v.mus = musText(e);
+      if (e.alt && v.kicker) { v.kicker += MID + 'Figure: ' + e.figure; v.mus = ''; } // (a set's kind takes the muscles line's room: the figure's name rides in the kicker)
       v.sel = true;
       const r = selValue(), w = selKg();
       v.primary = { act: 'go', label: 'Go', icon: 'go', aria: 'Go: set ' + (k + 1) + ', a 5 second countdown, then the reps are counted' };
@@ -1690,6 +1691,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       v.kicker = 'Drop set'; v.kTone = 'warm'; v.name = e.name;
       v.line = T.noRest + MID + 'go now' + (w > 0 ? ' at ' + fmtW(w) : '') + (e.unilateral ? MID + 'each arm' : ''); v.lTone = 'go';
       v.mus = musText(e);
+      if (e.alt) { v.kicker += MID + 'Figure: ' + e.figure; v.mus = ''; }
       v.sel = true;
       v.primary = { act: 'go', label: 'Go', icon: 'go', aria: 'Go: the drop set, a 5 second countdown, then the reps are counted' };
       v.log = { aria: 'Log the drop set with ' + repsWord(selValue()) + ' at ' + fmtU(w) + ' ' + uWord() + ', without the pacer' };
