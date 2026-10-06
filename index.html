@@ -79,6 +79,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .mbusy[hidden] { display: none; }
 .menu button:active:not([aria-disabled="true"]) { background: rgba(236,231,222,.1); }
 @media (hover: hover) { .menu button:hover:not([aria-disabled="true"]) { background: rgba(236,231,222,.08); } }
+.menu { max-height: calc(100vh - var(--top) - 8px); max-height: calc(100dvh - var(--top) - 8px); overflow-y: auto; overscroll-behavior: contain; } /* (a short screen: the menu scrolls rather than run off the bottom) */
+@media (max-height: 560px) { .menu { display: grid; grid-template-columns: 1fr 1fr; column-gap: 4px; min-width: 380px; max-width: min(560px, calc(100vw - 2 * var(--gut))); } .menu .mbusy { grid-column: 1 / -1; } } /* (landscape: two columns, so every item fits) */
 .info { position: absolute; left: 0; right: 0; top: var(--ty0); z-index: 2; display: flex; flex-direction: column; align-items: center;
   padding: 0 var(--sr) 0 var(--sl); text-align: center; pointer-events: none; }
 .info > * { margin: 0; max-width: 34rem; }
