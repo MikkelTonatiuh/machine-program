@@ -45,9 +45,12 @@ if '--all' in args:
     F1, F2 = font(15), font(13)
     rows = (len(ids) + cols - 1) // cols
     cw, ch = tw * 2 + 6, th + 22
-    img = Image.new('RGB', (cols * (cw + 8) + 8, 44 + rows * (ch + 8)), (14, 18, 22))
+    FOOT = opt('--footer', '')
+    img = Image.new('RGB', (cols * (cw + 8) + 8, 44 + rows * (ch + 8) + (26 if FOOT else 0)), (14, 18, 22))
     d = ImageDraw.Draw(img)
     d.text((10, 10), title, fill=(225, 228, 230), font=F1)
+    if FOOT:
+        d.text((10, img.size[1] - 22), FOOT, fill=(140, 146, 150), font=F2)
     for i, id in enumerate(ids):
         x, y = 8 + (i % cols) * (cw + 8), 44 + (i // cols) * (ch + 8)
         for k, ph in enumerate(('0', 'peak')):
