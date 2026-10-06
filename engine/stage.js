@@ -102,7 +102,7 @@
         if (!this.url) {
           const src = 'const M = (' + MCE.SKIN_MODULE.toString() + ')();\n' +
             'self.onmessage = (e) => { const { id, job } = e.data; try { const r = M.buildSkin(job);' +
-            ' const tr = [r.pos.buffer, r.nor.buffer, r.idx.buffer, r.skI.buffer, r.skW.buffer, r.ao.buffer, r.musA.buffer, r.hd.buffer, r.bm.buffer, r.g0.buffer, r.g1.buffer];' +
+            ' const tr = Object.values(r).filter((x) => x && x.buffer instanceof ArrayBuffer).map((x) => x.buffer);' +
             ' self.postMessage({ id, r }, tr); } catch (err) { self.postMessage({ id, error: String((err && err.stack) || err) }); } };';
           this.url = URL.createObjectURL(new Blob([src], { type: 'text/javascript' }));
         }
@@ -191,7 +191,7 @@
         const t0 = MCE.now();
         try {
           if (!this.mod) this.mod = MCE.SKIN_MODULE();
-          if (!a.it) a.it = this.mod.buildSkinGen(a.item.job);
+          if (!a.it) a.it = a.item.job.figure ? this.mod.paintFigureGen(a.item.job) : this.mod.buildSkinGen(a.item.job);
           for (;;) { const r = a.it.next(); if (r.done) { this._active.splice(this._active.indexOf(a), 1); a.item.resolve(r.value); break; } if (MCE.now() - t0 > budget) break; }
         } catch (e) { this._active.splice(this._active.indexOf(a), 1); a.item.reject(e); }
         this._pumpMain();
@@ -216,6 +216,10 @@
       // engine/app.js); see MCE.shading.FINISHES
       this.opts = Object.assign({ base: '', maxDpr: 2, fill: 0.58, autoplay: true, workers: Math.min(2, Math.max(1, (navigator.hardwareConcurrency || 2) - 1)),
         cacheSize: 8, grain: true, preserveDrawingBuffer: false, debugMode: 'skin', arc: null, compose: null, finish: 'satin', exercisePath: (id) => 'exercises/' + id + '.json' }, opts);
+      // body: 'mpfb' (the static MakeHuman / MPFB figure, engine/figure.js; the default) or 'sdf' (the sculpted body meshed per
+      // exercise); a page that passes nothing gets the figure, and ?body=sdf in its address asks for the sculpted body. If the
+      // figure's files do not load the stage falls back to the sculpted body by itself.
+      if (!this.opts.body) this.opts.body = (typeof location !== 'undefined' && /[?&]body=sdf(&|$)/.test(location.search)) ? 'sdf' : 'mpfb';
       this.opts.reducedMotion = rmAuto ? !!(mq && mq.matches) : !!opts.reducedMotion;
       this.container = container;
       this.listeners = {};
@@ -291,12 +295,34 @@
       const wait = this._dataRetryAt ? Math.max(0, this._dataRetryAt - MCE.now()) : 0;
       const p = this.dataP = (wait ? new Promise((r) => setTimeout(r, wait)) : Promise.resolve())
         .then(() => Promise.all(['data/rig.json', 'data/body.json', 'data/muscles.json'].map((f) => MCE.loadJSON(f, this.opts.base))))
-        .then(([rig, body, muscles]) => ({ rig, body: MCE.prepBody(body), muscles: MCE.prepMuscles(muscles) }));
+        .then(([rig, body, muscles]) => ({ rig, body: MCE.prepBody(body), muscles: MCE.prepMuscles(muscles) }))
+        .then((D) => (this.opts.body === 'mpfb' ? this._figure(D).catch((e) => { console.warn('MCE: the static figure did not load, using the sculpted body', e); this.opts.body = 'sdf'; return D; }) : D));
       p.then(() => { this._dataFails = 0; this._dataRetryAt = 0; }, () => {
         if (this.dataP === p) this.dataP = null;
         this._dataFails = (this._dataFails || 0) + 1; this._dataRetryAt = MCE.now() + Math.min(15000, 600 * 2 ** (this._dataFails - 1));
       });
       return p;
+    }
+    // the static figure: its mesh, its definition map, and the rig with the figure's own grip centre and landmarks
+    _figure(D) {
+      const THREE = g.THREE, base = this.opts.base || '';
+      // the definition map: a tangent-space normal map in the file's own uv convention (v down), so no flip and no colour transform
+      const map = new Promise((res) => {
+        const tex = new THREE.Texture(); tex.flipY = false; tex.encoding = THREE.LinearEncoding; tex.generateMipmaps = true; tex.minFilter = THREE.LinearMipmapLinearFilter;
+        new THREE.ImageLoader().load(base + 'data/figure_mpfb_nrm.webp', (img) => { tex.image = img; tex.needsUpdate = true; res(tex); }, undefined, () => res(null));
+      });
+      // engine/figure.js is loaded here on first use, so a page that never asks for the figure needs no change
+      const lib = MCE.Figure ? Promise.resolve() : new Promise((res, rej) => { const el = document.createElement('script'); el.src = base + 'engine/figure.js'; el.onload = res; el.onerror = () => rej(new Error('engine/figure.js did not load')); document.head.appendChild(el); });
+      const fit = MCE.loadJSON('data/figure_mpfb_fit.json', base).catch(() => ({}));
+      return Promise.all([lib.then(() => MCE.Figure.load(base + 'data/figure_mpfb.glb')), map, fit]).then(([fig, tex, fitTable]) => {
+        fig.fit = fitTable;
+        if (tex) { tex.anisotropy = Math.min(4, this.renderer.capabilities.getMaxAnisotropy()); fig.normalTex = tex; }
+        // look of the figure (Stage option figure: { normalScale, knee, keep, roughness }; the defaults are the tuned ones)
+        const look = Object.assign({ normalScale: 1.6, knee: 0.17, keep: 0.45, roughness: null }, this.opts.figure || {});
+        fig.normalScale = look.normalScale; fig.knee = look.knee; fig.keep = look.keep; fig.roughness = look.roughness;
+        const rig = { ...D.rig, grip: { ...D.rig.grip, ...fig.grip }, landmarks: { ...D.rig.landmarks, ...fig.landmarks } };
+        return { ...D, rig, figure: fig };
+      });
     }
     // ------------------------------------------------ loading and cache
     // One background build at a time prepares its job (the Instance and its compiled skin job, 10-100 ms of main-thread

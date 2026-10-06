@@ -199,6 +199,8 @@ at hand height so the stretch is loaded, and the incline press grips about 1.5×
 A custom program, built on ideas from Jeff Nippard's free videos and published research. The 7-day routine is not his. Not
 affiliated.
 
+The figure's body is from [MakeHuman](https://www.makehumancommunity.org) (its base mesh, targets, rig and weights are CC0),
+shaped and skinned for this app (`tools/figure/`; the files are `data/figure_mpfb.glb` and `data/figure_mpfb_nrm.webp`).
 The 3D engine uses [three.js](https://threejs.org) (MIT license), loaded from cdn.jsdelivr.net, and the Newsreader and
 Instrument Sans typefaces come from Google Fonts. Both are loaded from their CDNs on the first visit and then kept on
 the phone for offline use.
@@ -221,6 +223,9 @@ own record, so keep it once chosen; Options lists them under "Other machines", s
 - `node tools/covers.mjs` draws the overview's pictures (`covers/`) from the app's own figure engine: an animation and a
   still frame for each day's cover exercise (`cover` in the program inside `index.html`). Run it when an exercise's
   animation or the cover choice changes. `--only 1,3` redraws just those days.
+- `tools/figure/` makes the figure's two data files once, offline (`tools/figure/README.md`). The figure is the default body;
+  `?body=sdf` in the page's address shows the sculpted body instead (it is still in the engine), and if the figure's files do not
+  load the stage falls back to it by itself.
 - `node tools/pwa.mjs` writes the service worker's file list and hashes (the first line of `sw.js`). The worker refuses a
   file that does not match, so run it after changing **any** file the app ships, before committing.
   `node tools/pwa.mjs --check` fails when the list is out of date.

@@ -1,0 +1,177 @@
+{
+ "note": "Extra definition lines for the MPFB figure (same schema and units as data/body.json primitives: H, rest-pose coordinates on a bone; a negative k presses a groove of depth |k| H; each is snapped onto the figure's skin along the front or back direction). Off-axis primitives are mirrored.",
+ "prims": [
+  {
+   "n": "inter00",
+   "bone": "thorax",
+   "t": "cone",
+   "a": [
+    0.004,
+    0.722,
+    0.068
+   ],
+   "b": [
+    0.026,
+    0.722,
+    0.065
+   ],
+   "ra": 0.012,
+   "rb": 0.012,
+   "k": -0.0016
+  },
+  {
+   "n": "inter01",
+   "bone": "thorax",
+   "t": "cone",
+   "a": [
+    0.026,
+    0.722,
+    0.065
+   ],
+   "b": [
+    0.047,
+    0.722,
+    0.058
+   ],
+   "ra": 0.012,
+   "rb": 0.012,
+   "k": -0.0016
+  },
+  {
+   "n": "inter12",
+   "bone": "thorax",
+   "t": "cone",
+   "a": [
+    0.04,
+    0.697,
+    0.0568
+   ],
+   "b": [
+    0.049,
+    0.699,
+    0.054
+   ],
+   "ra": 0.014,
+   "rb": 0.014,
+   "k": -0.0024
+  },
+  {
+   "n": "inter22",
+   "bone": "lumbar",
+   "t": "cone",
+   "a": [
+    0.04,
+    0.66,
+    0.0527
+   ],
+   "b": [
+    0.048,
+    0.661,
+    0.052
+   ],
+   "ra": 0.014,
+   "rb": 0.014,
+   "k": -0.0022
+  },
+  {
+   "n": "inter30",
+   "bone": "lumbar",
+   "t": "cone",
+   "a": [
+    0.004,
+    0.59,
+    0.062
+   ],
+   "b": [
+    0.026,
+    0.59,
+    0.059
+   ],
+   "ra": 0.014,
+   "rb": 0.014,
+   "k": -0.002
+  },
+  {
+   "n": "inter31",
+   "bone": "lumbar",
+   "t": "cone",
+   "a": [
+    0.026,
+    0.59,
+    0.059
+   ],
+   "b": [
+    0.046,
+    0.592,
+    0.053
+   ],
+   "ra": 0.014,
+   "rb": 0.014,
+   "k": -0.002
+  },
+  {
+   "n": "serr0",
+   "bone": "thorax",
+   "t": "cone",
+   "a": [
+    0.078,
+    0.715,
+    0.04
+   ],
+   "b": [
+    0.07,
+    0.7,
+    0.046
+   ],
+   "ra": 0.01,
+   "rb": 0.01,
+   "k": -0.0014
+  },
+  {
+   "n": "serr1",
+   "bone": "thorax",
+   "t": "cone",
+   "a": [
+    0.079,
+    0.7,
+    0.038
+   ],
+   "b": [
+    0.071,
+    0.685,
+    0.044
+   ],
+   "ra": 0.01,
+   "rb": 0.01,
+   "k": -0.0014
+  },
+  {
+   "n": "serr2",
+   "bone": "thorax",
+   "t": "cone",
+   "a": [
+    0.08,
+    0.685,
+    0.036
+   ],
+   "b": [
+    0.072,
+    0.67,
+    0.042
+   ],
+   "ra": 0.01,
+   "rb": 0.01,
+   "k": -0.0014
+  }
+ ],
+ "scale": {
+  "inter": {
+   "w": 0.85,
+   "d": 1.2
+  },
+  "linea": {
+   "w": 0.9,
+   "d": 1.2
+  }
+ }
+}

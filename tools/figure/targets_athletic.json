@@ -1,0 +1,5 @@
+{"torso-vshape-incr": 0.7, "torso-muscle-dorsi-incr": 0.6, "torso-muscle-pectoral-incr": 0.5,
+ "l-upperarm-shoulder-muscle-incr": 0.7, "r-upperarm-shoulder-muscle-incr": 0.7,
+ "l-upperarm-muscle-incr": 0.5, "r-upperarm-muscle-incr": 0.5, "l-lowerarm-muscle-incr": 0.4, "r-lowerarm-muscle-incr": 0.4,
+ "l-upperleg-muscle-incr": 0.35, "r-upperleg-muscle-incr": 0.35, "l-lowerleg-muscle-incr": 0.4, "r-lowerleg-muscle-incr": 0.4,
+ "measure-waist-circ-decr": 0.4, "stomach-tone-incr": 0.5}
