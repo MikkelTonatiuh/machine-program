@@ -2456,7 +2456,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     for (const id of [st.ex, base, ...exOf(st.ex).swap, ...exOf(base).swap, ...exOf(cur).swap]) if (id !== cur && isReady(id) && !used.has(id) && !out.includes(id)) out.push(id);
     return out;
   }
-  const lc = (s) => (/^Bayesian/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1));
+  const lc = (s) => (/^(Bayesian|Smith)/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1));
   function doLater() {
     const d = ui.day, i = busyStep();
     if (!canLater(d, i)) return;
