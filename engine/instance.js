@@ -560,7 +560,7 @@
         if (d >= K) continue;
         let gx = sdf(P, M, x + e, y, z) - sdf(P, M, x - e, y, z), gy = sdf(P, M, x, y + e, z) - sdf(P, M, x, y - e, z), gz = sdf(P, M, x, y, z + e) - sdf(P, M, x, y, z - e);
         const gl = Math.hypot(gx, gy, gz) || 1; gx /= gl; gy /= gl; gz /= gl;
-        const h = Math.max(K - Math.abs(d), 0) / K, push = Math.max(d, 0) + h * h * K * 0.25 - d;
+        const h = Math.max(K - Math.abs(d), 0) / K, dp = Math.max(d, 0), sm = Math.min(dp / K, 1), push = dp + h * h * K * 0.25 + 0.0004 * (1 - sm * sm * (3 - 2 * sm)) - d; // (the lift is the shader's: 0.4 mm off the pad's face)
         x += gx * push; y += gy * push; z += gz * push;
       }
       return [x, y, z];

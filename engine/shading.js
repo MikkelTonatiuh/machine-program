@@ -132,7 +132,8 @@
         const float e = 0.001;
         vec3 pg = vec3(padSdf(lp + vec3(e, 0, 0), pp) - padSdf(lp - vec3(e, 0, 0), pp), padSdf(lp + vec3(0, e, 0), pp) - padSdf(lp - vec3(0, e, 0), pp), padSdf(lp + vec3(0, 0, e), pp) - padSdf(lp - vec3(0, 0, e), pp));
         mat3 pr = mat3(uPadM[i]); vec3 gw = normalize(pg * pr); // the pad matrix is rigid: back to figure space by its transpose
-        float h = max(uPadK - abs(d), 0.0) / uPadK, dn = max(d, 0.0) + h * h * uPadK * 0.25;
+        // (0.4 mm of lift off the pad's face, fading out over uPadK: skin lying exactly on the face would z-fight with it)
+        float h = max(uPadK - abs(d), 0.0) / uPadK, dn = max(d, 0.0) + h * h * uPadK * 0.25 + 0.0004 * (1.0 - smoothstep(0.0, uPadK, max(d, 0.0)));
         dqPos += gw * (dn - d);
         dqNrm = normalize(mix(dqNrm, -gw, 0.75 * (1.0 - smoothstep(-uPadK, 0.0, d))));
       }
