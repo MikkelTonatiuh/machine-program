@@ -61,6 +61,8 @@ workspace (`engine/probe.js`) with the figure's pad press, a pad-fit probe and t
   (the default body is identical for all 28 exercises: the figure option changes nothing unless it is asked for).
 - `node shader_check.mjs`: builds the skin material's shader text the way the browser does for every option combination and checks
   it for unresolved interpolations and unbalanced blocks (the GLSL itself is only compiled in a browser).
+- `node sim_all.mjs out/sim28` and `python frames_sheet.py out/sim28 sheet.png --all --crop 1.0`: the figure on every exercise at its
+  bottom and top frame, software-rendered in a phone-shaped crop, as one overview sheet.
 - `node cpu_frame.mjs`: per-frame CPU time (solve and skin uniforms), triangle and vertex counts and scene build time, both bodies.
 - `node sim_probe.mjs chest_press,leg_press mpfb [--skin] [--fit none|file]`: reach, pins, pad contacts, skin penetration and
   clearance checks, ROM, for the figure (`mpfb`) or the sculpted body (`sdf`); all 28 exercises take about 11 s.
