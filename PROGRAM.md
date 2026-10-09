@@ -43,7 +43,7 @@ Around the list, the app adds what is not a working set (the counts below leave 
 2. Hack squat: top set 6–8, then 3 × 8–12, rest 3 min after the top set, then 2 min; swap: Leg press, Smith squat, Belt squat, Pendulum squat
 3. Leg extension: 3 × 10–15 + drop set, rest 90 s; swap: Hack squat, Pendulum squat, Cable knee extension
 4. Seated leg curl: 3 × 10–12 + drop set, rest 90 s; swap: 45° back extension, Lying leg curl, Smith Romanian deadlift, Standing single-leg curl
-5. 45° back extension: 3 × 10–15, rest 2 min; swap: Hip thrust, Smith Romanian deadlift
+5. 45° back extension: 3 × 10–15, rest 2 min; swap: Hip thrust, Smith Romanian deadlift, Cable pull-through
 6. Seated hip adduction: 3 × 12–15 + drop set, rest 90 s; swap: Leg press, Standing cable adduction, Smith sumo squat
 7. Standing calf raise: 4 × 10–15 + drop set, rest 90 s; swap: Seated calf raise, Leg-press calf raise, Smith calf raise on a step
 
@@ -77,7 +77,7 @@ Around the list, the app adds what is not a working set (the counts below leave 
 
 1. Warm-up: 5 min easy bike, then 30 s leg and arm swings, pulse 105–125 bpm; swap: Incline treadmill walk
 2. Seated leg curl: 3 × 10–12 + drop set, rest 90 s; swap: 45° back extension, Lying leg curl, Smith Romanian deadlift, Standing single-leg curl
-3. Hip thrust: top set 6–8, then 3 × 8–12, rest 3 min after the top set, then 2 min; swap: 45° back extension, Smith hip thrust, Cable glute kickback
+3. Hip thrust: top set 6–8, then 3 × 8–12, rest 3 min after the top set, then 2 min; swap: 45° back extension, Smith hip thrust, Cable glute kickback, Cable pull-through
 4. Leg press: 3 × 10–12, rest 2 min; swap: Hack squat, Smith squat, Pendulum squat
 5. Seated hip abduction: 3 × 15–20 + drop set, rest 90 s; swap: Standing cable abduction, Cable glute kickback
 6. Seated hip adduction: 2 × 12–15 + drop set, rest 90 s; swap: Leg press, Standing cable adduction, Smith sumo squat
@@ -89,10 +89,6 @@ Around the list, the app adds what is not a working set (the counts below leave 
 2. Machine crunch: 3 × 10–12, every set to failure + drop set, rest 90 s; swap: Cable crunch
 3. Knee raise: 3 × 10–20, every set to failure, rest 90 s; swap: Machine crunch, Cable crunch, Hanging knee raise; next: Leg raise
 4. Stretching (optional): 10 min
-
-Other machines (Options; text only: the figure of the exercise stays, its weights are kept apart):
-
-- 45° back extension: Cable pull-through
 
 Working sets a day: day 1: 18, day 2: 20, day 3: 6, day 4: 18, day 5: 18, day 6: 19, day 7: 6. In a week: 105.
 
