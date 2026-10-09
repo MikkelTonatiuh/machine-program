@@ -166,7 +166,9 @@ for Strava's endpoints, in a Node bed and in real Chrome, `tests/strava*.mjs` in
   to the API with no token answered 401 with the same allow-origin: so a page can call them. The real answer of a token trade
   could not be seen without a code; if it lacked the allow-origin, Connect would end with "couldn't reach Strava".
 - That the strength upload shows as sets in Strava's own screens, and how Strava names the sets of a one-arm exercise (the app
-  sends one set per arm).
+  sends one set per arm). A community thread (Strava's community hub, 2026-08-01) reported that some plausible-looking exercise
+  names showed as "Unknown" and that the documented list may lag; every name sent is from the documented list, but only a real post
+  shows how Strava reads them: after the first post, look at its sets for "Unknown".
 - The Strava subscription (above) and the 10-athlete limit of a standard app: only your own account ever connects here.
 - Strava's brand rules ask for its own "Connect with Strava" button graphic; this app has a plain **Connect** button (no Strava
   logo or image is used), and says "View on Strava" in bold orange for the link, as the rules say. Strava was not asked whether an
