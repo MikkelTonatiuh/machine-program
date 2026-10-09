@@ -57,7 +57,7 @@ Open it, and download it to your phone (the **Download app** button is on its fi
 - A finished day shows its **workout card**: the figure with every muscle the day worked lit, the day and date, the time, the
   weight lifted, the sets, each exercise's best set, the top set, what went up since last time and new bests (PB). **Share**
   opens the phone's share sheet (Strava, Instagram, Photos…) with the picture (1080 × 1350) and a short text for the
-  description; the button beside it copies both, to paste.
+  description; the button beside it copies both, to paste. To post the day to Strava straight from the app, see Strava below.
 - Made a mistake? Undo takes back the last step, and again for the one before. The three dots at the top right also hold
   Restart workout (it starts the day over, and Undo brings it back) and All workouts.
 - A machine is taken? **Options** (top right; during a rest it is about the exercise coming next) opens a sheet "Instead of
@@ -106,6 +106,69 @@ Your sets and weights (drop sets apart), the day you are on, the time each worko
 in the browser's storage on that phone only. There is no account and nothing is uploaded, so each phone keeps its own progress.
 Clearing the site's data in the browser starts it fresh. A finished week stays ticked until you begin the next workout (or
 press Start a new week at the bottom of the overview); that is also when the week number goes up.
+
+## Strava
+
+**Share** and **Copy** on the workout card need no setup: paste the picture and the text into Strava. To post a finished day to
+Strava from the app itself, connect your own Strava app once (the three dots, **Strava**). Nothing goes through a server of
+this app's: the page talks to strava.com from your phone, with the keys of your own Strava app.
+
+1. Open [strava.com/settings/api](https://www.strava.com/settings/api) and create an app: any name without "Strava" in it
+   (Strava's brand rules), and **Authorization Callback Domain** `mikkeltonatiuh.github.io`. A new app starts in single-player
+   mode, where only your own Strava account can connect to it: that is all this needs.
+2. Copy its **Client ID** and **Client Secret**.
+3. In the app: three dots, **Strava**, paste both, **Connect**. Strava asks once to let the app upload your activities; keep
+   that ticked. You come back to the app, and the sheet says "Connected as <your name>".
+
+Creating the Strava app needs a Strava subscription: Strava's Getting Started page says "A Strava subscription is a
+prerequisite for creating an app" (read on 2026-10-09; it could not be tried, there is no account here). Without one, Share and Copy
+are the way.
+
+What is posted. **Post to Strava** is under a finished day and on its card (the overview's square for that day). It makes one
+**Weight Training** activity: named "Upper · 9 Oct", with the day's real start and elapsed time, every set with Strava's own
+exercise name, its reps and its weight in kg (Strava's JSON strength upload), and a description: each exercise as kg × reps, the
+top set marked, the drop sets, the kg lifted in all, the bike's minutes. A machine Strava has no name for stays in the description only.
+If Strava refuses the strength upload, the same words go as a plain activity (that fallback has no repeat check of its own: if the
+connection drops at that very moment, Post again can make a second activity, which Strava lets you delete). A day is posted once:
+the app keeps a mark per day, and each upload carries its own workout's id. Then the line says **Posted · View on Strava**, a link to the activity. If
+something fails it says why ("Couldn't post: Strava is having trouble. Try again") and keeps the sets; with no connection it says
+"Not posted yet" and **Post again** works when the phone is back. **Post automatically when I finish** (in the Strava sheet, off
+until you turn it on) does it for you, and tries again when the phone is back online.
+
+What is kept, and where. Only on this phone, in the browser's storage, and sent nowhere but strava.com: the app's Client ID and
+Client Secret, the access and refresh tokens (renewed before they run out; Strava gives a new refresh token each time), the athlete's
+name and the activities' ids (a week at most: Strava's API policy, 6.2, allows nothing from Strava to be kept longer in a cache,
+and 7.4 has it deleted when an athlete's authorization ends), and which days were posted. The secret, the tokens and the code that
+Strava hands back never go into an address, a log line or an error text; the code is taken off the address the moment the page
+opens, and the check of the `state` it kept makes an answer that this phone did not ask for refuse itself. **Disconnect** (two
+taps) tells Strava to end the authorization and removes the keys, tokens, name and ids from the phone; the app's own marks of which
+days were posted stay, so nothing is posted twice. A secret kept in a page can be read by anything running in that page: the page runs
+nothing but its own files and three.js (loaded with an integrity hash). The service worker never answers or caches a request to strava.com.
+
+What could not be verified against the real Strava (no credentials exist for it here; the tests run the page against a stand-in
+for Strava's endpoints, in a Node bed and in real Chrome, `tests/strava*.mjs` in the maintainer's work folder):
+
+- Everything that needs a real Strava account and app: the sign-in and consent pages (and that Strava accepts this page's folder
+  address as the redirect for the callback domain), the answer to the code's trade, a refresh, an upload, a plain activity and a
+  revoke, with their real fields, answers and error texts. The requests follow Strava's own documentation (read on 2026-10-09:
+  Authentication, Create an Activity, Uploads with the JSON strength format and its list of supported exercise names, the API
+  Agreement and Policy, the brand guidelines); the 69 exercise names sent are all from that list. Where a real answer differs
+  (for example the words of a duplicate: "duplicate of activity 123" is taken from Strava's documentation of uploads), the
+  page shows a plain failure with Post again, never a wrong "Posted".
+- Strava's CORS answers. Called without credentials on 2026-10-09, the preflight (OPTIONS) of the token, revoke, uploads and
+  activities endpoints answered 200 with `access-control-allow-origin: *` and `authorization,content-type` allowed, and a call
+  to the API with no token answered 401 with the same allow-origin: so a page can call them. The real answer of a token trade
+  could not be seen without a code; if it lacked the allow-origin, Connect would end with "couldn't reach Strava".
+- That the strength upload shows as sets in Strava's own screens, and how Strava names the sets of a one-arm exercise (the app
+  sends one set per arm).
+- The Strava subscription (above) and the 10-athlete limit of a standard app: only your own account ever connects here.
+- Strava's brand rules ask for its own "Connect with Strava" button graphic; this app has a plain **Connect** button (no Strava
+  logo or image is used), and says "View on Strava" in bold orange for the link, as the rules say. Whether Strava asks more of an
+  app only the owner uses, was not asked.
+- Strava's changelog (2026-06-01) says the API's address changes from `https://www.strava.com/api/v3` to
+  `https://api-v3.strava.com`, the new one available from 2027-01-04. The app uses the old one; the address is one constant in
+  `index.html` (`API`), to change when Strava retires the old one. (Its old deauthorize endpoint is also being phased out: the app uses
+  the new `/oauth/revoke`.)
 
 ## Where the numbers come from
 
@@ -216,7 +279,7 @@ affiliated.
 
 The figure's body is from [MakeHuman](https://www.makehumancommunity.org) (its base mesh, targets, rig and weights are CC0),
 shaped and skinned for this app (`tools/figure/`; the files are `data/figure_mpfb.glb` and `data/figure_mpfb_nrm.webp`).
-The 3D engine uses [three.js](https://threejs.org) (MIT license), loaded from cdn.jsdelivr.net, and the Newsreader and
+The 3D engine uses [three.js](https://threejs.org) (MIT license), loaded from cdn.jsdelivr.net (pinned by an integrity hash), and the Newsreader and
 Instrument Sans typefaces come from Google Fonts. Both are loaded from their CDNs on the first visit and then kept on
 the phone for offline use.
 
@@ -255,6 +318,9 @@ lists `swap` and `alts` together, in the order of `eq`, so adding one is a chang
   `alts` list and its `eq` line moves to the new id. `--dry` only checks; `--run` then runs `program.mjs`, `thumbs.mjs --only <the new ids>` and `pwa.mjs`.
 - The program's `aliases` (`{ "rope_face_pull": "face_pull", ... }`) say which animated exercise replaced which old text-only id; the
   patch tool writes it from its `ALIASES` table, and the app uses it to move a saved choice, record and history line to the new id.
+- `node tools/strava_types.mjs` reads the exercise names Strava lists as supported for a strength upload (its uploads documentation)
+  into `tools/strava_exercise_types.json`; `tools/program.mjs --check` tests every exercise's `strava` name (the name its sets go to
+  Strava under, e.g. `MACHINE_CHEST_PRESS`; a timed exercise has none) against that list. A new exercise needs one.
 - `node tools/pwa.mjs` writes the service worker's file list and hashes (the first line of `sw.js`). The worker refuses a
   file that does not match, so run it after changing **any** file the app ships, before committing.
   `node tools/pwa.mjs --check` fails when the list is out of date.

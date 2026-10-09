@@ -17,6 +17,9 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sideFor } from './side.mjs';
 
+// the exercise_type names Strava lists as supported for a strength upload (null when the file is not there: the names are then not checked)
+const STRAVA = existsSync(new URL('./strava_exercise_types.json', import.meta.url)) ? new Set(Object.values(JSON.parse(readFileSync(new URL('./strava_exercise_types.json', import.meta.url), 'utf8')).categories).flat()) : null;
+
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const html = readFileSync(join(ROOT, 'index.html'), 'utf8');
 const m = html.match(/<script type="application\/json" id="program">([\s\S]*?)<\/script>/);
@@ -99,6 +102,12 @@ for (const [id, e] of Object.entries(P.ex)) {
     const ok = e.eq && typeof e.eq === 'object' && !Array.isArray(e.eq) && Object.entries(e.eq).every(([k, v]) => keys.has(k) && v && ['same', 'close', 'weak'].includes(v.m) && typeof v.w === 'string' && v.w.length > 0 && v.w.length <= 60);
     if (!ok) problems.push('"' + id + '": eq must map ids of its swap or alts to { m: same|close|weak, w: reason of at most 60 characters }');
   }
+  // the name Strava knows a set of this exercise by (an upload's exercise_type, from Strava's own list: tools/strava_exercise_types.json,
+  // refreshed by node tools/strava_types.mjs); a timed exercise (a ride, a walk) is not a set and has none
+  if (e.strava !== undefined) {
+    if (typeof e.strava !== 'string' || !/^[A-Z][A-Z0-9_]{2,59}$/.test(e.strava) || e.timed) problems.push('"' + id + '": strava is an exercise_type name such as MACHINE_CHEST_PRESS (and a timed exercise has none)');
+    else if (STRAVA && !STRAVA.has(e.strava)) problems.push('"' + id + '": strava name ' + e.strava + ' is not in Strava\'s list (tools/strava_exercise_types.json; node tools/strava_types.mjs refreshes it)');
+  } else if (!e.timed) notes.push('"' + id + '" has no strava name (a post to Strava then names it in the description only)');
   if (Array.isArray(e.swap) || Array.isArray(e.alts)) for (const k of [...(e.swap || []), ...(e.alts || []).map((a) => a.id)]) if (!(e.eq && e.eq[k])) notes.push('"' + id + '" has no eq entry for "' + k + '" (Options then shows no match line for it)');
   if (e.reps !== undefined && !(Array.isArray(e.reps) && e.reps.length === 2 && e.reps[0] >= 1 && e.reps[1] >= e.reps[0])) problems.push('"' + id + '": reps must be [lo, hi]');
   // a one-sided exercise says what it does one of at a time: side "arm" (the default) or "leg" (all its primary muscles are leg muscles)
