@@ -75,12 +75,10 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .menu { max-width: min(280px, calc(100vw - 2 * var(--gut))); }
 .menu small { display: block; margin-top: 3px; font: 400 12.5px/1.3 var(--sans); color: var(--ink3); text-wrap: balance; }
 .menu small:empty { display: none; }
-.mbusy { margin: 0 0 4px; padding: 0 0 4px; border-bottom: 1px solid var(--line); }
-.mbusy[hidden] { display: none; }
 .menu button:active:not([aria-disabled="true"]) { background: rgba(236,231,222,.1); }
 @media (hover: hover) { .menu button:hover:not([aria-disabled="true"]) { background: rgba(236,231,222,.08); } }
 .menu { max-height: calc(100vh - var(--top) - 8px); max-height: calc(100dvh - var(--top) - 8px); overflow-y: auto; overscroll-behavior: contain; } /* (a short screen: the menu scrolls rather than run off the bottom) */
-@media (max-height: 560px) { .menu { display: grid; grid-template-columns: 1fr 1fr; column-gap: 4px; min-width: 380px; max-width: min(560px, calc(100vw - 2 * var(--gut))); } .menu .mbusy { grid-column: 1 / -1; } } /* (landscape: two columns, so every item fits) */
+@media (max-height: 560px) { .menu { display: grid; grid-template-columns: 1fr 1fr; column-gap: 4px; min-width: 380px; max-width: min(560px, calc(100vw - 2 * var(--gut))); } } /* (landscape: two columns, so every item fits) */
 .info { position: absolute; left: 0; right: 0; top: var(--ty0); z-index: 2; display: flex; flex-direction: column; align-items: center;
   padding: 0 var(--sr) 0 var(--sl); text-align: center; pointer-events: none; }
 .info > * { margin: 0; max-width: 34rem; }
@@ -312,8 +310,50 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 @media (max-height: 419px) { .app.side .mus { display: none; } }
 .app.longnote:not(.side) .mus { display: none; }
+/* v12: Options (the alternatives as a gallery, a preview, the way back), the pill, the toast */
+.optsheet { background: rgba(4,6,8,.3); }
+.optsheet.prev { background: transparent; pointer-events: none; }
+.optbox { display: flex; flex-direction: column; max-height: min(58%, 540px); overflow-y: auto; overscroll-behavior: contain; padding-bottom: 16px; }
+.optsheet.prev .optbox { max-height: none; pointer-events: auto; padding-bottom: 16px; }
+.optsheet.prev .opthead, .optsheet.prev .optnow, .optsheet.prev .optgal, .optsheet.prev .optbusy { display: none; }
+.opthead { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.opthead h3 { margin: 0; font: 300 24px/1.15 var(--serif); }
+.optnow { margin: 6px 0 4px; padding: 12px 14px; border-radius: 16px; border: 1px solid rgba(224,160,96,.5); background: rgba(224,160,96,.08); }
+.optnow p { margin: 0 0 10px !important; font: 500 15px/1.35 var(--sans) !important; color: var(--ink) !important; }
+.optnow .primary { height: 48px; }
+.optgal { display: flex; flex-direction: column; gap: 8px; margin: 8px 0 12px; }
+.optcard { display: flex; gap: 12px; width: 100%; padding: 8px; border-radius: 16px; background: rgba(236,231,222,.06); text-align: left; touch-action: manipulation; }
+.optcard:active { background: rgba(236,231,222,.14); }
+.optthumb { position: relative; flex: none; width: 72px; height: 90px; border-radius: 10px; overflow: hidden; background: linear-gradient(#111c25, #1a1514); }
+.optthumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.optthumb em { position: absolute; left: 0; right: 0; bottom: 0; padding: 3px 2px; background: rgba(0,0,0,.62); font: 600 9px/1.15 var(--sans); font-style: normal; letter-spacing: .05em; text-transform: uppercase; text-align: center; color: var(--ink2); }
+.optinfo { min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
+.optname { font: 500 16px/1.2 var(--sans); color: var(--ink); }
+.optchips { display: flex; flex-wrap: wrap; gap: 4px; }
+.optchips i { padding: 4px 7px; border-radius: 999px; background: rgba(236,231,222,.09); font: 500 11.5px/1 var(--sans); font-style: normal; color: var(--ink2); }
+.optmatch { margin: 0; font: 400 13px/1.3 var(--sans); color: var(--ink2); }
+.optmatch b { margin-right: 6px; font-weight: 600; color: var(--ink); }
+.optmatch[data-m="same"] b { color: var(--amber); }
+.optmatch[data-m="weak"] b { color: var(--ink3); }
+.optbusy { margin-top: 2px; padding-top: 12px; border-top: 1px solid var(--line); }
+.optbusy h4 { margin: 0 0 8px; font: 600 12px/1.2 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
+.optbusy button { width: 100%; height: 48px; border-radius: 12px; background: rgba(236,231,222,.06); font: 500 15.5px/1 var(--sans); color: var(--ink); touch-action: manipulation; }
+.optbusy button:active { background: rgba(236,231,222,.14); }
+.optbusy p { margin: 8px 2px 0 !important; font: 400 13px/1.35 var(--sans) !important; color: var(--ink3) !important; }
+.optprev { display: flex; flex-direction: column; gap: 6px; }
+.optprev[hidden] { display: none; }
+.optpname { font: 300 24px/1.15 var(--serif); color: var(--ink); }
+.optpnote { margin: 0 0 4px !important; font: 400 13.5px/1.35 var(--sans) !important; color: var(--ink2) !important; }
+.optprev .kpact { margin-top: 8px; }
+.swappill { pointer-events: auto; max-width: 100%; height: 26px; margin: 5px 0 0; padding: 0 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-radius: 999px; border: 1px solid rgba(236,231,222,.3); background: rgba(236,231,222,.06); font: 500 13px/1 var(--sans); color: var(--ink2); touch-action: manipulation; }
+.swappill b { font-weight: 600; color: var(--amber); }
+.swappill[aria-disabled="true"] { border-color: var(--line); }
+.toast { position: absolute; z-index: 6; left: 50%; transform: translateX(-50%); bottom: calc(80px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  width: min(calc(100% - var(--sl) - var(--sr)), 360px); padding: 6px 6px 6px 16px; border-radius: 16px; background: rgba(17,22,27,.97); border: 1px solid var(--line2); box-shadow: 0 10px 30px rgba(0,0,0,.5);
+  font: 500 14.5px/1.3 var(--sans); color: var(--ink); }
+.toast button { flex: none; height: 40px; padding: 0 14px; border-radius: 999px; font: 600 14.5px/1 var(--sans); color: var(--amber); touch-action: manipulation; }
+.app.side .toast { left: var(--tx0); transform: none; width: min(340px, calc(100% - var(--tx0) - var(--sr))); bottom: calc(var(--actb, 14px) + 68px); }
 /* v11: other machines in Options, the week review */
-.optsub { margin: 10px 4px 2px; font: 600 12px/1.2 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
 .reviewsheet .sheetbox { max-height: 100%; overflow-y: auto; }
 .revhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .revhead h3 { margin: 0; }
@@ -358,7 +398,6 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     </div>
   </header>
   <div class="menu" id="menu" hidden>
-    <div class="mbusy" id="mbusy"><button type="button" id="mlater">Do it later</button><div id="mswaps"></div></div>
     <button type="button" id="mdeload"><span id="mdeloadt">Deload week</span><small id="mdeloads"></small></button>
     <button type="button" id="msound"><span>Sound</span><small id="msounds">On</small></button>
     <button type="button" id="munit"><span>Weight unit</span><small id="munits">kg</small></button>
@@ -379,6 +418,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     <p class="clock" id="clock" hidden></p>
     <p class="line" id="line"></p>
     <p class="mus" id="mus" hidden></p>
+    <button class="swappill" id="swappill" type="button" hidden><span id="pilltxt"></span><b id="pillback"> · Back</b></button>
   </section>
   <section class="act" id="act" aria-label="Actions" hidden>
     <p class="note" id="note" hidden><span class="nicon" id="nicon" aria-hidden="true" hidden><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="m4.4 10.6 3.7 3.6 7.6-8.4"/></svg></span><span id="notet"></span></p>
@@ -445,11 +485,18 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       <button class="linkbtn" id="cardagain" type="button">Do this day again</button>
     </div>
   </div>
-  <div class="sheet" id="optsheet" role="dialog" aria-modal="true" aria-labelledby="opttitle" hidden>
-    <div class="sheetbox">
-      <h3 id="opttitle">Options</h3>
-      <div class="optlist" id="optlist"></div>
-      <div class="kpact"><button class="kpcancel" id="optclose" type="button">Close</button></div>
+  <div class="sheet optsheet" id="optsheet" role="dialog" aria-modal="true" aria-labelledby="opttitle" hidden>
+    <div class="sheetbox optbox" id="optbox">
+      <div class="opthead"><h3 id="opttitle"></h3><button class="daysclose" id="optclose" type="button" aria-label="Close"><svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="m2.5 2.5 9 9m0-9-9 9"/></svg></button></div>
+      <div class="optnow" id="optnow" hidden><p id="optnowtxt"></p><button class="primary" id="optback" type="button"></button></div>
+      <div class="optgal" id="optlist"></div>
+      <div class="optbusy" id="optbusy" hidden><h4>Machine busy?</h4><button id="optlast" type="button">Do this one last today</button><p>Moves it to the end of today’s workout.</p></div>
+      <div class="optprev" id="optprev" hidden>
+        <b class="optpname" id="optpname"></b>
+        <p class="optmatch" id="optpmatch"></p>
+        <p class="optpnote" id="optpnote" hidden></p>
+        <div class="kpact"><button class="kpcancel" id="optcancel" type="button">Cancel</button><button class="primary" id="optuse" type="button">Use this</button></div>
+      </div>
     </div>
   </div>
   <div class="sheet reviewsheet" id="reviewsheet" role="dialog" aria-modal="true" aria-labelledby="revtitle" hidden>
@@ -460,9 +507,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       <button class="primary" id="revgo" type="button"></button>
     </div>
   </div>
+  <div class="toast" id="toast" role="status" hidden><span id="toasttxt"></span><button id="toastundo" type="button">Undo</button></div>
   <p class="sr" id="status" aria-live="polite"></p>
 </main>
-<script type="application/json" id="program">{"days":[{"name":"Upper","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"3 min easy bike, then 30 s leg and arm swings","sec":210,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk.","phases":[{"sec":180,"name":"Easy bike","pulse":"105–125"},{"sec":30,"name":"Leg and arm swings","cue":"Swing each leg and both arms, easy."}]},{"t":"sets","ex":"chest_press","n":4,"top":[6,8],"lo":8,"hi":12,"rest":120,"restTop":180},{"t":"sets","ex":"lat_pulldown","n":3,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"chest_row","n":3,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"lateral_raise","n":3,"lo":12,"hi":15,"rest":60},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90,"off":true},{"t":"sets","ex":"bayesian_curl","n":2,"lo":10,"hi":15,"rest":60},{"t":"sets","ex":"overhead_ext","n":3,"lo":10,"hi":15,"rest":90}],"cover":"chest_press"},{"name":"Lower","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then 30 s leg and arm swings","sec":330,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk.","phases":[{"sec":300,"name":"Easy bike","pulse":"105–125"},{"sec":30,"name":"Leg and arm swings","cue":"Swing each leg and both arms, easy."}]},{"t":"sets","ex":"hack_squat","n":4,"top":[6,8],"lo":8,"hi":12,"rest":120,"restTop":180},{"t":"sets","ex":"leg_extension","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"leg_curl","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_adduction","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"calf_raise","n":4,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"back_extension","n":3,"lo":10,"hi":15,"rest":120}],"cover":"hack_squat","order":[0,1,2,3,6,4,5]},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike intervals","line":"8 min easy, 4 × 4 min hard, 5 min easy","sec":2280,"pulse":"115–179","cue":"Hard: only a few words possible.","phases":[{"sec":480,"name":"Easy, building up","pulse":"up to 140","cue":"You can still talk."},{"sec":240,"name":"Hard 1 of 4","pulse":"160, then 170–179","hard":true,"cue":"Hard: only a few words possible."},{"sec":180,"name":"Easy","pulse":"115–130","cue":"You can still talk."},{"sec":240,"name":"Hard 2 of 4","pulse":"160, then 170–179","hard":true,"cue":"Hard: only a few words possible."},{"sec":180,"name":"Easy","pulse":"115–130","cue":"You can still talk."},{"sec":240,"name":"Hard 3 of 4","pulse":"160, then 170–179","hard":true,"cue":"Hard: only a few words possible."},{"sec":180,"name":"Easy","pulse":"115–130","cue":"You can still talk."},{"sec":240,"name":"Hard 4 of 4","pulse":"160, then 170–179","hard":true,"cue":"Hard: only a few words possible."},{"sec":300,"name":"Easy","pulse":"115–130","cue":"You can still talk."}]},{"t":"sets","ex":"cable_crunch","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":20,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600,"optional":true}],"cover":"bike"},{"name":"Push","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"3 min easy bike, then 30 s leg and arm swings","sec":210,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk.","phases":[{"sec":180,"name":"Easy bike","pulse":"105–125"},{"sec":30,"name":"Leg and arm swings","cue":"Swing each leg and both arms, easy."}]},{"t":"sets","ex":"incline_press","n":4,"top":[6,8],"lo":8,"hi":12,"rest":120,"restTop":180},{"t":"sets","ex":"shoulder_press","n":3,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"pec_deck","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"lateral_raise","n":4,"lo":12,"hi":15,"rest":60},{"t":"sets","ex":"pushdown","n":4,"lo":10,"hi":15,"rest":90}],"cover":"incline_press"},{"name":"Pull","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"3 min easy bike, then 30 s leg and arm swings","sec":210,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk.","phases":[{"sec":180,"name":"Easy bike","pulse":"105–125"},{"sec":30,"name":"Leg and arm swings","cue":"Swing each leg and both arms, easy."}]},{"t":"sets","ex":"lat_pulldown","n":4,"top":[6,8],"lo":8,"hi":12,"rest":120,"restTop":180},{"t":"sets","ex":"chest_row","n":4,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"bayesian_curl","n":3,"lo":10,"hi":15,"rest":60},{"t":"sets","ex":"preacher_curl","n":2,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"hammer_curl","n":2,"lo":10,"hi":15,"rest":90,"off":true},{"t":"sets","ex":"lateral_raise","n":2,"lo":12,"hi":15,"rest":60}],"cover":"lat_pulldown","order":[0,1,2,3,7,4,5,6]},{"name":"Legs","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then 30 s leg and arm swings","sec":330,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk.","phases":[{"sec":300,"name":"Easy bike","pulse":"105–125"},{"sec":30,"name":"Leg and arm swings","cue":"Swing each leg and both arms, easy."}]},{"t":"sets","ex":"leg_curl","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_thrust","n":4,"top":[6,8],"lo":8,"hi":12,"rest":120,"restTop":180},{"t":"sets","ex":"leg_press","n":3,"lo":10,"hi":12,"rest":120},{"t":"sets","ex":"hip_abduction","n":3,"lo":15,"hi":20,"rest":90},{"t":"sets","ex":"hip_adduction","n":2,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"seated_calf_raise","n":4,"lo":10,"hi":15,"rest":90,"off":true},{"t":"sets","ex":"calf_raise","n":4,"lo":10,"hi":15,"rest":90}],"cover":"hip_thrust","order":[0,1,2,3,4,5,7,6]},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike","line":"40–45 min easy bike","sec":2400,"open":true,"pulse":"120–140","cue":"You can still talk."},{"t":"sets","ex":"machine_crunch","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":20,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600,"optional":true}],"cover":"knee_raise"}],"ex":{"back_extension":{"name":"45° back extension","ready":true,"cue":"Hinge at the hips, then squeeze your glutes","muscles":{"primary":["Glutes","Hamstrings"],"secondary":["Lower back"]},"unilateral":false,"verbs":["Rise","Lower"],"kg0":0,"fail":true,"harder":["lower slowly over 3 s","hold a plate to your chest"],"swap":["hip_thrust"],"reps":[10,15],"breath":"In as you lower, out as you rise.","alts":[{"id":"smith_rdl","n":"Smith Romanian deadlift"},{"id":"cable_pull_through","n":"Cable pull-through"}]},"bayesian_curl":{"name":"Bayesian cable curl","ready":true,"cue":"Arms behind torso, cable at hand height","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":true,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"partials":true,"swap":["preacher_curl","hammer_curl"],"breath":"Out as you curl, in as you lower.","alts":[{"id":"cable_bar_curl","n":"Cable bar curl"}]},"bike":{"name":"Bike","ready":true,"cue":"","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false},"cable_crunch":{"name":"Cable crunch","ready":true,"cue":"Round your lower back, squeeze abs","muscles":{"primary":["Abs"],"secondary":[]},"unilateral":false,"verbs":["Crunch","Return"],"kg0":20,"fail":true,"drop":true,"failAll":true,"swap":["machine_crunch"],"breath":"Breathe out fully as you crunch."},"calf_raise":{"name":"Standing calf raise","ready":true,"cue":"Pause 1–2 s at the bottom. No bouncing.","muscles":{"primary":["Calves"],"secondary":[]},"unilateral":false,"verbs":["Rise","Sink"],"kg0":40,"fail":true,"drop":true,"partials":true,"swap":["seated_calf_raise"],"breath":"Out as you rise, in as you sink.","alts":[{"id":"leg_press_calf_raise","n":"Leg-press calf raise","cue":"Knees straight."},{"id":"smith_calf_raise","n":"Smith calf raise on a step"}]},"chest_press":{"name":"Chest press","ready":true,"cue":"Let handles come back to deep stretch","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Press","Return"],"kg0":20,"fail":true,"compound":true,"swap":["incline_press"],"breath":"In as handles return, out as you press.","alts":[{"id":"smith_flat_press","n":"Smith flat press"},{"id":"assisted_dip","n":"Assisted dip machine","cue":"Lean forward a little."}]},"chest_row":{"name":"Chest-supported row","ready":true,"cue":"Chest on the pad. Stretch fully forward.","muscles":{"primary":["Mid traps","Lats","Upper back"],"secondary":[]},"unilateral":false,"verbs":["Row","Return"],"kg0":20,"fail":true,"compound":true,"swap":["lat_pulldown"],"breath":"Out as you row, in as you reach.","alts":[{"id":"seated_cable_row","n":"Seated cable row"},{"id":"t_bar_row","n":"Chest-supported T-bar row"},{"id":"single_arm_row","n":"Single-arm row"}]},"hack_squat":{"name":"Hack squat","ready":true,"cue":"Go as deep as the machine allows","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Stand","Lower"],"kg0":40,"short":true,"compound":true,"swap":["leg_press"],"breath":"Big breath, brace, down; out near the top.","alts":[{"id":"pendulum_squat","n":"Pendulum squat"},{"id":"smith_squat_forward","n":"Smith squat, feet forward"},{"id":"belt_squat","n":"Belt or V-squat"}]},"hammer_curl":{"name":"Rope hammer curl","ready":true,"cue":"Elbows pinned, palms facing in","muscles":{"primary":["Brachialis","Forearms"],"secondary":["Biceps"]},"unilateral":false,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"swap":["bayesian_curl","preacher_curl"],"breath":"Out as you curl, in as you lower.","alts":[{"id":"preacher_hammer_curl","n":"Preacher hammer curl"},{"id":"reverse_grip_curl","n":"Cable reverse-grip curl"}]},"hip_abduction":{"name":"Seated hip abduction","ready":true,"cue":"Lean forward about 30 degrees","muscles":{"primary":["Side glutes","Upper glutes"],"secondary":[]},"unilateral":false,"verbs":["Open","Close"],"kg0":30,"fail":true,"drop":true,"breath":"Out as you open, in as you close.","alts":[{"id":"standing_cable_abduction","n":"Standing cable abduction","cue":"Ankle cuff; lift the leg out to the side."},{"id":"glute_kickback","n":"Cable or machine kickback"}]},"hip_adduction":{"name":"Seated hip adduction","ready":true,"cue":"Start wide; close and open slowly.","muscles":{"primary":["Inner thighs"],"secondary":[]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":30,"fail":true,"drop":true,"swap":["leg_press"],"breath":"Out as you squeeze, in as you open.","alts":[{"id":"standing_cable_adduction","n":"Standing cable adduction"},{"id":"smith_sumo_squat","n":"Smith sumo squat"}]},"hip_thrust":{"name":"Hip thrust","ready":true,"cue":"Ribs down; drive your hips up straight.","muscles":{"primary":["Glutes"],"secondary":[]},"unilateral":false,"verbs":["Thrust","Lower"],"kg0":40,"fail":true,"compound":true,"swap":["back_extension"],"breath":"Breathe in and brace; out at the top.","alts":[{"id":"smith_hip_thrust","n":"Smith hip thrust"},{"id":"glute_kickback","n":"Glute kickback"}]},"incline_press":{"name":"Incline press","ready":true,"cue":"Hands just outside shoulders; touch upper chest.","muscles":{"primary":["Upper chest"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":20,"fail":true,"compound":true,"swap":["chest_press"],"breath":"In as you lower, out as you press.","brace":"Big breath, brace, lower; out past halfway.","alts":[{"id":"machine_incline_press","n":"Machine incline press"},{"id":"low_high_cable_fly","n":"Low-to-high cable fly"}]},"knee_raise":{"name":"Knee raise","ready":true,"cue":"Curl your lower back up, not just legs","muscles":{"primary":["Abs","Hip flexors"],"secondary":[]},"unilateral":false,"verbs":["Raise","Lower"],"kg0":0,"fail":true,"failAll":true,"harder":"straighten your legs more","next":"leg_raise","reps":[10,20],"breath":"Breathe out as your knees rise.","alts":[{"id":"hanging_knee_raise","n":"Hanging knee raise","cue":"With ab straps; curl your pelvis up."}],"swap":["machine_crunch","cable_crunch"]},"lat_pulldown":{"name":"Lat pulldown","ready":true,"cue":"Stay vertical at the top","muscles":{"primary":["Lats"],"secondary":[]},"unilateral":false,"verbs":["Pull","Return"],"kg0":30,"fail":true,"compound":true,"swap":["chest_row"],"breath":"Out as you pull, in as arms rise.","alts":[{"id":"single_arm_pulldown","n":"Single-arm cable pulldown","cue":"Half-kneeling, one arm at a time."},{"id":"assisted_pull_up","n":"Assisted pull-up machine"},{"id":"pullover","n":"Machine or cable pullover"}]},"lateral_raise":{"name":"Cable lateral raise","ready":true,"cue":"Cable at hand height","muscles":{"primary":["Side shoulders"],"secondary":[]},"unilateral":true,"verbs":["Raise","Lower"],"kg0":5,"fail":true,"drop":true,"partials":true,"swap":["shoulder_press"],"breath":"Out as you raise, in as you lower.","alts":[{"id":"machine_lateral_raise","n":"Machine lateral raise"},{"id":"cable_y_raise","n":"Cable Y-raise"},{"id":"wide_cable_upright_row","n":"Wide-grip cable upright row","cue":"Elbows lead, no higher than the shoulders."}]},"leg_curl":{"name":"Seated leg curl","ready":true,"cue":"Lean forward until hamstrings feel stretched","muscles":{"primary":["Hamstrings"],"secondary":[]},"unilateral":false,"verbs":["Curl","Return"],"kg0":25,"fail":true,"drop":true,"partials":true,"swap":["back_extension"],"breath":"Out as you curl, in as you return.","alts":[{"id":"lying_leg_curl","n":"Lying leg curl"},{"id":"standing_leg_curl","n":"Standing single-leg curl"},{"id":"smith_rdl","n":"Smith Romanian deadlift"}]},"leg_extension":{"name":"Leg extension","ready":true,"cue":"Lean back; lower slowly into a deep bend.","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":30,"fail":true,"drop":true,"partials":true,"swap":["hack_squat"],"breath":"Out as you extend, in as you lower.","alts":[{"id":"cable_knee_extension","n":"Cable knee extension","cue":"Seated, with an ankle cuff."},{"id":"pendulum_squat","n":"Pendulum squat"}]},"leg_press":{"name":"Leg press","ready":true,"cue":"Go deep; stop before your tailbone lifts.","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false,"verbs":["Press","Return"],"kg0":60,"short":true,"compound":true,"swap":["hack_squat"],"breath":"Brace on the way down; exhale near lockout.","alts":[{"id":"pendulum_squat","n":"Pendulum squat"},{"id":"smith_squat_forward","n":"Smith squat, feet forward"}]},"leg_raise":{"name":"Leg raise","ready":true,"cue":"Straight legs to hip height, lower slowly","muscles":{"primary":["Abs"],"secondary":["Hip flexors"]},"unilateral":false,"verbs":["Raise","Lower"],"kg0":0,"fail":true,"failAll":true,"harder":["lower slowly over 3 s","add ankle weights"],"swap":["knee_raise","machine_crunch","cable_crunch"],"reps":[10,20],"breath":"Breathe out as your legs rise.","alts":[{"id":"hanging_knee_raise","n":"Hanging knee raise","cue":"With ab straps; curl your pelvis up."}]},"machine_crunch":{"name":"Machine crunch","ready":true,"cue":"Curl your ribs toward your pelvis","muscles":{"primary":["Abs"],"secondary":["Obliques"]},"unilateral":false,"verbs":["Crunch","Return"],"kg0":20,"fail":true,"drop":true,"failAll":true,"swap":["cable_crunch"],"breath":"Breathe out fully as you crunch."},"overhead_ext":{"name":"Overhead extension","ready":true,"cue":"Arms overhead, feel the deep stretch","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":15,"fail":true,"drop":true,"partials":true,"swap":["pushdown"],"breath":"Out as you extend, in as you lower.","alts":[{"id":"cross_body_extension","n":"Cross-body cable extension"},{"id":"smith_jm_press","n":"Smith JM press"}]},"pec_deck":{"name":"Pec deck","ready":true,"cue":"Open wide to a stretch, then squeeze.","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":20,"fail":true,"drop":true,"partials":true,"swap":["chest_press"],"breath":"In as arms open, out as you squeeze.","alts":[{"id":"seated_cable_fly","n":"Seated cable fly"},{"id":"cable_crossover","n":"Cable crossover"}]},"preacher_curl":{"name":"Machine preacher curl","ready":true,"cue":"Go all the way down","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":false,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"partials":true,"swap":["bayesian_curl","hammer_curl"],"breath":"Out as you curl, in as you lower.","alts":[{"id":"cable_preacher_curl","n":"Cable preacher curl"},{"id":"cable_bar_curl","n":"Cable bar curl"}]},"pushdown":{"name":"Cable pushdown","ready":true,"cue":"Use a bar, not the rope","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Push","Return"],"kg0":15,"fail":true,"drop":true,"swap":["overhead_ext"],"breath":"Out as you push, in as you return.","alts":[{"id":"cable_kickback","n":"Cable triceps kickback"},{"id":"smith_jm_press","n":"Smith JM press"}]},"reverse_fly":{"name":"Reverse fly","ready":true,"cue":"Sweep out, not back","muscles":{"primary":["Rear shoulders"],"secondary":[]},"unilateral":false,"verbs":["Sweep","Return"],"kg0":10,"fail":true,"drop":true,"swap":["chest_row"],"breath":"Out as you sweep, in as you return.","alts":[{"id":"reverse_cable_crossover","n":"Reverse cable crossover"},{"id":"single_arm_rear_fly","n":"Single-arm cable rear fly"},{"id":"rope_face_pull","n":"Rope face pull"}]},"seated_calf_raise":{"name":"Seated calf raise","ready":true,"cue":"Pause 1–2 s at the bottom. No bouncing.","muscles":{"primary":["Calves"],"secondary":[]},"unilateral":false,"verbs":["Rise","Sink"],"kg0":20,"fail":true,"drop":true,"partials":true,"swap":["calf_raise"],"breath":"Out as you rise, in as you sink.","alts":[{"id":"smith_seated_calf_raise","n":"Smith seated calf raise"},{"id":"leg_press_calf_raise","n":"Leg-press calf raise"}]},"shoulder_press":{"name":"Shoulder press","ready":true,"cue":"Lower until arms pass below parallel","muscles":{"primary":["Front shoulders"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":15,"fail":true,"compound":true,"swap":["incline_press"],"breath":"In as you lower, out as you press.","alts":[{"id":"smith_seated_press","n":"Smith seated press"}]}},"breath":{"brace":"Big breath and brace; breathe out past the hard part."}}</script>
+<script type="application/json" id="program">{"days":[{"name":"Upper","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"3 min easy bike, then 30 s leg and arm swings","sec":210,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk.","phases":[{"sec":180,"name":"Easy bike","pulse":"105–125"},{"sec":30,"name":"Leg and arm swings","cue":"Swing each leg and both arms, easy."}]},{"t":"sets","ex":"chest_press","n":4,"top":[6,8],"lo":8,"hi":12,"rest":120,"restTop":180},{"t":"sets","ex":"lat_pulldown","n":3,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"chest_row","n":3,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"lateral_raise","n":3,"lo":12,"hi":15,"rest":60},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90,"off":true},{"t":"sets","ex":"bayesian_curl","n":2,"lo":10,"hi":15,"rest":60},{"t":"sets","ex":"overhead_ext","n":3,"lo":10,"hi":15,"rest":90}],"cover":"chest_press"},{"name":"Lower","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then 30 s leg and arm swings","sec":330,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk.","phases":[{"sec":300,"name":"Easy bike","pulse":"105–125"},{"sec":30,"name":"Leg and arm swings","cue":"Swing each leg and both arms, easy."}]},{"t":"sets","ex":"hack_squat","n":4,"top":[6,8],"lo":8,"hi":12,"rest":120,"restTop":180},{"t":"sets","ex":"leg_extension","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"leg_curl","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_adduction","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"calf_raise","n":4,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"back_extension","n":3,"lo":10,"hi":15,"rest":120}],"cover":"hack_squat","order":[0,1,2,3,6,4,5]},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike intervals","line":"8 min easy, 4 × 4 min hard, 5 min easy","sec":2280,"pulse":"115–179","cue":"Hard: only a few words possible.","phases":[{"sec":480,"name":"Easy, building up","pulse":"up to 140","cue":"You can still talk."},{"sec":240,"name":"Hard 1 of 4","pulse":"160, then 170–179","hard":true,"cue":"Hard: only a few words possible."},{"sec":180,"name":"Easy","pulse":"115–130","cue":"You can still talk."},{"sec":240,"name":"Hard 2 of 4","pulse":"160, then 170–179","hard":true,"cue":"Hard: only a few words possible."},{"sec":180,"name":"Easy","pulse":"115–130","cue":"You can still talk."},{"sec":240,"name":"Hard 3 of 4","pulse":"160, then 170–179","hard":true,"cue":"Hard: only a few words possible."},{"sec":180,"name":"Easy","pulse":"115–130","cue":"You can still talk."},{"sec":240,"name":"Hard 4 of 4","pulse":"160, then 170–179","hard":true,"cue":"Hard: only a few words possible."},{"sec":300,"name":"Easy","pulse":"115–130","cue":"You can still talk."}]},{"t":"sets","ex":"cable_crunch","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":20,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600,"optional":true}],"cover":"bike"},{"name":"Push","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"3 min easy bike, then 30 s leg and arm swings","sec":210,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk.","phases":[{"sec":180,"name":"Easy bike","pulse":"105–125"},{"sec":30,"name":"Leg and arm swings","cue":"Swing each leg and both arms, easy."}]},{"t":"sets","ex":"incline_press","n":4,"top":[6,8],"lo":8,"hi":12,"rest":120,"restTop":180},{"t":"sets","ex":"shoulder_press","n":3,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"pec_deck","n":3,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"lateral_raise","n":4,"lo":12,"hi":15,"rest":60},{"t":"sets","ex":"pushdown","n":4,"lo":10,"hi":15,"rest":90}],"cover":"incline_press"},{"name":"Pull","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"3 min easy bike, then 30 s leg and arm swings","sec":210,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk.","phases":[{"sec":180,"name":"Easy bike","pulse":"105–125"},{"sec":30,"name":"Leg and arm swings","cue":"Swing each leg and both arms, easy."}]},{"t":"sets","ex":"lat_pulldown","n":4,"top":[6,8],"lo":8,"hi":12,"rest":120,"restTop":180},{"t":"sets","ex":"chest_row","n":4,"lo":8,"hi":12,"rest":120},{"t":"sets","ex":"reverse_fly","n":3,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"bayesian_curl","n":3,"lo":10,"hi":15,"rest":60},{"t":"sets","ex":"preacher_curl","n":2,"lo":10,"hi":15,"rest":90},{"t":"sets","ex":"hammer_curl","n":2,"lo":10,"hi":15,"rest":90,"off":true},{"t":"sets","ex":"lateral_raise","n":2,"lo":12,"hi":15,"rest":60}],"cover":"lat_pulldown","order":[0,1,2,3,7,4,5,6]},{"name":"Legs","steps":[{"t":"timer","key":"warmup","ex":"bike","name":"Warm-up","line":"5 min easy bike, then 30 s leg and arm swings","sec":330,"auto":true,"pulse":"105–125","cue":"Light sweat. You can still talk.","phases":[{"sec":300,"name":"Easy bike","pulse":"105–125"},{"sec":30,"name":"Leg and arm swings","cue":"Swing each leg and both arms, easy."}]},{"t":"sets","ex":"leg_curl","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"hip_thrust","n":4,"top":[6,8],"lo":8,"hi":12,"rest":120,"restTop":180},{"t":"sets","ex":"leg_press","n":3,"lo":10,"hi":12,"rest":120},{"t":"sets","ex":"hip_abduction","n":3,"lo":15,"hi":20,"rest":90},{"t":"sets","ex":"hip_adduction","n":2,"lo":12,"hi":15,"rest":90},{"t":"sets","ex":"seated_calf_raise","n":4,"lo":10,"hi":15,"rest":90,"off":true},{"t":"sets","ex":"calf_raise","n":4,"lo":10,"hi":15,"rest":90}],"cover":"hip_thrust","order":[0,1,2,3,4,5,7,6]},{"name":"Recovery","steps":[{"t":"timer","key":"bike","ex":"bike","name":"Bike","line":"40–45 min easy bike","sec":2400,"open":true,"pulse":"120–140","cue":"You can still talk."},{"t":"sets","ex":"machine_crunch","n":3,"lo":10,"hi":12,"rest":90},{"t":"sets","ex":"knee_raise","n":3,"lo":10,"hi":20,"rest":90},{"t":"timer","key":"stretch","ex":null,"name":"Stretching","line":"10 min","sec":600,"optional":true}],"cover":"knee_raise"}],"ex":{"back_extension":{"name":"45° back extension","ready":true,"cue":"Hinge at the hips, then squeeze your glutes","muscles":{"primary":["Glutes","Hamstrings"],"secondary":["Lower back"]},"unilateral":false,"verbs":["Rise","Lower"],"kg0":0,"fail":true,"harder":["lower slowly over 3 s","hold a plate to your chest"],"swap":["hip_thrust"],"reps":[10,15],"breath":"In as you lower, out as you rise.","alts":[{"id":"smith_rdl","n":"Smith Romanian deadlift"},{"id":"cable_pull_through","n":"Cable pull-through"}],"eq":{"smith_rdl":{"m":"same","w":"Same hip hinge, same muscles"},"hip_thrust":{"m":"close","w":"Glutes only: the hamstrings work less"},"cable_pull_through":{"m":"close","w":"A hip hinge on a cable"}}},"bayesian_curl":{"name":"Bayesian cable curl","ready":true,"cue":"Arms behind torso, cable at hand height","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":true,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"partials":true,"swap":["preacher_curl","hammer_curl"],"breath":"Out as you curl, in as you lower.","alts":[{"id":"cable_bar_curl","n":"Cable bar curl"}],"eq":{"preacher_curl":{"m":"same","w":"Grows like it when the resistance profile matches"},"cable_bar_curl":{"m":"close","w":"Same muscle on a cable, both arms at once"},"hammer_curl":{"m":"close","w":"Works the brachialis more than the biceps"}}},"bike":{"name":"Bike","ready":true,"cue":"","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false},"cable_crunch":{"name":"Cable crunch","ready":true,"cue":"Round your lower back, squeeze abs","muscles":{"primary":["Abs"],"secondary":[]},"unilateral":false,"verbs":["Crunch","Return"],"kg0":20,"fail":true,"drop":true,"failAll":true,"swap":["machine_crunch"],"breath":"Breathe out fully as you crunch.","eq":{"machine_crunch":{"m":"same","w":"Same spinal curl on a machine"}}},"calf_raise":{"name":"Standing calf raise","ready":true,"cue":"Pause 1–2 s at the bottom. No bouncing.","muscles":{"primary":["Calves"],"secondary":[]},"unilateral":false,"verbs":["Rise","Sink"],"kg0":40,"fail":true,"drop":true,"partials":true,"swap":["seated_calf_raise"],"breath":"Out as you rise, in as you sink.","alts":[{"id":"leg_press_calf_raise","n":"Leg-press calf raise","cue":"Knees straight."},{"id":"smith_calf_raise","n":"Smith calf raise on a step"}],"eq":{"leg_press_calf_raise":{"m":"same","w":"Same calves with straight knees"},"smith_calf_raise":{"m":"same","w":"Same raise on a Smith machine"},"seated_calf_raise":{"m":"weak","w":"Bent knees: the soleus, weak for the gastrocnemius"}}},"chest_press":{"name":"Chest press","ready":true,"cue":"Let handles come back to deep stretch","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Press","Return"],"kg0":20,"fail":true,"compound":true,"swap":["incline_press"],"breath":"In as handles return, out as you press.","alts":[{"id":"smith_flat_press","n":"Smith flat press"},{"id":"assisted_dip","n":"Assisted dip machine","cue":"Lean forward a little."}],"eq":{"smith_flat_press":{"m":"same","w":"Same muscles, a flat press on a Smith machine"},"incline_press":{"m":"close","w":"Same press, tilted up: upper chest only"},"assisted_dip":{"m":"close","w":"Chest and triceps in a different movement"}}},"chest_row":{"name":"Chest-supported row","ready":true,"cue":"Chest on the pad. Stretch fully forward.","muscles":{"primary":["Mid traps","Lats","Upper back"],"secondary":[]},"unilateral":false,"verbs":["Row","Return"],"kg0":20,"fail":true,"compound":true,"swap":["lat_pulldown"],"breath":"Out as you row, in as you reach.","alts":[{"id":"seated_cable_row","n":"Seated cable row"},{"id":"t_bar_row","n":"Chest-supported T-bar row"},{"id":"single_arm_row","n":"Single-arm row"}],"eq":{"seated_cable_row":{"m":"same","w":"Same row on a cable"},"t_bar_row":{"m":"same","w":"Same row with the chest supported"},"single_arm_row":{"m":"close","w":"Same muscles, one arm at a time"},"lat_pulldown":{"m":"weak","w":"A pulldown: the lats work more than the mid back"}}},"hack_squat":{"name":"Hack squat","ready":true,"cue":"Go as deep as the machine allows","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Stand","Lower"],"kg0":40,"short":true,"compound":true,"swap":["leg_press"],"breath":"Big breath, brace, down; out near the top.","alts":[{"id":"pendulum_squat","n":"Pendulum squat"},{"id":"smith_squat_forward","n":"Smith squat, feet forward"},{"id":"belt_squat","n":"Belt or V-squat"}],"eq":{"pendulum_squat":{"m":"same","w":"Same squat pattern, same muscles"},"smith_squat_forward":{"m":"close","w":"Same muscles, feet forward on a Smith machine"},"leg_press":{"m":"close","w":"Same quads, a press instead of a squat"},"belt_squat":{"m":"close","w":"Same quads, the load on a belt"}}},"hammer_curl":{"name":"Rope hammer curl","ready":true,"cue":"Elbows pinned, palms facing in","muscles":{"primary":["Brachialis","Forearms"],"secondary":["Biceps"]},"unilateral":false,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"swap":["bayesian_curl","preacher_curl"],"breath":"Out as you curl, in as you lower.","alts":[{"id":"preacher_hammer_curl","n":"Preacher hammer curl"},{"id":"reverse_grip_curl","n":"Cable reverse-grip curl"}],"eq":{"preacher_hammer_curl":{"m":"same","w":"Same grip on a preacher pad"},"reverse_grip_curl":{"m":"close","w":"Overhand grip: more forearm, less biceps"},"bayesian_curl":{"m":"close","w":"Biceps more than the brachialis"},"preacher_curl":{"m":"close","w":"Biceps more than the brachialis"}}},"hip_abduction":{"name":"Seated hip abduction","ready":true,"cue":"Lean forward about 30 degrees","muscles":{"primary":["Side glutes","Upper glutes"],"secondary":[]},"unilateral":false,"verbs":["Open","Close"],"kg0":30,"fail":true,"drop":true,"breath":"Out as you open, in as you close.","alts":[{"id":"standing_cable_abduction","n":"Standing cable abduction","cue":"Ankle cuff; lift the leg out to the side."},{"id":"glute_kickback","n":"Cable or machine kickback"}],"eq":{"standing_cable_abduction":{"m":"same","w":"Same side-glute work on a cable"},"glute_kickback":{"m":"close","w":"Glute work in a different direction"}}},"hip_adduction":{"name":"Seated hip adduction","ready":true,"cue":"Start wide; close and open slowly.","muscles":{"primary":["Inner thighs"],"secondary":[]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":30,"fail":true,"drop":true,"swap":["leg_press"],"breath":"Out as you squeeze, in as you open.","alts":[{"id":"standing_cable_adduction","n":"Standing cable adduction"},{"id":"smith_sumo_squat","n":"Smith sumo squat"}],"eq":{"standing_cable_adduction":{"m":"same","w":"Same inner-thigh work on a cable"},"leg_press":{"m":"weak","w":"Wide and deep it reaches the adductors; quads lead"},"smith_sumo_squat":{"m":"weak","w":"A wide squat: the quads and glutes lead"}}},"hip_thrust":{"name":"Hip thrust","ready":true,"cue":"Ribs down; drive your hips up straight.","muscles":{"primary":["Glutes"],"secondary":[]},"unilateral":false,"verbs":["Thrust","Lower"],"kg0":40,"fail":true,"compound":true,"swap":["back_extension"],"breath":"Breathe in and brace; out at the top.","alts":[{"id":"smith_hip_thrust","n":"Smith hip thrust"},{"id":"glute_kickback","n":"Glute kickback"}],"eq":{"smith_hip_thrust":{"m":"same","w":"Same thrust on a Smith machine"},"back_extension":{"m":"close","w":"Glutes and hamstrings in a hip hinge"},"glute_kickback":{"m":"close","w":"Glutes alone in a lighter movement"}}},"incline_press":{"name":"Incline press","ready":true,"cue":"Hands just outside shoulders; touch upper chest.","muscles":{"primary":["Upper chest"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":20,"fail":true,"compound":true,"swap":["chest_press"],"breath":"In as you lower, out as you press.","brace":"Big breath, brace, lower; out past halfway.","alts":[{"id":"machine_incline_press","n":"Machine incline press"},{"id":"low_high_cable_fly","n":"Low-to-high cable fly"}],"eq":{"machine_incline_press":{"m":"same","w":"Same muscles, the same angle on a machine"},"chest_press":{"m":"close","w":"Flatter press: chest as well as upper chest"},"low_high_cable_fly":{"m":"close","w":"Upper chest in a fly instead of a press"}}},"knee_raise":{"name":"Knee raise","ready":true,"cue":"Curl your lower back up, not just legs","muscles":{"primary":["Abs","Hip flexors"],"secondary":[]},"unilateral":false,"verbs":["Raise","Lower"],"kg0":0,"fail":true,"failAll":true,"harder":"straighten your legs more","next":"leg_raise","reps":[10,20],"breath":"Breathe out as your knees rise.","alts":[{"id":"hanging_knee_raise","n":"Hanging knee raise","cue":"With ab straps; curl your pelvis up."}],"swap":["machine_crunch","cable_crunch"],"eq":{"hanging_knee_raise":{"m":"same","w":"Same knee raise, hanging from straps"},"machine_crunch":{"m":"close","w":"Loaded abs in a crunch instead of a raise"},"cable_crunch":{"m":"close","w":"Loaded abs in a crunch instead of a raise"}}},"lat_pulldown":{"name":"Lat pulldown","ready":true,"cue":"Stay vertical at the top","muscles":{"primary":["Lats"],"secondary":[]},"unilateral":false,"verbs":["Pull","Return"],"kg0":30,"fail":true,"compound":true,"swap":["chest_row"],"breath":"Out as you pull, in as arms rise.","alts":[{"id":"single_arm_pulldown","n":"Single-arm cable pulldown","cue":"Half-kneeling, one arm at a time."},{"id":"assisted_pull_up","n":"Assisted pull-up machine"},{"id":"pullover","n":"Machine or cable pullover"}],"eq":{"single_arm_pulldown":{"m":"same","w":"Same lats, one arm at a time"},"assisted_pull_up":{"m":"same","w":"Same vertical pull, with assistance"},"pullover":{"m":"close","w":"Lats through a different arc"},"chest_row":{"m":"weak","w":"A row: the mid back works more than the lats"}}},"lateral_raise":{"name":"Cable lateral raise","ready":true,"cue":"Cable at hand height","muscles":{"primary":["Side shoulders"],"secondary":[]},"unilateral":true,"verbs":["Raise","Lower"],"kg0":5,"fail":true,"drop":true,"partials":true,"swap":["shoulder_press"],"breath":"Out as you raise, in as you lower.","alts":[{"id":"machine_lateral_raise","n":"Machine lateral raise"},{"id":"cable_y_raise","n":"Cable Y-raise"},{"id":"wide_cable_upright_row","n":"Wide-grip cable upright row","cue":"Elbows lead, no higher than the shoulders."}],"eq":{"machine_lateral_raise":{"m":"same","w":"Same side-shoulder raise on a machine"},"cable_y_raise":{"m":"close","w":"Side and rear shoulders in a Y-shaped raise"},"wide_cable_upright_row":{"m":"close","w":"Side shoulders and traps in a row"},"shoulder_press":{"m":"weak","w":"A press: the front shoulders lead"}}},"leg_curl":{"name":"Seated leg curl","ready":true,"cue":"Lean forward until hamstrings feel stretched","muscles":{"primary":["Hamstrings"],"secondary":[]},"unilateral":false,"verbs":["Curl","Return"],"kg0":25,"fail":true,"drop":true,"partials":true,"swap":["back_extension"],"breath":"Out as you curl, in as you return.","alts":[{"id":"lying_leg_curl","n":"Lying leg curl"},{"id":"standing_leg_curl","n":"Standing single-leg curl"},{"id":"smith_rdl","n":"Smith Romanian deadlift"}],"eq":{"lying_leg_curl":{"m":"close","w":"Seated grew the hamstrings more than lying"},"standing_leg_curl":{"m":"close","w":"Same muscle, one leg at a time"},"back_extension":{"m":"close","w":"A hip hinge: hamstrings and glutes"},"smith_rdl":{"m":"close","w":"A hip hinge: hamstrings and glutes"}}},"leg_extension":{"name":"Leg extension","ready":true,"cue":"Lean back; lower slowly into a deep bend.","muscles":{"primary":["Quads"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":30,"fail":true,"drop":true,"partials":true,"swap":["hack_squat"],"breath":"Out as you extend, in as you lower.","alts":[{"id":"cable_knee_extension","n":"Cable knee extension","cue":"Seated, with an ankle cuff."},{"id":"pendulum_squat","n":"Pendulum squat"}],"eq":{"cable_knee_extension":{"m":"same","w":"Same knee extension on a cable"},"hack_squat":{"m":"weak","w":"Grows the vasti but not the rectus femoris"},"pendulum_squat":{"m":"weak","w":"A squat, not an isolation: the quads work together"}}},"leg_press":{"name":"Leg press","ready":true,"cue":"Go deep; stop before your tailbone lifts.","muscles":{"primary":["Glutes","Quads"],"secondary":[]},"unilateral":false,"verbs":["Press","Return"],"kg0":60,"short":true,"compound":true,"swap":["hack_squat"],"breath":"Brace on the way down; exhale near lockout.","alts":[{"id":"pendulum_squat","n":"Pendulum squat"},{"id":"smith_squat_forward","n":"Smith squat, feet forward"}],"eq":{"hack_squat":{"m":"close","w":"Same quads, fewer glutes"},"pendulum_squat":{"m":"close","w":"A squat: quads and glutes"},"smith_squat_forward":{"m":"close","w":"A squat: quads and glutes"}}},"leg_raise":{"name":"Leg raise","ready":true,"cue":"Straight legs to hip height, lower slowly","muscles":{"primary":["Abs"],"secondary":["Hip flexors"]},"unilateral":false,"verbs":["Raise","Lower"],"kg0":0,"fail":true,"failAll":true,"harder":["lower slowly over 3 s","add ankle weights"],"swap":["knee_raise","machine_crunch","cable_crunch"],"reps":[10,20],"breath":"Breathe out as your legs rise.","alts":[{"id":"hanging_knee_raise","n":"Hanging knee raise","cue":"With ab straps; curl your pelvis up."}],"eq":{"knee_raise":{"m":"close","w":"Same abs, an easier version with bent knees"},"hanging_knee_raise":{"m":"close","w":"Same abs, an easier hanging version"},"machine_crunch":{"m":"close","w":"Loaded abs in a crunch instead of a raise"},"cable_crunch":{"m":"close","w":"Loaded abs in a crunch instead of a raise"}}},"machine_crunch":{"name":"Machine crunch","ready":true,"cue":"Curl your ribs toward your pelvis","muscles":{"primary":["Abs"],"secondary":["Obliques"]},"unilateral":false,"verbs":["Crunch","Return"],"kg0":20,"fail":true,"drop":true,"failAll":true,"swap":["cable_crunch"],"breath":"Breathe out fully as you crunch.","eq":{"cable_crunch":{"m":"same","w":"Same spinal curl on a cable"}}},"overhead_ext":{"name":"Overhead extension","ready":true,"cue":"Arms overhead, feel the deep stretch","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Extend","Lower"],"kg0":15,"fail":true,"drop":true,"partials":true,"swap":["pushdown"],"breath":"Out as you extend, in as you lower.","alts":[{"id":"cross_body_extension","n":"Cross-body cable extension"},{"id":"smith_jm_press","n":"Smith JM press"}],"eq":{"cross_body_extension":{"m":"same","w":"Same triceps, a similar overhead extension"},"smith_jm_press":{"m":"close","w":"Triceps in a press: the chest helps"},"pushdown":{"m":"weak","w":"Weaker for the long head: about 40% less triceps growth"}}},"pec_deck":{"name":"Pec deck","ready":true,"cue":"Open wide to a stretch, then squeeze.","muscles":{"primary":["Upper chest","Chest"],"secondary":["Front shoulders"]},"unilateral":false,"verbs":["Squeeze","Open"],"kg0":20,"fail":true,"drop":true,"partials":true,"swap":["chest_press"],"breath":"In as arms open, out as you squeeze.","alts":[{"id":"seated_cable_fly","n":"Seated cable fly"},{"id":"cable_crossover","n":"Cable crossover"}],"eq":{"seated_cable_fly":{"m":"same","w":"Same fly on a cable"},"cable_crossover":{"m":"same","w":"Same fly standing at a cable"},"chest_press":{"m":"close","w":"A press instead of a fly: the same muscles"}}},"preacher_curl":{"name":"Machine preacher curl","ready":true,"cue":"Go all the way down","muscles":{"primary":["Biceps"],"secondary":[]},"unilateral":false,"verbs":["Curl","Lower"],"kg0":10,"fail":true,"drop":true,"partials":true,"swap":["bayesian_curl","hammer_curl"],"breath":"Out as you curl, in as you lower.","alts":[{"id":"cable_preacher_curl","n":"Cable preacher curl"},{"id":"cable_bar_curl","n":"Cable bar curl"}],"eq":{"bayesian_curl":{"m":"same","w":"Same muscle, on a cable one arm at a time"},"cable_preacher_curl":{"m":"same","w":"Same curl on a cable"},"cable_bar_curl":{"m":"close","w":"Same muscle on a cable, standing"},"hammer_curl":{"m":"close","w":"Works the brachialis more than the biceps"}}},"pushdown":{"name":"Cable pushdown","ready":true,"cue":"Use a bar, not the rope","muscles":{"primary":["Triceps"],"secondary":[]},"unilateral":false,"verbs":["Push","Return"],"kg0":15,"fail":true,"drop":true,"swap":["overhead_ext"],"breath":"Out as you push, in as you return.","alts":[{"id":"cable_kickback","n":"Cable triceps kickback"},{"id":"smith_jm_press","n":"Smith JM press"}],"eq":{"overhead_ext":{"m":"same","w":"An upgrade: grows the long head more"},"cable_kickback":{"m":"close","w":"Same muscle, a different resistance curve"},"smith_jm_press":{"m":"close","w":"Triceps in a press: the chest helps"}}},"reverse_fly":{"name":"Reverse fly","ready":true,"cue":"Sweep out, not back","muscles":{"primary":["Rear shoulders"],"secondary":[]},"unilateral":false,"verbs":["Sweep","Return"],"kg0":10,"fail":true,"drop":true,"swap":["chest_row"],"breath":"Out as you sweep, in as you return.","alts":[{"id":"reverse_cable_crossover","n":"Reverse cable crossover"},{"id":"single_arm_rear_fly","n":"Single-arm cable rear fly"},{"id":"rope_face_pull","n":"Rope face pull"}],"eq":{"reverse_cable_crossover":{"m":"same","w":"Same rear-shoulder fly on cables"},"single_arm_rear_fly":{"m":"same","w":"Same fly, one arm at a time"},"rope_face_pull":{"m":"close","w":"Rear shoulders and upper back"},"chest_row":{"m":"weak","w":"A row: the back leads, the rear shoulders help"}}},"seated_calf_raise":{"name":"Seated calf raise","ready":true,"cue":"Pause 1–2 s at the bottom. No bouncing.","muscles":{"primary":["Calves"],"secondary":[]},"unilateral":false,"verbs":["Rise","Sink"],"kg0":20,"fail":true,"drop":true,"partials":true,"swap":["calf_raise"],"breath":"Out as you rise, in as you sink.","alts":[{"id":"smith_seated_calf_raise","n":"Smith seated calf raise"},{"id":"leg_press_calf_raise","n":"Leg-press calf raise"}],"eq":{"calf_raise":{"m":"same","w":"Standing grew the whole calf more than seated"},"smith_seated_calf_raise":{"m":"same","w":"Same raise on a Smith machine"},"leg_press_calf_raise":{"m":"close","w":"Straight knees: more gastrocnemius, less soleus"}}},"shoulder_press":{"name":"Shoulder press","ready":true,"cue":"Lower until arms pass below parallel","muscles":{"primary":["Front shoulders"],"secondary":[]},"unilateral":false,"verbs":["Press","Lower"],"kg0":15,"fail":true,"compound":true,"swap":["incline_press"],"breath":"In as you lower, out as you press.","alts":[{"id":"smith_seated_press","n":"Smith seated press"}],"eq":{"smith_seated_press":{"m":"same","w":"Same press on a Smith machine"},"incline_press":{"m":"close","w":"A tilted press: upper chest as well as shoulders"}}}},"breath":{"brace":"Big breath and brace; breathe out past the hard part."}}</script>
 <script>
 // Machine Coach figure engine - core helpers and the data loader.
 // Every engine file is a classic script that adds to the global namespace `MCE`, so the page works from
@@ -834,7 +882,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
 // v9 "everything, on machines": warm-up sets before each compound (and one light set before an isolation for a muscle not yet
 // worked that day), a heavy top set and lighter back-off sets on the first compound of a lifting day, a drop set right after
 // the last set of the machine and cable isolations, abs to failure with a bodyweight progression (reps, then harder), Do it
-// later and Swap for a busy machine (the menu), the effort rule of every set in the coaching card, and a deload week (half the
+// Options for a busy machine (an alternative, or this one last), the effort rule of every set in the coaching card, and a deload week (half the
 // sets, same weights) that the app suggests after 8 weeks or when several lifts stall.
 // v10 "the pacer": a set starts with Go: a 5 s countdown (big numerals, a beep and a buzz each second), then the figure starts
 // at the bottom of its rep and the app counts the reps on ONE clock that drives the figure (kept on it through the stage's
@@ -931,7 +979,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     kgminus: $('kgminus'), kgplus: $('kgplus'), kg: $('kg'), kgn: $('kgn'), kgu: $('kgu'),
     primary: $('primary'), pic: $('pic'), plabel: $('plabel'), tip: $('turntip'), back: $('back'), sess: $('sess'),
     coach: $('coach'), cphase: $('cphase'), cverb: $('cverb'), cspeed: $('cspeed'), crule: $('crule'), ccue: $('ccue'), cbreath: $('cbreath'),
-    log: $('logbtn'), opt: $('optbtn'),
+    log: $('logbtn'), opt: $('optbtn'), pill: $('swappill'), toast: $('toast'),
   };
 
   // ---------------------------------------------------------------- saving
@@ -1294,6 +1342,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     go: null,          // { day, step, k, until }: the next set's highlight, "Set 3 . go"
     glow: null,        // { day, step, k, t0, until }: the tick of the set just logged lights up
     sel: null,         // { day, step, k, v, kg }: the reps and weight selectors' numbers for the set on screen (kept on this device)
+    toast: null,       // { text, until, uid }: what an Options step did, with Undo for a few seconds
+    preview: null,     // { id, kind, fig }: an alternative being looked at in Options (its figure is on the stage)
     pace: null,        // the pacer of the set on screen: { day, step, k, drop, uni, first, side, stage, t0, run0, done, target, kg } (paceView)
     tipUntil: 0, end: null, rimFade: null,
   };
@@ -1310,7 +1360,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
   const joinAnd = (a) => (a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]);
   // the working muscles in plain words, primary first: "Upper chest and chest, with front shoulders"
-  const musText = (e) => (e.alt ? 'Figure: ' + e.figure : musLine(e.muscles)); // (another machine: which figure it borrows)
+  const musText = (e) => musLine(e.muscles);
   function musLine(m) {
     const p = (m.primary || []).map((x) => x.toLowerCase()), s = (m.secondary || []).map((x) => x.toLowerCase());
     return cap(joinAnd(p) + (s.length ? (p.length ? ', with ' : '') + joinAnd(s) : ''));
@@ -1632,7 +1682,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   const sideWord = (s) => (s === 'l' ? 'Left side' : s === 'r' ? 'Right side' : '');
   function viewNow() {
     const d = ui.day, i = ui.step, t = now(), st = ui.mode === 'end' || ui.mode === 'boot' ? null : stepsOf(d)[i];
-    const v = { kind: ui.mode, kicker: '', kTone: '', name: '', check: false, clock: '', cTone: '', line: '', lTone: '', ticks: null, mus: '', note: null, sel: false, primary: null, log: null, coach: null, hint: null };
+    const v = { kind: ui.mode, kicker: '', kTone: '', name: '', check: false, clock: '', cTone: '', line: '', lTone: '', ticks: null, mus: '', note: null, sel: false, primary: null, log: null, coach: null, hint: null, pill: null };
     if (st && ((ui.mode === 'timer' && st.t !== 'timer') || ((ui.mode === 'set' || ui.mode === 'warm' || ui.mode === 'drop') && st.t !== 'sets'))) return v; // a change in the middle: the next draw has it right
     const glowAt = (step) => (ui.glow && t < ui.glow.until && ui.glow.day === d && ui.glow.step === step ? ui.glow : null);
     const pc = setMode() ? paceNow(t) : null;
@@ -1670,7 +1720,6 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       v.lTone = go ? 'go' : '';
       v.ticks = { n, done: k, go, glow: gw ? gw.k : null, t0: gw ? gw.t0 : null };
       v.mus = musText(e);
-      if (e.alt && v.kicker) { v.kicker += MID + 'Figure: ' + e.figure; v.mus = ''; } // (a set's kind takes the muscles line's room: the figure's name rides in the kicker)
       v.sel = true;
       const r = selValue(), w = selKg();
       v.primary = { act: 'go', label: 'Go', icon: 'go', aria: 'Go: set ' + (k + 1) + ', a 5 second countdown, then the reps are counted' };
@@ -1691,7 +1740,6 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       v.kicker = 'Drop set'; v.kTone = 'warm'; v.name = e.name;
       v.line = T.noRest + MID + 'go now' + (w > 0 ? ' at ' + fmtW(w) : '') + (e.unilateral ? MID + 'each arm' : ''); v.lTone = 'go';
       v.mus = musText(e);
-      if (e.alt) { v.kicker += MID + 'Figure: ' + e.figure; v.mus = ''; }
       v.sel = true;
       v.primary = { act: 'go', label: 'Go', icon: 'go', aria: 'Go: the drop set, a 5 second countdown, then the reps are counted' };
       v.log = { aria: 'Log the drop set with ' + repsWord(selValue()) + ' at ' + fmtU(w) + ' ' + uWord() + ', without the pacer' };
@@ -1749,6 +1797,12 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if (!ui.adhoc) v.log = { act: 'copy', aria: 'Copy the workout card, to paste it' };
       v.next = 'Next: ' + dayLabel(nd);
     }
+    // another exercise or machine in this one's place: the pill under the name says so and goes back (it takes the muscles line's slot)
+    if (v.kind === 'set' || v.kind === 'warm' || v.kind === 'drop' || v.kind === 'rest') {
+      const j = v.kind === 'rest' ? (ui.rest ? ui.rest.next : -1) : i;
+      v.pill = pillFor(d, j);
+      if (v.pill && v.kind !== 'rest') v.mus = '';
+    }
     // a done line carried over to this step for a while ("Warm-up done"), or a word about what just happened ("Undone")
     if (ui.note && t < ui.note.until && (ui.mode === 'set' || ui.mode === 'warm' || ui.mode === 'timer' || ui.mode === 'done' || ui.mode === 'end')) v.note = Object.assign({ tone: 'done', icon: true }, ui.note);
     // a message for a moment in the kicker (e.g. "Next time: add weight" on the stretching screen; over a set's kind for that moment)
@@ -1773,7 +1827,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     }
     setText(E.kicker, v.kicker); E.kicker.dataset.tone = v.kTone;
     setName(v.name, v.check); setText(E.clock, v.clock); E.clock.dataset.tone = v.cTone || '';
-    setLine(v.line, v.ticks, v.lTone); setText(E.mus, v.mus);
+    setLine(v.line, v.ticks, v.lTone); setText(E.mus, v.mus); paintPill(v.pill);
     app.dataset.mode = ui.mode;
     if (!selMode() && kpOpen()) closeKeypad();
     app.dataset.view = v.kind;
@@ -1793,7 +1847,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       else if (v.hint.last) note = { text: v.hint.last, tone: 'soft' };
       else if (v.hint.rule && !cs.rule) note = { text: v.hint.rule, tone: 'guide' };
     }
-    paintNote(note); paintSel(v.sel); paintPrimary(v.primary); paintLog(v.log); paintBack(); paintSess(); paintOpt();
+    paintNote(note); paintSel(v.sel); paintPrimary(v.primary); paintLog(v.log); paintBack(); paintSess(); paintOpt(); paintToast();
     { const en = $('endnext'), on = !!v.next; if (en.hidden === on) en.hidden = !on; if (on && en.textContent !== v.next) en.textContent = v.next; }
     // a control that had the keyboard's focus went away with the state (the selector in the rest): the focus
     // goes to the primary button, so a keyboard user stays in the action area
@@ -1818,7 +1872,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         if (!kids.length || !ctl.length) return 0;
         return Math.max(...kids.map((e) => e.getBoundingClientRect().bottom)) - Math.min(...ctl.map((e) => e.getBoundingClientRect().top));
       };
-      if (over() > 0) { L.add('crowded'); if (over() > 0) L.add('crowded2'); }
+      const order = app.dataset.view === 'rest' && !E.pill.hidden ? ['crowded2', 'crowded'] : ['crowded', 'crowded2']; // (the plan line stays on a rest with a pill)
+      for (const c of order) { if (over() > 0) L.add(c); else break; }
     } catch (_) { /* no layout here */ }
   }
   function paintNote(n) {
@@ -1956,7 +2011,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const el = E.coach, shown = { rule: false, cue: false };
     coachC = c;
     const drawn = engine === 'ready' && !!stage && !!stage.cur && stage.cur.id === wantFig && !figHidden && !placeholderOn && !loadingNow;
-    if (!c || !(drawn || engine === 'none')) { el.hidden = true; return shown; }
+    if (!c || ui.preview || !(drawn || engine === 'none')) { el.hidden = true; return shown; }
     const rule = app.classList.contains('compact') ? '' : c.rule || '';
     setText(E.crule, rule); setText(E.ccue, c.pace ? '' : c.cue);
     const bmax = c.cycle ? '' : c.breath || '';
@@ -2356,6 +2411,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     return s;
   }
   function snapshot(label) {
+    ui.toast = null; // (a new step takes the toast's Undo away)
     if (ui.adhoc) return null;
     const d = ui.day, p = S.prog[d], last = {};
     for (const id of idsOf(d)) last[id] = S.last[id] ? clone(S.last[id]) : null;
@@ -2433,11 +2489,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   const canRestart = () => { const p = S.prog[ui.day]; return !!((p && (p.t0 || Object.values(p.sets).some((a) => a.length) || Object.keys(p.done).length || Object.keys(p.warm || {}).length || Object.keys(p.swap || {}).length || p.order)) || ui.timers.size || ui.rest); };
 
-  // ---------------------------------------------------------------- a busy machine: do it later, or swap it
-  // From the menu, for the exercise on screen (during a rest: the one coming up next). Do it later moves it to the end of the
-  // day's order (another open step must be left to do first; the day still ends when every step is done). Swap puts another
-  // exercise in its place for today (only before its first set): the step keeps its sets, reps and rest, and its sets are
-  // logged to the exercise done. Both are steps Undo takes back.
+  // ---------------------------------------------------------------- Options: the exercise on screen, or what comes next in a rest
+  // Use puts another exercise (its animation) or another machine (text only, the exercise's figure stays) in the exercise's place for
+  // today, only before its first set: the step keeps its sets, reps and rest, and its sets are logged to what was done. Back takes the
+  // program's own exercise again. Do this one last moves the step to the end of the day's order (another open step must be left to do
+  // first; the day still ends when every step is done). Each is a step Undo takes back, and a toast says so.
   function busyStep() {
     if (ui.adhoc || dialogOpen() || (ui.pace && setMode())) return -1;
     if (ui.mode === 'rest') return ui.rest ? ui.rest.next : -1;
@@ -2459,60 +2515,75 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     return out;
   }
   const lc = (s) => (/^(Bayesian|Smith)/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1));
+  const canBack = (d, i) => { const st = i >= 0 ? stepsOf(d)[i] : null; return !!st && st.t === 'sets' && !setsOf(d, i).length && !dropDue(d, i) && (exIdAt(d, i) !== levelOf(st.ex) || !!altOf(d, i)); };
+  // what step i stands in for: { text: "Instead of Hack squat", back }, or null when it is the program's own exercise
+  function pillFor(d, i) {
+    const st = i >= 0 && d >= 0 ? stepsOf(d)[i] : null;
+    if (!st || st.t !== 'sets') return null;
+    const orig = levelOf(st.ex);
+    if (exIdAt(d, i) === orig && !altOf(d, i)) return null;
+    return { text: 'Instead of ' + exOf(orig).name, back: canBack(d, i) };
+  }
+  function toast(text, u) { ui.toast = { text, until: now() + 6000, uid: u ? u.id : null }; render(); kickLoop(); }
+  function paintToast() {
+    const t = ui.toast && now() < ui.toast.until ? ui.toast : null;
+    if (E.toast.hidden === !!t) E.toast.hidden = !t;
+    if (t && $('toasttxt').textContent !== t.text) $('toasttxt').textContent = t.text;
+  }
+  // Undo on the toast: only while the step it speaks of is still the last one
+  $('toastundo').addEventListener('click', () => {
+    const t = ui.toast; ui.toast = null;
+    if (t && t.uid && hist.length && hist[hist.length - 1].id === t.uid) doUndo(); else render();
+  });
+  function paintPill(p) {
+    const b = E.pill;
+    if (b.hidden === !!p) b.hidden = !p;
+    if (!p) return;
+    $('pilltxt').textContent = p.text; $('pillback').hidden = !p.back;
+    b.setAttribute('aria-disabled', p.back ? 'false' : 'true');
+    b.setAttribute('aria-label', p.text + (p.back ? '. Back' : ''));
+  }
+  E.pill.addEventListener('click', () => { if (E.pill.getAttribute('aria-disabled') !== 'true') { wake.on(); doBack(); } });
+  // After the step: the screen as it is for the step (a rest: the same rest, naming what comes next), saved, and a toast with Undo
+  function afterStep(d, i, u, said) {
+    const resting = ui.mode === 'rest', p = ensureProg(d);
+    delete p.warm[i]; touchProg(p); S.current = d;
+    if (ui.sel && ui.sel.day === d && ui.sel.step === i) { ui.sel = null; saveSel(); }
+    if (resting) { saveRest(); Alerts.schedule(); render(); prefetch(); }
+    else { p.step = i; goStep(i, { cut: true, quiet: true }); }
+    Save.persist(); haptic(10);
+    toast(said, u);
+    announce(said + '. ' + (resting ? restNext(ui.rest) + '.' : stepSpeech()));
+  }
+  // an alternative for step i: { swap: id } an animated one, { alt: id } a text one (the exercise's figure stays), {} the program's own
+  function choose(i, c) {
+    const d = ui.day, st = stepsOf(d)[i];
+    if (!st || st.t !== 'sets' || setsOf(d, i).length || dropDue(d, i)) return;
+    const orig = levelOf(st.ex), origName = exOf(orig).name;
+    const name = c.swap ? nameOf(c.swap) : c.alt ? altFind(orig, c.alt).n : origName;
+    const u = snapshot((c.swap || c.alt ? 'use ' : 'back to ') + lc(name));
+    const p = ensureProg(d);
+    if (c.swap && c.swap !== orig) p.swap[i] = c.swap; else delete p.swap[i];
+    if (c.alt) (p.alt = p.alt || {})[i] = c.alt; else if (p.alt) delete p.alt[i];
+    afterStep(d, i, u, c.swap || c.alt ? 'Using ' + name + ' instead of ' + origName : 'Back to ' + origName);
+  }
+  function doBack() { const i = busyStep(); if (canBack(ui.day, i)) choose(i, {}); }
+  // Do this one last today: the step moves to the end of the day's order
   function doLater() {
     const d = ui.day, i = busyStep();
     if (!canLater(d, i)) return;
     const resting = ui.mode === 'rest', name = stepName(d, i), O = fullOrderOf(d).slice(), pos = orderOf(d).indexOf(i);
-    snapshot('do ' + lc(name) + ' later');
+    const u = snapshot('do ' + lc(name) + ' last');
     const p = ensureProg(d);
     O.splice(O.indexOf(i), 1); O.push(i); p.order = O; touchProg(p); S.current = d;
-    const nx = openFrom(d, pos, i), said = name + ' moved to the end';
+    const nx = openFrom(d, pos, i), said = 'Moved to the end' + MID + 'Next: ' + stepName(d, nx);
     p.step = nx;
-    if (resting) { ui.rest.next = nx; ui.rest.msg = said; ui.rest.msgUntil = now() + 3000; saveRest(); Alerts.schedule(); render(); prefetch(); }
-    else { ui.note = { text: said, until: now() + 3000 }; goStep(nx, { cut: true, quiet: true }); }
+    if (resting) { ui.rest.next = nx; saveRest(); Alerts.schedule(); render(); prefetch(); }
+    else goStep(nx, { cut: true, quiet: true });
     Save.persist(); haptic(10);
+    toast(said, u);
     announce(said + '. ' + (resting ? restNext(ui.rest) + '.' : stepSpeech()));
   }
-  function doSwap(id) {
-    const d = ui.day, i = busyStep();
-    if (!swapsFor(d, i).includes(id)) return;
-    const resting = ui.mode === 'rest', st = stepsOf(d)[i], said = 'Swapped for ' + lc(nameOf(id));
-    snapshot('swap for ' + lc(nameOf(id)));
-    const p = ensureProg(d);
-    if (id === levelOf(st.ex)) delete p.swap[i]; else p.swap[i] = id;
-    if (p.alt) delete p.alt[i]; // (another machine belonged to the exercise it was chosen for)
-    delete p.warm[i]; touchProg(p); S.current = d;
-    if (ui.sel && ui.sel.day === d && ui.sel.step === i) { ui.sel = null; saveSel(); }
-    if (resting) { ui.rest.msg = said; ui.rest.msgUntil = now() + 3000; saveRest(); Alerts.schedule(); render(); prefetch(); }
-    else { p.step = i; ui.note = { text: said, until: now() + 3000 }; goStep(i, { cut: true, quiet: true }); }
-    Save.persist(); haptic(10);
-    announce(said + '. ' + (resting ? restNext(ui.rest) + '.' : stepSpeech()));
-  }
-
-  // the other machines step i can be done on now (before its first set): the text alternatives of its exercise, best first, and the
-  // exercise itself while one is in use. The figure stays the exercise's: the nearest movement.
-  function altsFor(d, i) {
-    const st = i >= 0 ? stepsOf(d)[i] : null;
-    if (!st || st.t !== 'sets' || setsOf(d, i).length || dropDue(d, i) || ui.adhoc) return [];
-    const id = exIdAt(d, i), cur = altOf(d, i), out = altsOf(id).filter((a) => a.id !== cur);
-    if (cur) out.unshift({ id: null, n: exOf(id).name, back: true });
-    return out;
-  }
-  function doAlt(a) {
-    const d = ui.day, i = busyStep(), x = altsFor(d, i).find((y) => y.id === a);
-    if (!x) return;
-    const resting = ui.mode === 'rest', name = x.n, said = x.back ? 'Back to ' + lc(name) : 'Using ' + lc(name);
-    snapshot((x.back ? 'back to ' : 'use ') + lc(name));
-    const p = ensureProg(d);
-    if (a) (p.alt = p.alt || {})[i] = a; else if (p.alt) delete p.alt[i];
-    delete p.warm[i]; touchProg(p); S.current = d;
-    if (ui.sel && ui.sel.day === d && ui.sel.step === i) { ui.sel = null; saveSel(); }
-    if (resting) { ui.rest.msg = said; ui.rest.msgUntil = now() + 3000; saveRest(); Alerts.schedule(); render(); prefetch(); }
-    else { p.step = i; ui.note = { text: said, until: now() + 3000 }; goStep(i, { cut: true, quiet: true }); }
-    Save.persist(); haptic(10);
-    announce(said + '. ' + (resting ? restNext(ui.rest) + '.' : stepSpeech()));
-  }
-
   // ---------------------------------------------------------------- the deload week
   // A lighter week now and then (general practice; Jeff Nippard's own programs mostly do without): half the sets, the same
   // weights, every set 3-4 reps short of failure, no drop sets; the program stays as it is and the progression goes on from
@@ -2747,7 +2818,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   // the figure the screen wants: during a rest the next set's (the next exercise, when the rest leads to another one: so its
   // machine can be found while resting), else the step's
-  const figWanted = () => (ui.mode === 'end' ? null : ui.mode === 'rest' && ui.rest ? figAt(ui.day, ui.rest.next) : figAt(ui.day, ui.step));
+  const figWanted = () => (ui.mode === 'end' ? null : ui.preview && ui.preview.fig ? ui.preview.fig : ui.mode === 'rest' && ui.rest ? figAt(ui.day, ui.rest.next) : figAt(ui.day, ui.step));
   function syncFig() { if (ui.mode === 'boot') return; const id = figWanted(); if (id !== wantFig) showFigure(id, true); }
   // A turned figure comes back to its own view (the coaching card steps aside while it is turned): when the pacer starts, at a
   // rest and at the next set, and by itself a while after the last turn (turnBack)
@@ -3021,6 +3092,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (ui.glow) { if (t >= ui.glow.until) { ui.glow = null; render(); } else need = true; }
     if (ui.tipUntil) { if (t >= ui.tipUntil) { ui.tipUntil = 0; render(); } else need = true; }
     if (ui.flash) { if (t >= ui.flash.until) { ui.flash = null; render(); } else need = true; }
+    if (ui.toast) { if (t >= ui.toast.until) { ui.toast = null; render(); } else need = true; }
     if (need) { if (!doc.hidden) raf = requestAnimationFrame(loop); }
     else if (iv) { clearInterval(iv); iv = 0; }
   }
@@ -3335,7 +3407,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   doc.addEventListener('keydown', (e) => {
     if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.key === 'Escape') {
-      if (kpOpen()) { e.preventDefault(); closeKeypad(); } else if (optOpen()) { e.preventDefault(); closeOpts(); } else if (revOpen()) { e.preventDefault(); closeReview(); } else if (cardOpen()) { e.preventDefault(); closeCardSheet(); } else if (sheetOpen()) { e.preventDefault(); closeSheet(); } else if (dialogOpen()) { e.preventDefault(); closeDays(); } else if (menuOpen()) { e.preventDefault(); closeMenu(true); } else cancelGesture(true);
+      if (kpOpen()) { e.preventDefault(); closeKeypad(); } else if (optOpen()) { e.preventDefault(); if (ui.preview) cancelPreview(); else closeOpts(); } else if (revOpen()) { e.preventDefault(); closeReview(); } else if (cardOpen()) { e.preventDefault(); closeCardSheet(); } else if (sheetOpen()) { e.preventDefault(); closeSheet(); } else if (dialogOpen()) { e.preventDefault(); closeDays(); } else if (menuOpen()) { e.preventDefault(); closeMenu(true); } else cancelGesture(true);
       return;
     }
     if (kpOpen()) return; // (the weight field has the keys)
@@ -3807,7 +3879,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // ---------------------------------------------------------------- the workout menu (the three dots)
   const menu = $('menu'), more = $('morebtn');
   const menuOpen = () => !menu.hidden;
-  // a busy machine first (Do it later, the swaps; only while they can be done), then the deload week, Restart workout, All workouts
+  // the deload week, Sound, the weight unit, the test alert, Restart workout, All workouts (a busy machine is Options' business)
   const menuBtns = () => [...menu.querySelectorAll('button:not([aria-disabled="true"])')].filter((b) => b.offsetParent !== null);
   let menuKey = '';
   function openMenu() {
@@ -3817,22 +3889,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   // the items as the screen is now (render() calls it while the menu is open: a rest that ran out changes what it acts on)
   function paintMenu() {
-    const d = ui.day, i = busyStep(), later = $('mlater'), sw = $('mswaps'), on = deloadOn();
-    const key = [i, canLater(d, i), ui.mode === 'rest' && ui.rest ? ui.rest.next : '', swapsFor(d, i).join(','), on, ui.adhoc, ui.mode, canRestart(), prefs.sound, prefs.unit].join('|');
+    const on = deloadOn();
+    const key = [on, ui.adhoc, ui.mode, canRestart(), prefs.sound, prefs.unit].join('|');
     if (key === menuKey && !menu.hidden) return;
     menuKey = key;
     const had = menu.contains(doc.activeElement);
-    later.hidden = !canLater(d, i);
-    if (!later.hidden) later.textContent = ui.mode === 'rest' && ui.rest.next !== ui.rest.after ? 'Do ' + lc(stepName(d, i)) + ' later' : 'Do it later';
-    sw.textContent = '';
-    const swaps = swapsFor(d, i);
-    for (const id of swaps) {
-      const b = doc.createElement('button'); b.type = 'button'; b.dataset.ex = id; b.textContent = 'Swap: ' + nameOf(id);
-      b.addEventListener('click', () => { closeMenu(true); doSwap(id); });
-      sw.append(b);
-    }
-    if (stage && swaps.length) stage.prefetch(swaps.filter((x) => !(stage.cur && stage.cur.id === x))); // (a swap cuts in at once)
-    $('mbusy').hidden = later.hidden && !sw.childElementCount;
     $('mdeloadt').textContent = on ? 'End the deload week' : 'Deload week';
     $('mdeloads').textContent = on ? '' : deloadDue() ? 'Due now: ' + T.deloadWhat.charAt(0).toLowerCase() + T.deloadWhat.slice(1) : T.deloadWhat;
     $('mdeload').setAttribute('aria-disabled', ui.adhoc ? 'true' : 'false');
@@ -3859,7 +3920,6 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   });
   $('mrestart').addEventListener('click', () => { if ($('mrestart').getAttribute('aria-disabled') === 'true') return; closeMenu(true); restartDay(); });
   $('mhome').addEventListener('click', () => { closeMenu(false); openDays(); });
-  $('mlater').addEventListener('click', () => { closeMenu(true); doLater(); });
   $('mdeload').addEventListener('click', () => { if ($('mdeload').getAttribute('aria-disabled') === 'true') return; closeMenu(true); setDeload(!deloadOn()); });
   // Sound on / off, and the weight unit (kg / lb): this phone's choices (the menu stays open, its line says the new one)
   function savePrefs() { const u = lsGet(LS_UI) || {}; u.unit = prefs.unit; u.sound = prefs.sound ? 1 : 0; lsSet(LS_UI, u); }
@@ -3875,34 +3935,135 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   $('munit').addEventListener('click', () => { prefs.unit = prefs.unit === 'kg' ? 'lb' : 'kg'; savePrefs(); closeKeypad(); render(); paintMenu(); announce('Weights in ' + uWord() + '.'); });
   doc.addEventListener('pointerdown', (e) => { if (menuOpen() && !menu.contains(e.target) && !more.contains(e.target)) closeMenu(false); }, true);
 
-  // ---------------------------------------------------------------- Options: a busy machine
-  // The Options button at the top right (on a set, warm-up sets, a timed step, and during a rest for what comes next) lists what
-  // the menu lists for a busy machine: Do it later, and the other machines for the same muscles (each exercise's "swap" list
-  // in the program: a machine added there, with its animation, shows up here). It is there only when there is a choice.
+  // ---------------------------------------------------------------- Options: instead of this exercise
+  // The Options button at the top right (on a set, the warm-up sets, a timed step, and during a rest for what comes next) opens a bottom
+  // sheet "Instead of <exercise>" over the figure: when something else is in the exercise's place, what it is and a button back; then
+  // every alternative, best first (the exercise's "swap" list, which has animations, and its "alts", which have none), each a card with
+  // its thumbnail, name, muscles and how close it is (the exercise's "eq": same, close or weaker, and why); and a small "Machine busy?"
+  // section. A tap on a card previews it: its real animation (or the closest figure, for a machine with none) plays on the stage and
+  // the sheet shrinks to a bar with Use this and Cancel. Use this (or Back, or Do this one last) is a step Undo takes back, and a toast
+  // says what happened. The sheet is only there when there is a choice.
   const optSheet = $('optsheet');
   const optOpen = () => !optSheet.hidden;
-  function optItems() { const d = ui.day, i = busyStep(); if (i < 0) return null; const later = canLater(d, i), swaps = swapsFor(d, i), alts = altsFor(d, i); return later || swaps.length || alts.length ? { d, i, later, swaps, alts } : null; }
-  function paintOpt() { const on = !!optItems() && !ackOn(); if (E.opt.hidden === on) E.opt.hidden = !on; if (!on && optOpen()) closeOpts(); }
+  const MATCH = { same: 'Same muscles', close: 'Close', weak: 'Weaker' };
+  let optCtx = null, optPrev = null;
+  function optModel(d, i) {
+    const st = i >= 0 ? stepsOf(d)[i] : null;
+    if (!st) return null;
+    const sets = st.t === 'sets', can = sets && !setsOf(d, i).length && !dropDue(d, i) && !ui.adhoc;
+    const orig = sets ? levelOf(st.ex) : null, raw = orig ? P.ex[orig] : null, items = [];
+    const swapped = can && canBack(d, i), curSwap = can && exIdAt(d, i) !== orig ? exIdAt(d, i) : null, curAlt = can ? altOf(d, i) : null;
+    if (can && raw) {
+      const used = new Set(stepsOf(d).map((x, j) => (j !== i && x.t === 'sets' && !x.off ? exIdAt(d, j) : null)));
+      // (a step that moved on to a harder version of its exercise also offers the exercise it started as, and that one's alternatives)
+      const own = orig !== st.ex && P.ex[st.ex] ? P.ex[st.ex] : null;
+      const swaps = [...new Set([...(Array.isArray(raw.swap) ? raw.swap : []), ...(own ? [st.ex, ...(Array.isArray(own.swap) ? own.swap : [])] : [])])].filter((x) => x !== orig);
+      const alts = altsOf(orig), eq = Object.assign({}, own && own.eq, raw.eq);
+      for (const id of [...new Set([...Object.keys(eq), ...swaps, ...alts.map((a) => a.id)])]) {
+        if (swaps.includes(id)) {
+          if (!isReady(id) || used.has(id) || id === curSwap) continue;
+          items.push({ kind: 'swap', id, name: nameOf(id), fig: id, muscles: exOf(id).muscles.primary, eq: eq[id] || null });
+        } else {
+          const a = alts.find((x) => x.id === id);
+          if (!a || a.id === curAlt) continue;
+          items.push({ kind: 'alt', id, name: a.n, fig: orig, muscles: exOf(orig).muscles.primary, eq: eq[id] || null, cue: a.cue || '' });
+        }
+      }
+    }
+    return { d, i, later: canLater(d, i), items, sets, orig, origName: orig ? exOf(orig).name : stepName(d, i), swapped, nowName: stepName(d, i) };
+  }
+  function optItems() { const i = busyStep(); if (i < 0) return null; const m = optModel(ui.day, i); return m && (m.later || m.items.length || m.swapped) ? m : null; }
+  function paintOpt() {
+    const on = !!optItems() && !ackOn();
+    if (E.opt.hidden === on) E.opt.hidden = !on;
+    if (optOpen() && (!on || !optCtx || busyStep() !== optCtx.i)) closeOpts();
+  }
+  function matchLine(el, eq) {
+    el.textContent = ''; el.hidden = !eq;
+    if (!eq) return;
+    el.dataset.m = eq.m;
+    const b = doc.createElement('b'); b.textContent = MATCH[eq.m] || ''; el.append(b, eq.w);
+  }
+  function fillOpts(x) {
+    const list = $('optlist'); list.textContent = '';
+    $('opttitle').textContent = x.sets && (x.items.length || x.swapped) ? 'Instead of ' + x.origName : x.nowName;
+    $('optnow').hidden = !x.swapped;
+    if (x.swapped) { $('optnowtxt').textContent = 'Doing ' + x.nowName + ' instead of ' + x.origName; $('optback').textContent = 'Back to ' + x.origName; }
+    for (const it of x.items) {
+      const b = doc.createElement('button'); b.type = 'button'; b.className = 'optcard'; b.dataset.id = it.id; b.dataset.kind = it.kind;
+      const th = doc.createElement('span'); th.className = 'optthumb';
+      const img = doc.createElement('img'); img.alt = ''; img.decoding = 'async'; img.src = 'thumbs/' + it.fig + '.webp';
+      img.addEventListener('error', () => img.remove()); // (no thumbnail yet: the card keeps its colour)
+      th.append(img);
+      if (it.kind === 'alt') { const t = doc.createElement('em'); t.textContent = 'Closest figure'; th.append(t); }
+      const info = doc.createElement('span'); info.className = 'optinfo';
+      const nm = doc.createElement('b'); nm.className = 'optname'; nm.textContent = it.name;
+      const chips = doc.createElement('span'); chips.className = 'optchips';
+      for (const m of it.muscles.slice(0, 3)) { const c = doc.createElement('i'); c.textContent = m; chips.append(c); }
+      info.append(nm, chips);
+      if (it.eq) { const mt = doc.createElement('span'); mt.className = 'optmatch'; matchLine(mt, it.eq); info.append(mt); }
+      b.append(th, info);
+      b.setAttribute('aria-label', it.name + (it.eq ? '. ' + MATCH[it.eq.m] + ': ' + it.eq.w : '') + '. Look at it');
+      b.addEventListener('click', () => previewOpt(it));
+      list.append(b);
+    }
+    $('optbusy').hidden = !x.later;
+  }
   function openOpts() {
     const x = optItems(); if (!x || dialogOpen()) return;
     closeMenu(false);
-    const list = $('optlist'); list.textContent = '';
-    const add = (text, fn, ex, alt) => { const b = doc.createElement('button'); b.type = 'button'; b.textContent = text; if (ex) b.dataset.ex = ex; if (alt) b.dataset.alt = alt; b.addEventListener('click', () => { closeOpts(); fn(); }); list.append(b); };
-    if (x.later) add(ui.mode === 'rest' && ui.rest && ui.rest.next !== ui.rest.after ? 'Do ' + lc(stepName(x.d, x.i)) + ' later' : 'Do it later', doLater);
-    for (const id of x.swaps) add('Swap: ' + nameOf(id), () => doSwap(id), id);
-    if (stage && x.swaps.length) stage.prefetch(x.swaps.filter((y) => !(stage.cur && stage.cur.id === y))); // (a swap cuts in at once)
-    if (x.alts.length) { // the other machines: text only, the exercise's figure stays
-      const h = doc.createElement('p'); h.className = 'optsub'; h.textContent = 'Other machines'; list.append(h);
-      for (const a of x.alts) add(a.back ? 'Back to ' + lc(a.n) : a.n, () => doAlt(a.id), null, a.id || '_back');
-    }
-    $('opttitle').textContent = stepName(x.d, x.i);
-    optSheet.hidden = false;
-    try { list.querySelector('button').focus({ preventScroll: true }); } catch (_) { /* fine */ }
+    optCtx = { d: x.d, i: x.i }; ui.preview = null; optPrev = null;
+    fillOpts(x);
+    optSheet.classList.remove('prev'); $('optprev').hidden = true; optSheet.hidden = false;
+    if (stage) stage.prefetch(x.items.filter((it) => it.kind === 'swap').slice(0, 3).map((it) => it.id).filter((y) => !(stage.cur && stage.cur.id === y))); // (a look cuts in at once)
+    try { (optSheet.querySelector('.optcard') || optSheet.querySelector('button')).focus({ preventScroll: true }); } catch (_) { /* fine */ }
+    announce('Options. ' + (x.items.length ? x.items.length + ' alternatives.' : ''));
   }
-  function closeOpts() { if (optSheet.hidden) return; optSheet.hidden = true; try { E.opt.focus({ preventScroll: true }); } catch (_) { /* fine */ } }
+  // closing puts the original figure back (keepFig: the caller is about to show another)
+  function closeOpts(keepFig) {
+    if (optSheet.hidden) return;
+    if (ui.preview) { ui.preview = null; optPrev = null; if (!keepFig) { syncFig(); render(); } }
+    optSheet.hidden = true; optSheet.classList.remove('prev'); $('optprev').hidden = true; optCtx = null;
+    try { E.opt.focus({ preventScroll: true }); } catch (_) { /* fine */ }
+  }
+  function previewOpt(it) {
+    optPrev = it; ui.preview = { id: it.id, kind: it.kind, fig: it.fig };
+    $('optpname').textContent = it.name;
+    matchLine($('optpmatch'), it.eq);
+    const nt = $('optpnote'); nt.hidden = it.kind !== 'alt';
+    nt.textContent = it.kind === 'alt' ? 'No figure for this machine yet: showing ' + exOf(it.fig).name + (it.cue ? '. ' + it.cue : '') : '';
+    optSheet.classList.add('prev'); $('optprev').hidden = false;
+    syncFig(); render();
+    try { $('optuse').focus({ preventScroll: true }); } catch (_) { /* fine */ }
+    announce(it.name + (it.eq ? '. ' + MATCH[it.eq.m] + ': ' + it.eq.w : '') + '. Use this, or Cancel.');
+  }
+  function cancelPreview() {
+    if (!ui.preview) return;
+    ui.preview = null; optPrev = null; optSheet.classList.remove('prev'); $('optprev').hidden = true;
+    syncFig(); render();
+    try { (optSheet.querySelector('.optcard') || optSheet.querySelector('button')).focus({ preventScroll: true }); } catch (_) { /* fine */ }
+  }
+  function useOpt() {
+    const it = optPrev, c = optCtx; if (!it || !c) return;
+    closeOpts(true);
+    const d = ui.day, st = stepsOf(d)[c.i];
+    if (!st || setsOf(d, c.i).length || dropDue(d, c.i)) { syncFig(); render(); return; }
+    choose(c.i, it.kind === 'swap' ? { swap: it.id } : { alt: it.id });
+  }
+  // the sheet as the tests read it
+  function optState() {
+    if (!optOpen()) return null;
+    return { mode: ui.preview ? 'preview' : 'gallery', title: $('opttitle').textContent, now: $('optnow').hidden ? null : $('optnowtxt').textContent, back: $('optnow').hidden ? null : $('optback').textContent, busy: !$('optbusy').hidden,
+      items: [...$('optlist').children].map((c) => { const m = c.querySelector('.optmatch'), im = c.querySelector('img'); return { id: c.dataset.id, kind: c.dataset.kind, name: c.querySelector('.optname').textContent, chips: [...c.querySelectorAll('.optchips i')].map((x) => x.textContent), match: m ? m.dataset.m : null, why: m ? m.textContent : '', thumb: !!im, loaded: !!(im && im.naturalWidth > 0), tag: !!c.querySelector('em') }; }),
+      preview: ui.preview ? { id: ui.preview.id, kind: ui.preview.kind, fig: ui.preview.fig, name: $('optpname').textContent, match: $('optpmatch').hidden ? null : $('optpmatch').dataset.m, why: $('optpmatch').textContent, note: $('optpnote').hidden ? '' : $('optpnote').textContent } : null };
+  }
   E.opt.addEventListener('click', () => { wake.on(); if (optOpen()) closeOpts(); else openOpts(); });
-  $('optclose').addEventListener('click', closeOpts);
-  optSheet.addEventListener('click', (e) => { if (e.target === optSheet) closeOpts(); });
+  $('optclose').addEventListener('click', () => closeOpts());
+  $('optcancel').addEventListener('click', cancelPreview);
+  $('optuse').addEventListener('click', useOpt);
+  $('optback').addEventListener('click', () => { closeOpts(true); doBack(); });
+  $('optlast').addEventListener('click', () => { closeOpts(true); doLater(); });
+  optSheet.addEventListener('click', (e) => { if (e.target === optSheet && !ui.preview) closeOpts(); });
   optSheet.addEventListener('keydown', (e) => trapTab(optSheet, e));
 
   // ---------------------------------------------------------------- layout: the composition the stage uses
@@ -4142,9 +4303,9 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         view: stage ? stage.view() : null, dialog: dialogOpen(),
         // v10
         pace: (() => { const pc = paceNow(t); return pc ? { stage: pc.stage, secs: pc.secs || null, count: pc.count == null ? null : pc.count, side: pc.side, target: pc.target, k: pc.ph ? pc.ph.k : null, phase: pc.phase == null ? null : +pc.phase.toFixed(4), first: ui.pace.first, done: ui.pace.done.slice(), kg: ui.pace.kg, drop: ui.pace.drop } : null; })(),
-        log: !E.log.hidden, opt: !E.opt.hidden, optOpen: optOpen(), unit: prefs.unit, sound: prefs.sound, sounds: Object.assign({}, Snd.played), mirrored, side: sideNow(),
+        log: !E.log.hidden, opt: !E.opt.hidden, optOpen: optOpen(), opts: optState(), pill: E.pill.hidden ? null : E.pill.textContent, toast: E.toast.hidden ? null : { text: $('toasttxt').textContent }, unit: prefs.unit, sound: prefs.sound, sounds: Object.assign({}, Snd.played), mirrored, side: sideNow(),
         breath: E.cbreath.hidden ? '' : E.cbreath.textContent, wake: wake.state(), alerts: Alerts.state(), amend: amendOn(),
-        clockTone: E.clock.dataset.tone || '', crowded: app.classList.contains('crowded') ? (app.classList.contains('crowded2') ? 2 : 1) : 0, lastLog, alt: ui.mode === 'end' ? null : altOf(ui.day, ui.step), logId: ui.mode === 'end' ? null : logIdAt(ui.day, ui.step), review: revOpen(), cardSheet: cardOpen(), endNext: $('endnext').hidden ? '' : $('endnext').textContent,
+        clockTone: E.clock.dataset.tone || '', crowded: (app.classList.contains('crowded') ? 1 : 0) + (app.classList.contains('crowded2') ? 1 : 0), lastLog, alt: ui.mode === 'end' ? null : altOf(ui.day, ui.step), logId: ui.mode === 'end' ? null : logIdAt(ui.day, ui.step), review: revOpen(), cardSheet: cardOpen(), endNext: $('endnext').hidden ? '' : $('endnext').textContent,
         card: (() => { const c = Card.current(); return c ? { ready: !!c.res, w: c.res ? c.res.w : 0, h: c.res ? c.res.h : 0, hero: c.res ? c.res.hero : null, text: c.res ? c.res.text : '', shown: cardImg.hasAttribute('data-on') || $('cardsheetimg').hasAttribute('data-on') } : null; })(),
       };
     },

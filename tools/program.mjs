@@ -42,7 +42,7 @@ const swaps = (e) => (e.swap && e.swap.length ? '; swap: ' + e.swap.map((id) => 
 const orderOf = (d) => (Array.isArray(d.order) ? d.order : d.steps.map((_, i) => i)).filter((i) => !d.steps[i].off);
 
 // ---- the checks
-const problems = [];
+const problems = [], notes = [];
 const used = new Set();
 P.days.forEach((d, k) => {
   const day = 'Day ' + (k + 1) + ' (' + d.name + ')';
@@ -89,6 +89,13 @@ for (const [id, e] of Object.entries(P.ex)) {
     const ok = Array.isArray(e.alts) && e.alts.length <= 8 && e.alts.every((a) => a && /^[a-z0-9_]{1,40}$/.test(a.id) && typeof a.n === 'string' && a.n.length > 0 && a.n.length <= 60 && (a.cue === undefined || (typeof a.cue === 'string' && a.cue.length <= 80)));
     if (!ok || new Set(e.alts.map((a) => a.id)).size !== e.alts.length) problems.push('"' + id + '": alts must be up to 8 of { id (a-z, 0-9, _), n (the name), cue? }, with different ids');
   }
+  if (e.eq !== undefined) {
+    // how close each alternative is: { <id in swap or alts>: { m: same | close | weak, w: reason up to 60 characters } }
+    const keys = new Set([...(Array.isArray(e.swap) ? e.swap : []), ...(Array.isArray(e.alts) ? e.alts.map((a) => a.id) : [])]);
+    const ok = e.eq && typeof e.eq === 'object' && !Array.isArray(e.eq) && Object.entries(e.eq).every(([k, v]) => keys.has(k) && v && ['same', 'close', 'weak'].includes(v.m) && typeof v.w === 'string' && v.w.length > 0 && v.w.length <= 60);
+    if (!ok) problems.push('"' + id + '": eq must map ids of its swap or alts to { m: same|close|weak, w: reason of at most 60 characters }');
+  }
+  if (Array.isArray(e.swap) || Array.isArray(e.alts)) for (const k of [...(e.swap || []), ...(e.alts || []).map((a) => a.id)]) if (!(e.eq && e.eq[k])) notes.push('"' + id + '" has no eq entry for "' + k + '" (Options then shows no match line for it)');
   if (e.reps !== undefined && !(Array.isArray(e.reps) && e.reps.length === 2 && e.reps[0] >= 1 && e.reps[1] >= e.reps[0])) problems.push('"' + id + '": reps must be [lo, hi]');
   // a no-weight exercise (kg0 0) is straight sets in its own range wherever it is done (a swap into a top-set step, a harder version)
   if (e.kg0 === 0) {
@@ -156,6 +163,8 @@ const TAIL = `
 `;
 const block = START + '\n' + LIST + '\n' + END;
 
+for (const id of Object.keys(P.ex)) if (P.ex[id].ready && !existsSync(join(ROOT, 'thumbs', id + '.webp'))) notes.push('no thumbnail for "' + id + '" (node tools/thumbs.mjs --only ' + id + ')');
+if (notes.length) console.log(notes.map((n) => 'program note: ' + n).join(String.fromCharCode(10)));
 if (process.argv.includes('--check')) {
   const cur = existsSync(FILE) ? readFileSync(FILE, 'utf8') : '';
   const a = cur.indexOf(START), b = cur.indexOf(END);
