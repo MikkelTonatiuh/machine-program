@@ -272,6 +272,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .app.crowded:not(.side) .mus { display: none !important; } /* (the script measured the text block over the controls: the muscles line goes, then the kicker, and the rest's clock shrinks) */
 .app.crowded2:not(.side) .kicker { display: none; }
 .app[data-view="rest"].crowded2:not(.side) .clock { font-size: 36px; }
+.app.crowded2:not(.side) .swappill { height: 22px; margin-top: 2px; } /* (a pill under a crowded text block: tighter) */
+.app.crowded2:not(.side) .line { margin-top: 7px; }
 .barr:has(.optbtn:not([hidden])) .turntip { display: none; } /* (the first-visit tip makes room for Options) */
 .app.side .note { margin-top: 6px; }
 .app.compact .coach { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: center; column-gap: 16px; width: min(calc(var(--bw) - var(--sl) - 12px), 460px); padding: 8px 14px 9px; }
@@ -348,11 +350,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .swappill { pointer-events: auto; max-width: 100%; height: 26px; margin: 5px 0 0; padding: 0 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-radius: 999px; border: 1px solid rgba(236,231,222,.3); background: rgba(236,231,222,.06); font: 500 13px/1 var(--sans); color: var(--ink2); touch-action: manipulation; }
 .swappill b { font-weight: 600; color: var(--amber); }
 .swappill[aria-disabled="true"] { border-color: var(--line); }
-.toast { position: absolute; z-index: 6; left: 50%; transform: translateX(-50%); bottom: calc(80px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; justify-content: space-between; gap: 10px;
+.toast { position: absolute; z-index: 6; left: 50%; transform: translateX(-50%); bottom: calc(100% - var(--ty0, 70%) + 8px); display: flex; align-items: center; justify-content: space-between; gap: 10px;
   width: min(calc(100% - var(--sl) - var(--sr)), 360px); padding: 6px 6px 6px 16px; border-radius: 16px; background: rgba(17,22,27,.97); border: 1px solid var(--line2); box-shadow: 0 10px 30px rgba(0,0,0,.5);
   font: 500 14.5px/1.3 var(--sans); color: var(--ink); }
 .toast button { flex: none; height: 40px; padding: 0 14px; border-radius: 999px; font: 600 14.5px/1 var(--sans); color: var(--amber); touch-action: manipulation; }
-.app.side .toast { left: var(--tx0); transform: none; width: min(340px, calc(100% - var(--tx0) - var(--sr))); bottom: calc(var(--actb, 14px) + 68px); }
+.app.side .toast { left: calc(var(--sl) + 14px); transform: none; width: min(340px, calc(var(--tx0) - var(--sl) - 28px)); bottom: 14px; }
 /* v11: other machines in Options, the week review */
 .reviewsheet .sheetbox { max-height: 100%; overflow-y: auto; }
 .revhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
