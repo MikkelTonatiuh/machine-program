@@ -53,6 +53,8 @@ P.days.forEach((d, k) => {
     const where = day + ', step ' + (i + 1);
     if (st.ex && !st.off) used.add(st.ex);
     if (st.ex && !P.ex[st.ex]) problems.push(where + ': "' + st.ex + '" has no entry in the exercises');
+    if (st.ex && P.ex[st.ex] && st.t === 'sets' && P.ex[st.ex].timed) problems.push(where + ': "' + st.ex + '" is a timed exercise (a timer step uses it, not a sets step)');
+    if (st.ex && P.ex[st.ex] && st.t === 'timer' && !P.ex[st.ex].timed) problems.push(where + ': a timer step\'s exercise "' + st.ex + '" must be marked "timed": true');
     if (st.t === 'sets') {
       if (!(st.n >= 1)) problems.push(where + ': no sets');
       if (!(st.lo >= 1 && st.hi >= st.lo)) problems.push(where + ': the rep range is wrong');
@@ -103,12 +105,27 @@ for (const [id, e] of Object.entries(P.ex)) {
   if (e.side !== undefined && !['arm', 'leg'].includes(e.side)) problems.push('"' + id + '": side must be "arm" or "leg"');
   else if (e.side !== undefined && !e.unilateral) problems.push('"' + id + '": side only means something on a unilateral exercise');
   else if (e.unilateral && sideFor(e) !== (e.side || 'arm')) problems.push('"' + id + '": unilateral with primary muscles ' + (e.muscles && e.muscles.primary || []).join(', ') + ' needs side: "' + sideFor(e) + '"');
+  // a timed exercise (the bike, the treadmill walk) is done on a timer step: no sets, no rep range; it swaps only with timed ones, which no
+  // sets exercise lists; its `noun` (the word the step's texts use for it) and `note` (a line on the card when it takes the original's place) are text
+  if (e.timed !== undefined && e.timed !== true) problems.push('"' + id + '": timed is true or left out');
+  for (const k of ['noun', 'note']) if (e[k] !== undefined && !(e.timed && typeof e[k] === 'string' && e[k].length > 0 && e[k].length <= (k === 'noun' ? 30 : 100))) problems.push('"' + id + '": ' + k + ' is a short text and only on a timed exercise');
+  for (const x of Array.isArray(e.swap) ? e.swap : []) if (P.ex[x] && !!P.ex[x].timed !== !!e.timed) problems.push('"' + id + '" swaps with "' + x + '": a timed exercise swaps only with timed ones, and no other exercise lists a timed one');
   // a no-weight exercise (kg0 0) is straight sets in its own range wherever it is done (a swap into a top-set step, a harder version)
-  if (e.kg0 === 0) {
+  if (e.kg0 === 0 && !e.timed) {
     if (!Array.isArray(e.reps)) problems.push('"' + id + '" has no weight (kg0 0): it needs its own rep range (reps: [lo, hi])');
     if (e.drop || e.compound) problems.push('"' + id + '" has no weight (kg0 0): no drop set and no warm-up ramp (drop, compound)');
   }
   if (e.ready && !existsSync(join(ROOT, 'exercises', id + '.json'))) problems.push('"' + id + '" is ready but exercises/' + id + '.json is missing');
+}
+
+// the aliases: an old text-only machine's id -> the animated exercise that replaced it (a saved choice of the old one moves to the new one)
+if (P.aliases !== undefined) {
+  if (!(P.aliases && typeof P.aliases === 'object' && !Array.isArray(P.aliases))) problems.push('aliases must map an old text-only id to the animated exercise that replaced it');
+  else for (const [o, n] of Object.entries(P.aliases)) {
+    if (!/^[a-z0-9_]{1,40}$/.test(o) || typeof n !== 'string' || !P.ex[n] || !P.ex[n].ready) problems.push('aliases: "' + o + '" must name a ready exercise (it names "' + n + '")');
+    else if (P.ex[o]) problems.push('aliases: "' + o + '" is an exercise itself');
+    else for (const [id, e] of Object.entries(P.ex)) if ((e.alts || []).some((a) => a.id === o)) problems.push('aliases: "' + o + '" is still a text-only machine of "' + id + '" (take it out of alts)');
+  }
 }
 
 // ---- the list
@@ -118,8 +135,8 @@ P.days.forEach((d, k) => {
   orderOf(d).forEach((i, k) => {
     const st = d.steps[i];
     if (st.t === 'sets') { const e = P.ex[st.ex]; out.push((k + 1) + '. ' + e.name + ': ' + reps(st, e) + ', ' + restOf(st, e) + swaps(e)); }
-    else if (st.phases) out.push((k + 1) + '. ' + st.name + ': ' + phasesText(st));
-    else out.push((k + 1) + '. ' + st.name + (st.optional ? ' (optional)' : '') + ': ' + st.line + (st.pulse ? ', pulse ' + st.pulse + ' bpm' : ''));
+    else if (st.phases) out.push((k + 1) + '. ' + st.name + ': ' + phasesText(st) + (st.ex && P.ex[st.ex] ? swaps(P.ex[st.ex]) : ''));
+    else out.push((k + 1) + '. ' + st.name + (st.optional ? ' (optional)' : '') + ': ' + st.line + (st.pulse ? ', pulse ' + st.pulse + ' bpm' : '') + (st.ex && P.ex[st.ex] ? swaps(P.ex[st.ex]) : ''));
   });
   out.push('');
 });

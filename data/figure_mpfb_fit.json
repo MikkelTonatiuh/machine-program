@@ -252,5 +252,60 @@
    -0.004,
    0
   ]
+ },
+ "leg_press_calf_raise": {
+  "seat": [
+   0,
+   0.0062,
+   -0.0009
+  ],
+  "hbar_l": [
+   -0.004,
+   0,
+   0
+  ],
+  "hbar_r": [
+   0.004,
+   0,
+   0
+  ]
+ },
+ "smith_calf_raise": {
+  "step": [
+   0,
+   0.002,
+   0
+  ],
+  "step_l": [
+   0,
+   0.002,
+   0
+  ]
+ },
+ "hanging_knee_raise": {
+  "hpost_l": [
+   0,
+   0,
+   -0.004
+  ],
+  "hpost_r": [
+   0,
+   0,
+   -0.004
+  ]
+ },
+ "cable_preacher_curl": {
+  "armpad": [
+   0,
+   0.0066,
+   0.0065
+  ]
+ },
+ "preacher_hammer_curl": {
+  "armpad": [
+   0,
+   0.0066,
+   0.0065
+  ]
  }
 }

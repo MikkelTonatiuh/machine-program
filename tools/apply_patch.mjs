@@ -110,6 +110,8 @@ for (const [nid, oid] of Object.entries(aliases)) {
     if (!(n.swap || []).includes(bid)) notes.push('"' + nid + '" does not list "' + bid + '" in its swap (add a link, so the way back exists)');
   }
 }
+// the program keeps the table too (`aliases`: old id -> new id): a saved day or record that names the old text-only machine moves to the new exercise
+for (const [nid, oid] of Object.entries(aliases)) if (ID.test(nid) && ID.test(oid) && P.ex[nid] && P.ex[nid].ready && !P.ex[oid] && !(P.aliases && P.aliases[oid] === nid)) P.aliases = Object.assign({}, P.aliases || {}, { [oid]: nid });
 // 4. the fit table
 for (const [id, v] of Object.entries(patch.fit || {})) {
   if (!P.ex[id]) { fail('fit: unknown exercise "' + id + '"'); continue; }

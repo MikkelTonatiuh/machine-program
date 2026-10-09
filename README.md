@@ -70,6 +70,14 @@ Open it, and download it to your phone (the **Download app** button is on its fi
   instead of Hack squat" with **Undo**, and under the exercise's name a pill "Instead of Hack squat · Back" stays until you go
   back (one tap), or open Options again for "Back to Hack squat". At the bottom of the sheet, **Machine busy?** has **Do this
   one last today**, which moves the exercise to the end of today's workout (a toast with Undo says what is next).
+  The bike's timed steps (the warm-up ride, Day 3's intervals, Day 7's steady ride) have Options too: the incline treadmill walk can
+  take the bike's place before the timer starts. The timer, its phases, beeps and pulse targets stay; the figure and the machine's
+  word change ("Treadmill walk intervals", "Easy treadmill walk"), and the card says "On a treadmill: use the incline to reach the
+  same pulse." The preview, Use this, the pill, Back and the Undo toast work as they do for sets.
+- **Nothing a v11 phone kept is lost.** A text-only machine that is an animated exercise now (the Smith flat press kept its id; the
+  rope face pull, the assisted pull-up, the Smith squat with feet forward and the Smith seated press became Face pull, Assisted
+  pull-up, Smith squat and Smith shoulder press) is the exercise in the place of a day that chose it, its sets stay, its last-time
+  record is copied to the exercise's own record when that has none, and its history lines move to it.
 - **Week review**: "Start a new week" (or a workout chosen once all seven days are done) first shows what went up since the week
   before ("Chest press 61 → 62 kg", "Lat pulldown +1 rep"), what is stuck (3 sessions with no progress) and the next step of the
   stall ladder, and a deload when one is due. One button, "Start week 4", starts the week.
@@ -225,7 +233,9 @@ rest after a top set), `phases` on a timed step (`[{ sec, name, verb, pulse, cue
 `optional` (a timed step that can be skipped), and on an exercise `breath` (its breathing cue), `brace` (its own line for a heavy
 top set; the program's is `breath.brace`), `inc` (its step up in percent, instead of the rule above) and `alts` (other machines for the
 same movement, text only: `[{ "id": "smith_flat_press", "n": "Smith flat press", "cue": "..." }]`; `id` names the machine's
-own record, so keep it once chosen), `swap` (animated alternatives, below) and `eq` (how close each alternative is, below). Options
+own record, so keep it once chosen), `swap` (animated alternatives, below), `eq` (how close each alternative is, below) and, on a
+timed exercise (the bike, the treadmill walk), `"timed": true` with `noun` (the word the step's texts use: "bike", "treadmill walk") and `note`
+(a line on the card when it takes the original's place); a timed exercise has no rep range and swaps only with timed ones. Options
 lists `swap` and `alts` together, in the order of `eq`, so adding one is a change to this data only).
 
 - `node tools/covers.mjs` draws the overview's pictures (`covers/`) from the app's own figure engine: an animation and a
@@ -243,6 +253,8 @@ lists `swap` and `alts` together, in the order of `eq`, so adding one is a chang
   nothing when run twice. When an animated exercise comes under a different id than the text-only alternative it replaces (the
   `ALIASES` table at the top of the tool, or an `"aliases": { "<newId>": "<oldAltId>" }` key in the patch), the old one leaves every
   `alts` list and its `eq` line moves to the new id. `--dry` only checks; `--run` then runs `program.mjs`, `thumbs.mjs --only <the new ids>` and `pwa.mjs`.
+- The program's `aliases` (`{ "rope_face_pull": "face_pull", ... }`) say which animated exercise replaced which old text-only id; the
+  patch tool writes it from its `ALIASES` table, and the app uses it to move a saved choice, record and history line to the new id.
 - `node tools/pwa.mjs` writes the service worker's file list and hashes (the first line of `sw.js`). The worker refuses a
   file that does not match, so run it after changing **any** file the app ships, before committing.
   `node tools/pwa.mjs --check` fails when the list is out of date.
