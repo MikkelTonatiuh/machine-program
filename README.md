@@ -29,7 +29,7 @@ Open it, and download it to your phone (the **Download app** button is on its fi
 - Progression is double progression: when every set reached the top of the rep range, the next time is heavier: +2.5% for a top
   set and a 2-rep range, +4% for an upper-body compound, +5% for the rest, rounded down to a whole kg, at least 1 kg; the reps
   start 2 lower. A weight where 1 kg is more than 8% (a light cable) adds reps first (to 19 at 6 kg in 12–15), then 1 kg. Stuck 3
-  times in a row: one more rep on set 1, then the swap, then 10% lighter to climb again.
+  times in a row: one more rep on set 1, then another machine for the same muscles, then 10% lighter to climb again.
 - Before the first set of a machine compound you get its warm-up sets, worked out from that set's weight (for example
   20 kg × 8 · 30 kg × 4 · 34 kg × 2 before a 40 kg top set: every weight the app works out is a whole kg or lb). Do them, press
   **Warm-up done**; they are not logged. An isolation exercise for a muscle the day has not worked yet gets one light set.
@@ -39,7 +39,7 @@ Open it, and download it to your phone (the **Download app** button is on its fi
   many reps as you can. It is kept apart from the working sets (set the reps to 0 to skip it). The rest after it is the
   exercise's own (2 min when the next exercise works the same muscle).
 - Abs: every set to failure. Exercises with no weight go up by reps. Once every set reaches the top, the knee raise makes way
-  for the leg raise ("Next time: Leg raise"; Swap brings the knee raise back), and the 45° back extension says "Next time: lower
+  for the leg raise ("Next time: Leg raise"; Options brings the knee raise back), and the 45° back extension says "Next time: lower
   slowly over 3 s", then "hold a plate to your chest".
 - The text that tells you how to do the rep is a card right above the figure: the phase the figure is in (Press fast,
   Return slow 2–3 s), when to breathe ("In as handles return, out as you press"; on a heavy top set: "Big breath and brace;
@@ -57,12 +57,16 @@ Open it, and download it to your phone (the **Download app** button is on its fi
   description; the button beside it copies both, to paste.
 - Made a mistake? Undo takes back the last step, and again for the one before. The three dots at the top right also hold
   Restart workout (it starts the day over, and Undo brings it back) and All workouts.
-- A machine is taken? **Options** (top right) holds **Do it later** (the exercise moves to the end of the day) and **Swap**
-  (another machine for the same muscles takes its place for today, best first, with the same sets and reps; its sets are
-  logged to it). The three dots hold them too. **Other machines** below them lists text-only alternatives (a Smith flat press for the
-  chest press, a single-arm cable pulldown for the lat pulldown...): the exercise's figure stays, with its sets, reps and rest, the
-  title shows the machine ("Figure: Chest press" under it), and the machine keeps its own weights and history (its first time it
-  starts from the exercise's last weight: "New machine: start lighter").
+- A machine is taken? **Options** (top right; during a rest it is about the exercise coming next) opens a sheet "Instead of
+  Hack squat" over the figure, with every alternative that fits that exercise, best first: a picture with the muscles lit,
+  its name, its muscles and how close it is ("Same muscles", "Close" or "Weaker", with a one-line reason). A tap on one shows
+  it: its own animation plays on the stage (a machine with no animation yet shows the closest figure and says so), and the
+  sheet becomes a bar with **Use this** and **Cancel**. Use this puts it in the exercise's place for today, with the same sets,
+  reps and rest; its sets are logged to it, and a machine with no animation keeps its own weights and history (its first time
+  starts from the exercise's last weight: "New machine: start lighter"). Nothing is silent: a toast says "Using Leg press
+  instead of Hack squat" with **Undo**, and under the exercise's name a pill "Instead of Hack squat · Back" stays until you go
+  back (one tap), or open Options again for "Back to Hack squat". At the bottom of the sheet, **Machine busy?** has **Do this
+  one last today**, which moves the exercise to the end of today's workout (a toast with Undo says what is next).
 - **Week review**: "Start a new week" (or a workout chosen once all seven days are done) first shows what went up since the week
   before ("Chest press 61 → 62 kg", "Lat pulldown +1 rep"), what is stuck (3 sessions with no progress) and the next step of the
   stall ladder, and a deload when one is due. One button, "Start week 4", starts the week.
@@ -167,9 +171,9 @@ The app says little: each line is there because it changes what you do. Where th
   works the brachialis and the brachioradialis (Jeff ranks hammer curls A tier,
   [2024](https://www.youtube.com/watch?v=GNO4OtYoCYk); [Boland 2008](https://doi.org/10.1016/j.jhsa.2008.07.019)). The machine crunch
   is the cable crunch's loaded spinal curl on a machine.
-- **Busy machines.** A swap is another machine for the same muscles (as in [Jeff's 25 exercises, 2026](https://www.youtube.com/watch?v=S6rqpxVGKZ4)),
+- **Busy machines.** An alternative is another machine for the same muscles (as in [Jeff's 25 exercises, 2026](https://www.youtube.com/watch?v=S6rqpxVGKZ4)),
   best first. The standing calf raise is on Day 6 too: standing raises grew the whole calf more than seated ones
-  ([Kinoshita 2023](https://doi.org/10.3389/fphys.2023.1272106)); the seated one is its swap.
+  ([Kinoshita 2023](https://doi.org/10.3389/fphys.2023.1272106)); the seated one is its alternative.
   Doing an exercise later in the workout changes how much it grows little ([Nunes 2021](https://doi.org/10.1080/17461391.2020.1733672)).
 - **Deload week.** General practice, not a rule of Jeff's programs: about one easier week every 4–8 weeks, with fewer sets and
   more reps in reserve ([Jeff, 2022](https://www.youtube.com/watch?v=LT_aBQatj5s);
@@ -217,8 +221,9 @@ takes: `"off": true` on a step (taken out of the program: it keeps its place so 
 rest after a top set), `phases` on a timed step (`[{ sec, name, verb, pulse, cue, hard }]`: a beep and a buzz at each change),
 `optional` (a timed step that can be skipped), and on an exercise `breath` (its breathing cue), `brace` (its own line for a heavy
 top set; the program's is `breath.brace`), `inc` (its step up in percent, instead of the rule above) and `alts` (other machines for the
-same movement, text only, best first: `[{ "id": "smith_flat_press", "n": "Smith flat press", "cue": "..." }]`; `id` names the machine's
-own record, so keep it once chosen; Options lists them under "Other machines", so adding one is a change to this data only).
+same movement, text only: `[{ "id": "smith_flat_press", "n": "Smith flat press", "cue": "..." }]`; `id` names the machine's
+own record, so keep it once chosen), `swap` (animated alternatives, below) and `eq` (how close each alternative is, below). Options
+lists `swap` and `alts` together, in the order of `eq`, so adding one is a change to this data only).
 
 - `node tools/covers.mjs` draws the overview's pictures (`covers/`) from the app's own figure engine: an animation and a
   still frame for each day's cover exercise (`cover` in the program inside `index.html`). Run it when an exercise's
@@ -226,17 +231,31 @@ own record, so keep it once chosen; Options lists them under "Other machines", s
 - `tools/figure/` makes the figure's two data files once, offline (`tools/figure/README.md`). The figure is the default body;
   `?body=sdf` in the page's address shows the sculpted body instead (it is still in the engine), and if the figure's files do not
   load the stage falls back to it by itself.
+- `node tools/thumbs.mjs` draws the Options gallery's pictures (`thumbs/<id>.webp`, about 160 x 200: the exercise at its peak
+  contraction with the working muscles lit) with the app's own figure engine in headless Chrome, like `covers.mjs` (`--only a,b` for
+  some). A text-only alternative uses its exercise's picture; the card shows a plain placeholder for a missing one.
+- `node tools/apply_patch.mjs patch.json` merges a hand-over for new animated alternatives into the program and the fit table
+  (`{ "ex": { id: entry }, "links": [{ "base", "alt", "m", "w" }], "fit": { id: {...} } }`): it adds the entries, links both ways
+  (`swap` and `eq`, and takes the id out of the base's `alts` when it was a text-only one), refuses an unknown id, and changes
+  nothing when run twice. When an animated exercise comes under a different id than the text-only alternative it replaces (the
+  `ALIASES` table at the top of the tool, or an `"aliases": { "<newId>": "<oldAltId>" }` key in the patch), the old one leaves every
+  `alts` list and its `eq` line moves to the new id. `--dry` only checks; `--run` then runs `program.mjs`, `thumbs.mjs --only <the new ids>` and `pwa.mjs`.
 - `node tools/pwa.mjs` writes the service worker's file list and hashes (the first line of `sw.js`). The worker refuses a
   file that does not match, so run it after changing **any** file the app ships, before committing.
   `node tools/pwa.mjs --check` fails when the list is out of date.
 - `node tools/program.mjs` writes [PROGRAM.md](PROGRAM.md), the exact list of days, exercises and their order, from the program
   inside `index.html`. Run it after **any** change to the program, so the change shows up as a change to that list.
   `node tools/program.mjs --check` fails when the list is stale, when a step names an exercise that has no entry or animation
-  file, when a swap or harder variant names one that is not ready, or when an entry is not used by any step, swap or variant.
+  file, when a swap or harder variant names one that is not ready, when an entry is not used by any step, swap or variant, or when
+  `eq` is wrong (a key that is not in `swap` or `alts`, a match that is not `same`, `close` or `weak`, a reason over 60
+  characters; an alternative with no `eq` entry only gets a note). Missing thumbnails are listed as notes.
 
 Adding an exercise as a swap or as a harder variant is a change to data only: put its animation in `exercises/<id>.json`, add
 its entry to `ex` in the program inside `index.html` (`"ready": true`; `compound`, `drop`, `partials` and `failAll` as for the
 exercises like it; an exercise with no weight has `"kg0": 0` and its own rep range, `"reps": [10, 15]`), then name it in the
-other exercise's entry: `"swap": ["seated_calf_raise"]` on `calf_raise` (and `"swap": ["calf_raise"]` on the new one, to swap
-back), or `"next": "leg_raise"` on `knee_raise` (a bodyweight exercise moves on to its `next` once every set reaches the top of
-the range; until then `harder` says what to change). Run the two tools.
+other exercise's entry: `"swap": ["seated_calf_raise"]` on `calf_raise` (and `"swap": ["calf_raise"]` on the new one, to go
+back) with an `eq` line for each way (`"eq": { "seated_calf_raise": { "m": "close", "w": "Same calf muscle, bent knee" } }`: `m` is
+`same` for the same primary muscles in a similar movement, `close` for overlapping muscles, `weak` otherwise; `w` is the one-line
+reason shown in Options, up to 60 characters; the order of the keys is the order of the gallery), or `"next": "leg_raise"` on `knee_raise` (a bodyweight exercise moves on to its `next` once every set reaches the top of
+the range; until then `harder` says what to change). Run `tools/program.mjs`, `tools/thumbs.mjs --only <the new id>` and
+`tools/pwa.mjs` (`tools/apply_patch.mjs` does the data part of this from one file).

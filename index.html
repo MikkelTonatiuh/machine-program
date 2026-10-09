@@ -1868,7 +1868,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if (L.contains('side') || E.act.hidden || E.info.hidden) return;
       const vis = (e) => !!e && !e.hidden && e.offsetParent !== null;
       const over = () => {
-        const kids = [E.kicker, E.name, E.clock, E.line, E.mus].filter(vis), ctl = [E.note, E.sel, $('endnext'), E.act.querySelector('.prow')].filter(vis);
+        const kids = [E.kicker, E.name, E.clock, E.line, E.mus, E.pill].filter(vis), ctl = [E.note, E.sel, $('endnext'), E.act.querySelector('.prow')].filter(vis);
         if (!kids.length || !ctl.length) return 0;
         return Math.max(...kids.map((e) => e.getBoundingClientRect().bottom)) - Math.min(...ctl.map((e) => e.getBoundingClientRect().top));
       };

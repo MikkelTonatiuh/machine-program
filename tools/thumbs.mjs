@@ -45,7 +45,7 @@ const CAPTURE = `(async () => {
   put(st.skyCanvas, 'source-over'); put(st.timerCanvas, 'screen'); put(st.glCanvas, 'source-over'); put(st.bloomCanvas, 'screen');
   const enc = (q) => new Promise((res) => cv.toBlob(res, 'image/webp', q));
   const b64 = (blob) => new Promise((res) => { const fr = new FileReader(); fr.onload = () => res(fr.result.split(',')[1]); fr.readAsDataURL(blob); });
-  let q = 0.72, blob = await enc(q);
+  let q = 0.86, blob = await enc(q);
   while (blob.size > MAX && q > 0.05) { q = Math.round((q - 0.06) * 100) / 100; blob = await enc(q); }
   return { data: await b64(blob), size: blob.size, q };
 })()`;
