@@ -275,9 +275,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 @media (max-height: 699px) { .app[data-view="rest"]:not(.side) .note { display: none; } .app[data-view="rest"] .clock { font-size: 40px; } } /* (a short screen: the selectors say what was logged) */
 .app.crowded:not(.side) .mus { display: none !important; } /* (the script measured the text block over the controls: the muscles line goes, then the kicker, and the rest's clock shrinks) */
 .app.crowded2:not(.side) .kicker { display: none; }
-.app[data-view="end"].crowded:not(.side) .clock { font-size: clamp(44px, 12vw, 56px); } /* (the finished day with a Strava line that took a second row: the clock gives room first, then the count of exercises and sets, which the card holds too) */
-.app[data-view="end"].crowded2:not(.side) .line { display: none; }
+.app[data-view="end"].crowded3:not(.side) .line { display: none; } /* (the finished day, when the Strava line took a second row and the two steps above were not enough: the count of exercises and sets goes, the card holds it too, and then the clock shrinks) */
+.app[data-view="end"].crowded4:not(.side) .clock { font-size: clamp(44px, 12vw, 56px); }
 .app.side[data-view="end"] .info { bottom: calc(var(--actb, 14px) + 112px + var(--sx, 0px)); } /* (--sx: the height the Strava line's second row takes) */
+.app.side[data-view="end"][data-sx]:not([data-sx="0"]) .line { display: none; } /* (the sideways finished day has no measuring step: a second row for the Strava line takes the count of exercises and sets away, and the clock gets smaller) */
+.app.side[data-view="end"][data-sx]:not([data-sx="0"]) .clock { font-size: clamp(44px, 6.4vw, 72px); }
 .app[data-view="rest"].crowded2:not(.side) .clock { font-size: 36px; }
 .app.crowded2:not(.side) .swappill { height: 22px; margin-top: 2px; } /* (a pill under a crowded text block: tighter) */
 .app.crowded2:not(.side) .line { margin-top: 7px; }
@@ -476,7 +478,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         <button class="stepbtn" id="kgplus" type="button" aria-label="More weight"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4.5 10h11M10 4.5v11"/></svg></button>
       </div>
     </div>
-    <div class="endrow" id="endrow"><button class="linkbtn endnext" id="endnext" type="button" hidden></button><div class="stravabar" id="stravabar" hidden><button class="linkbtn" id="stravapost" type="button">Post to Strava</button><p class="stravastat" id="stravastat" role="status" aria-live="polite" hidden></p></div></div>
+    <div class="endrow" id="endrow" hidden><button class="linkbtn endnext" id="endnext" type="button" hidden></button><div class="stravabar" id="stravabar" hidden><button class="linkbtn" id="stravapost" type="button">Post to Strava</button><p class="stravastat" id="stravastat" role="status" aria-live="polite" hidden></p></div></div>
     <div class="prow">
       <button class="undobtn" id="back" type="button" aria-label="Undo" aria-disabled="true" title="Undo the last step"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M7.2 4.2 3.6 7.8l3.6 3.6"/><path d="M4 7.8h7.6a4.2 4.2 0 0 1 0 8.4H7.6"/></svg></button>
       <button class="primary" id="primary" type="button" hidden><span class="pic" id="pic" aria-hidden="true"></span><span id="plabel"></span></button>
@@ -1991,11 +1993,13 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   // The text block and the controls under it never overlap. The layout leaves the text room for its fullest screen at the normal text
   // size; a larger system font or an unusual screen can need more, so a measured overlap takes the muscles line away (.crowded), then
-  // the kicker too and, on the rest screen, makes the clock smaller (.crowded2). Always measured in the plain state.
+  // the kicker too and, on the rest screen, makes the clock smaller (.crowded2). The finished day has two more steps, for a Strava
+  // line that took a second row: the count of exercises and sets goes (.crowded3), then the clock shrinks (.crowded4); a finished day with no
+  // second row is measured and changed as every other screen is. Always measured in the plain state.
   function crowd() {
     try {
       const L = app.classList;
-      L.remove('crowded', 'crowded2');
+      L.remove('crowded', 'crowded2', 'crowded3', 'crowded4');
       if (L.contains('side') || E.act.hidden || E.info.hidden) return;
       const vis = (e) => !!e && !e.hidden && e.offsetParent !== null;
       const over = () => {
@@ -2003,7 +2007,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         if (!kids.length || !ctl.length) return 0;
         return Math.max(...kids.map((e) => e.getBoundingClientRect().bottom)) - Math.min(...ctl.map((e) => e.getBoundingClientRect().top));
       };
-      const order = app.dataset.view === 'rest' && !E.pill.hidden ? ['crowded2', 'crowded'] : ['crowded', 'crowded2']; // (the plan line stays on a rest with a pill)
+      const row = $('endrow'), tall = app.dataset.view === 'end' && !!row && !row.hidden && (row.offsetHeight || 0) > 44; // (a Strava line that took a second row under the finished day)
+      const order = app.dataset.view === 'rest' && !E.pill.hidden ? ['crowded2', 'crowded'] : tall ? ['crowded', 'crowded2', 'crowded3', 'crowded4'] : ['crowded', 'crowded2']; // (the plan line stays on a rest with a pill; the finished day with a tall Strava line has two more steps)
       for (const c of order) { if (over() > 0) L.add(c); else break; }
     } catch (_) { /* no layout here */ }
   }

@@ -110,8 +110,8 @@ press Start a new week at the bottom of the overview); that is also when the wee
 ## Strava
 
 **Share** and **Copy** on the workout card need no setup: paste the picture and the text into Strava. To post a finished day to
-Strava from the app itself, connect your own Strava app once (the three dots, **Strava**). Nothing goes through a server of
-this app's: the page talks to strava.com from your phone, with the keys of your own Strava app.
+Strava from the app itself, connect your own Strava app once (the three dots, **Strava**). Nothing goes through a server in
+between: the page talks to strava.com from your phone, with the keys of your own Strava app.
 
 1. Open [strava.com/settings/api](https://www.strava.com/settings/api) and create an app: any name without "Strava" in it
    (Strava's brand rules), and **Authorization Callback Domain** `mikkeltonatiuh.github.io`. A new app starts in single-player
@@ -124,7 +124,8 @@ Creating the Strava app needs a Strava subscription: Strava's Getting Started pa
 prerequisite for creating an app" (read on 2026-10-09; it could not be tried, there is no account here). Without one, Share and Copy
 are the way.
 
-What is posted. **Post to Strava** is under a finished day and on its card (the overview's square for that day). It makes one
+What is posted. **Post to Strava** is under a finished day (beside the link to the next day) and on its card (the overview's square
+for that day). It makes one
 **Weight Training** activity: named "Upper · 9 Oct", with the day's real start and elapsed time, every set with Strava's own
 exercise name, its reps and its weight in kg (Strava's JSON strength upload), and a description: each exercise as kg × reps, the
 top set marked, the drop sets, the kg lifted in all, the bike's minutes. A machine Strava has no name for stays in the description only.
@@ -136,7 +137,7 @@ something fails it says why ("Couldn't post: Strava is having trouble. Try again
 until you turn it on) does it for you, and tries again when the phone is back online.
 
 What is kept, and where. Only on this phone, in the browser's storage, and sent nowhere but strava.com: the app's Client ID and
-Client Secret, the access and refresh tokens (renewed before they run out; Strava gives a new refresh token each time), the athlete's
+Client Secret, the access and refresh tokens (renewed before they run out; each renewal makes Strava replace the refresh token), the athlete's
 name and the activities' ids (a week at most: Strava's API policy, 6.2, allows nothing from Strava to be kept longer in a cache,
 and 7.4 has it deleted when an athlete's authorization ends), and which days were posted. The secret, the tokens and the code that
 Strava hands back never go into an address, a log line or an error text; the code is taken off the address the moment the page
@@ -152,9 +153,14 @@ for Strava's endpoints, in a Node bed and in real Chrome, `tests/strava*.mjs` in
   address as the redirect for the callback domain), the answer to the code's trade, a refresh, an upload, a plain activity and a
   revoke, with their real fields, answers and error texts. The requests follow Strava's own documentation (read on 2026-10-09:
   Authentication, Create an Activity, Uploads with the JSON strength format and its list of supported exercise names, the API
-  Agreement and Policy, the brand guidelines); the 69 exercise names sent are all from that list. Where a real answer differs
-  (for example the words of a duplicate: "duplicate of activity 123" is taken from Strava's documentation of uploads), the
-  page shows a plain failure with Post again, never a wrong "Posted".
+  Agreement and Policy, the brand guidelines); the 70 exercise names sent (every exercise with sets) are all from that list, the
+  nearest one where Strava has no exact match. Where a real answer differs (for example the words of a duplicate: "duplicate of
+  activity 123" is taken from Strava's documentation of uploads), the page shows a plain failure with Post again, never a wrong
+  "Posted".
+- The way there and back on a phone. Connect leaves the page for strava.com and Strava sends the browser back to this page's
+  address. On Android the installed app may hand that to a Custom Tab or to the browser, so the answer can arrive in a browser tab
+  instead of the app window; both share the same storage, so the connection is complete either way and the app picks it up when
+  it is next in sight. Not tried on a phone.
 - Strava's CORS answers. Called without credentials on 2026-10-09, the preflight (OPTIONS) of the token, revoke, uploads and
   activities endpoints answered 200 with `access-control-allow-origin: *` and `authorization,content-type` allowed, and a call
   to the API with no token answered 401 with the same allow-origin: so a page can call them. The real answer of a token trade
@@ -163,8 +169,8 @@ for Strava's endpoints, in a Node bed and in real Chrome, `tests/strava*.mjs` in
   sends one set per arm).
 - The Strava subscription (above) and the 10-athlete limit of a standard app: only your own account ever connects here.
 - Strava's brand rules ask for its own "Connect with Strava" button graphic; this app has a plain **Connect** button (no Strava
-  logo or image is used), and says "View on Strava" in bold orange for the link, as the rules say. Whether Strava asks more of an
-  app only the owner uses, was not asked.
+  logo or image is used), and says "View on Strava" in bold orange for the link, as the rules say. Strava was not asked whether an
+  app that only its owner uses needs more.
 - Strava's changelog (2026-06-01) says the API's address changes from `https://www.strava.com/api/v3` to
   `https://api-v3.strava.com`, the new one available from 2027-01-04. The app uses the old one; the address is one constant in
   `index.html` (`API`), to change when Strava retires the old one. (Its old deauthorize endpoint is also being phased out: the app uses
