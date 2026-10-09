@@ -24,6 +24,9 @@ Open it, and download it to your phone (the **Download app** button is on its fi
 - **One arm at a time** (cable lateral raise, Bayesian curl): the weaker arm first (the left, then whichever did fewer reps),
   then "Switch sides" with no rest, and the other arm, mirrored on screen, does the same reps: the counter stops it there with
   a buzz. Both sides are logged; the lower one counts. 60 s rest after both arms.
+  A one-sided leg exercise (a standing cable abduction, a cable kickback) says "each leg", "Left leg", "Switch legs" instead: its
+  entry has `"unilateral": true` and `"side": "leg"` ("arm" is the default; `tools/program.mjs --check` fails when the muscles say leg and the
+  side does not, and `tools/apply_patch.mjs` sets it for a new one-sided entry).
 - The first set of an exercise says how to beat last time: "Today: 52 kg (+2): you hit 12 on every set" or "Today: beat 12 · 11
   · 10 at 50 kg"; every later set shows last time's numbers ("Last time 11 × 50 kg"); after the last set, "Next time: …".
 - Progression is double progression: when every set reached the top of the rep range, the next time is heavier: +2.5% for a top

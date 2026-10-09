@@ -10,6 +10,7 @@
 // For every link the tool adds `alt` to base.swap (and `base` to alt.swap, so the way back exists), removes `alt` from base.alts (a text
 // alternative that now has its animation is promoted), and sets base.eq[alt] and alt.eq[base] (a link may carry rm / rw for the way back;
 // otherwise the same match and reason). Each eq list is kept best first (same, close, weak; earlier entries stay ahead within a grade).
+// A one-sided entry ("unilateral": true) with no "side" gets "arm" or "leg" from its primary muscles (tools/side.mjs).
 // Aliases: an animated exercise can come under a different id than the text-only alternative it replaces (ALIASES below). When the patch
 // brings in such an id, the old alternative leaves every base.alts, its eq entry moves to the new id (in the same place, unless a link
 // of the patch already set one: the link wins) and the new id joins that base's swap list.
@@ -20,6 +21,7 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { sideFor } from './side.mjs';
 
 // the new animated id : the text-only alternative id it replaces
 const ALIASES = {
@@ -57,6 +59,8 @@ for (const [id, e] of Object.entries(patch.ex || {})) {
     if (old.alts || e.alts) merged.alts = [...new Map([...(old.alts || []), ...(e.alts || [])].map((a) => [a.id, a])).values()];
     if (old.eq || e.eq) merged.eq = Object.assign({}, old.eq || {}, e.eq || {});
   }
+  if (merged.side !== undefined && !['arm', 'leg'].includes(merged.side)) fail('"' + id + '": side must be "arm" or "leg"');
+  if (merged.unilateral && merged.side === undefined) merged.side = sideFor(merged); // (a one-sided exercise: "each arm" or "each leg", from its primary muscles)
   P.ex[id] = merged;
 }
 // 2. the links

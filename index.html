@@ -1192,7 +1192,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   const nameOf = (id) => (P && P.ex[id] && P.ex[id].name) || String(id).replace(/^_+/, '').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
   const exBase = (id) => {
     const e = (P && P.ex[id]) || {};
-    return { name: e.name || nameOf(id), cue: e.cue || '', muscles: e.muscles || { primary: [], secondary: [] }, unilateral: !!e.unilateral, ready: !!e.ready,
+    return { name: e.name || nameOf(id), cue: e.cue || '', muscles: e.muscles || { primary: [], secondary: [] }, unilateral: !!e.unilateral, side: e.side === 'leg' ? 'leg' : 'arm', ready: !!e.ready,
       verbs: Array.isArray(e.verbs) && e.verbs.length === 2 ? e.verbs : null, kg0: Number.isFinite(e.kg0) ? e.kg0 : 20, fail: !!e.fail, short: !!e.short,
       compound: !!e.compound, drop: !!e.drop, partials: !!e.partials, failAll: !!e.failAll, swap: Array.isArray(e.swap) ? e.swap.filter((x) => typeof x === 'string') : [],
       harder: typeof e.harder === 'string' || Array.isArray(e.harder) ? e.harder : '', next: typeof e.next === 'string' ? e.next : '',
@@ -1210,6 +1210,9 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     return Object.assign({}, b, { name: a ? a.n : String(id.slice(at + 1)).replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()), cue: a && a.cue ? a.cue : b.cue, alt: id.slice(at + 1), figure: b.name });
   };
   const isReady = (id) => !!(P && id && P.ex[id] && P.ex[id].ready);
+  // what a one-sided exercise does one of at a time: "arm" (the default) or "leg" (the exercise's own `side`)
+  const sideNoun = (e) => (e && e.side === 'leg' ? 'leg' : 'arm');
+  const eachSide = (e) => (e && e.unilateral ? ' each ' + sideNoun(e) : '');
   const dayLabel = (d) => (d < 0 ? '' : 'Day ' + (d + 1) + MID + P.days[d].name);
   const FRESH = 20 * 3600e3; // progress untouched this long is an old session: the day opens fresh
   const fresh = (p) => !!p && Date.now() - (p.at || 0) < FRESH;
@@ -1365,7 +1368,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const p = (m.primary || []).map((x) => x.toLowerCase()), s = (m.secondary || []).map((x) => x.toLowerCase());
     return cap(joinAnd(p) + (s.length ? (p.length ? ', with ' : '') + joinAnd(s) : ''));
   }
-  const rangeText = (d, i, k) => { const r = rangeAt(d, i, k); return r.lo + (r.hi !== r.lo ? ND + r.hi : '') + ' reps' + (exOf(exIdAt(d, i)).unilateral ? ' each arm' : ''); };
+  const rangeText = (d, i, k) => { const r = rangeAt(d, i, k); return r.lo + (r.hi !== r.lo ? ND + r.hi : '') + ' reps' + eachSide(exOf(exIdAt(d, i))); };
   const repsWord = (n) => n + (n === 1 ? ' rep' : ' reps');
   // Last time's sets of this step's exercise, read as this step's sets. One exercise can have a top set on one day and straight
   // sets on another (lat pulldown: day 5 and day 1): after a top-set day, a straight-set step goes on from the back-off sets; a
@@ -1523,7 +1526,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     for (const [f, r] of ramp) { const w = roundW(plan * f); if (w > (out.length ? out[out.length - 1][0] : 0) && w < plan) out.push([w, r]); }
     return out.length ? out : null;
   }
-  const warmText = (W, e) => W.map(([w, r]) => fmtW(w) + ' × ' + r).join(MID) + (e.unilateral ? ' each arm' : '');
+  const warmText = (W, e) => W.map(([w, r]) => fmtW(w) + ' × ' + r).join(MID) + eachSide(e);
   // ---- the drop set: right after the last set, about 30 % lighter (a whole kg or lb), as many reps as it gives
   function dropKg(d, i) { const w = kgsOf(d, i), x = w[w.length - 1]; if (!(x > 1)) return 0; const h = roundW(x * 0.7); return h < x ? h : roundW(x * 0.7, true); }
   function dropReps(d, i) { const a = setsOf(d, i); return clamp(a[a.length - 1] || stepsOf(d)[i].lo, 0, REPS_MAX); }
@@ -1618,7 +1621,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const st = stepsOf(d)[i]; if (!st) return '';
     if (st.t !== 'sets') return dash(st.line);
     const id = exIdAt(d, i), w = nextKgOf(d, i), n = nOf(d, i), k = setsOf(d, i).length, R = rangeAt(d, i, Math.min(1, n - 1)), R0 = rangeAt(d, i, 0);
-    const rr = (x) => x.lo + (x.hi !== x.lo ? ND + x.hi : ''), each = exOf(id).unilateral ? ' each arm' : '';
+    const rr = (x) => x.lo + (x.hi !== x.lo ? ND + x.hi : ''), each = eachSide(exOf(id));
     const sets = topAt(d, i) && !k ? 'Top set ' + rr(R0) + (n > 1 ? ', then ' + (n - 1) + ' × ' + rr(R) : '') : (n - k) + ' × ' + rr(R);
     return sets + each + (w > 0 ? MID + fmtW(w) : '');
   }
@@ -1679,7 +1682,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const lo = Math.min(...k), hi = Math.max(...k);
     return MID + (sameW(lo, hi) ? fmtW(lo) : fmtU(lo) + ND + fmtW(hi));
   };
-  const sideWord = (s) => (s === 'l' ? 'Left side' : s === 'r' ? 'Right side' : '');
+  // "Left side" / "Right side" for an arm, "Left leg" / "Right leg" for a leg; "Switch sides" / "Switch legs"; "Weaker arm first..." / "Weaker leg first..."
+  const sideWord = (s, e) => { const w = sideNoun(e) === 'leg' ? 'leg' : 'side'; return s === 'l' ? 'Left ' + w : s === 'r' ? 'Right ' + w : ''; };
+  const switchWord = (e) => (sideNoun(e) === 'leg' ? 'Switch legs' : T.switchSides);
+  const uniCue = (e) => T.uniCue.replace('arm', sideNoun(e));
   function viewNow() {
     const d = ui.day, i = ui.step, t = now(), st = ui.mode === 'end' || ui.mode === 'boot' ? null : stepsOf(d)[i];
     const v = { kind: ui.mode, kicker: '', kTone: '', name: '', check: false, clock: '', cTone: '', line: '', lTone: '', ticks: null, mus: '', note: null, sel: false, primary: null, log: null, coach: null, hint: null, pill: null };
@@ -1693,13 +1699,13 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       const what = Pc.drop ? 'Drop set' : 'Set ' + Math.min(k + 1, n) + ' of ' + n;
       v.kind = 'pace';
       if (pc.stage !== 'run') {
-        v.kicker = sw ? T.switchSides : sideWord(pc.side) || T.getReady; v.kTone = 'warm';
+        v.kicker = sw ? switchWord(e) : sideWord(pc.side, e) || T.getReady; v.kTone = 'warm';
         v.clock = String(pc.secs); v.cTone = 'count';
-        v.line = sw ? sideWord(pc.side) + MID + 'match ' + pc.target : Pc.uni ? T.uniCue : what + (Pc.kg > 0 ? MID + fmtW(Pc.kg) : '');
-        v.primary = sw ? { act: 'go2', label: 'Go', icon: 'go', aria: 'Go: the ' + sideWord(pc.side).toLowerCase() + ' now' }
+        v.line = sw ? sideWord(pc.side, e) + MID + 'match ' + pc.target : Pc.uni ? uniCue(e) : what + (Pc.kg > 0 ? MID + fmtW(Pc.kg) : '');
+        v.primary = sw ? { act: 'go2', label: 'Go', icon: 'go', aria: 'Go: the ' + sideWord(pc.side, e).toLowerCase() + ' now' }
           : { act: 'stop', label: 'Stop', icon: 'stop', aria: 'Stop: cancel the countdown' };
       } else {
-        v.kicker = pc.side ? sideWord(pc.side) : what;
+        v.kicker = pc.side ? sideWord(pc.side, e) : what;
         v.clock = String(pc.count);
         v.line = Pc.side === 1 ? 'Match ' + pc.target : Pc.drop ? 'To failure' : Pc.target ? 'Target ' + Pc.target : '';
         v.lTone = Pc.side === 1 ? 'go' : '';
@@ -1738,7 +1744,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       // the drop set, right after the last set: no rest, about 30 % lighter, to failure; logged as a drop (0 reps: not done)
       const e = exOf(logIdAt(d, i)), w = selKg();
       v.kicker = 'Drop set'; v.kTone = 'warm'; v.name = e.name;
-      v.line = T.noRest + MID + 'go now' + (w > 0 ? ' at ' + fmtW(w) : '') + (e.unilateral ? MID + 'each arm' : ''); v.lTone = 'go';
+      v.line = T.noRest + MID + 'go now' + (w > 0 ? ' at ' + fmtW(w) : '') + (e.unilateral ? MID + 'each ' + sideNoun(e) : ''); v.lTone = 'go';
       v.mus = musText(e);
       v.sel = true;
       v.primary = { act: 'go', label: 'Go', icon: 'go', aria: 'Go: the drop set, a 5 second countdown, then the reps are counted' };
@@ -2942,7 +2948,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       t0: now(), run0: 0, done: [], target: selValue(), kg: selKg(), brace: braceAt(d, i), beat: Math.ceil(COUNT_MS / 1000), seen: 0, tempo: tempoOf(id) };
     savePace(); paceStage(); paceBeeps(); haptic(30);
     render(); kickLoop();
-    announce((e.unilateral ? sideWord(ui.pace.first) + '. ' : '') + 'Five seconds, then go.');
+    announce((e.unilateral ? sideWord(ui.pace.first, e) + '. ' : '') + 'Five seconds, then go.');
   }
   // a countdown's beeps, set out on the audio clock from now to its end (one a second, then the higher "go")
   function paceBeeps(skipNow) {
@@ -2983,7 +2989,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (p.uni && p.side === 0) {
       p.done = [pc.count]; p.side = 1; p.stage = 'switch'; p.t0 = now(); p.beat = Math.ceil(SWITCH_MS / 1000); p.seen = 0;
       savePace(); paceStage(); paceBeeps(true); Snd.play('switch'); haptic([30, 50, 30]); render();
-      announce(T.switchSides + '. ' + sideWord(curSide(p)) + ', ' + repsWord(pc.count) + ' to match.');
+      const ue = exOf(logIdAt(p.day, p.step));
+      announce(switchWord(ue) + '. ' + sideWord(curSide(p), ue) + ', ' + repsWord(pc.count) + ' to match.');
       return;
     }
     paceFinish(pc.count, 'stop');
@@ -3248,7 +3255,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const d = ui.day, st = ui.mode === 'end' ? null : stepsOf(d)[ui.step];
     if (!st) return '';
     const e = st.t === 'sets' ? exOf(logIdAt(d, ui.step)) : null, k = setsOf(d, ui.step).length, sel = selValue() + ' reps and ' + fmtU(selKg()) + ' ' + uWord() + ' selected.';
-    if (ui.mode === 'set') { const R = rangeAt(d, ui.step, k); return e.name + ', ' + (topAt(d, ui.step) && !deloadOn() ? (k ? 'back-off set, ' : 'top set, ') : '') + 'set ' + (k + 1) + ' of ' + nOf(d, ui.step) + ', ' + R.lo + ' to ' + R.hi + ' reps' + (e.unilateral ? ' each arm' : '') + ', ' + sel; }
+    if (ui.mode === 'set') { const R = rangeAt(d, ui.step, k); return e.name + ', ' + (topAt(d, ui.step) && !deloadOn() ? (k ? 'back-off set, ' : 'top set, ') : '') + 'set ' + (k + 1) + ' of ' + nOf(d, ui.step) + ', ' + R.lo + ' to ' + R.hi + ' reps' + eachSide(e) + ', ' + sel; }
     if (ui.mode === 'warm') return e.name + ', warm-up sets: ' + warmText(warmSets(d, ui.step) || [], e).split(MID).join(', ').replace(/×/g, 'times') + '.';
     if (ui.mode === 'drop') return e.name + ', drop set: no rest, about 30 percent lighter, ' + sel;
     if (ui.mode === 'timer') return st.name + ', ' + dash(st.line).replace(ND, ' to ') + '.';

@@ -15,9 +15,12 @@ Around the list, the app adds what is not a working set (the counts below leave 
   before a top set; 75% × 4 alone when an earlier exercise has worked its muscles); one light set (about 50% × 10) before an
   isolation for a muscle the day has not worked yet. Whole kg (or lb).
 - **Drop set** right after the last set of an exercise marked "+ drop set": no rest, about 30% lighter, to failure.
-- **Each arm**: the weaker arm first, then the other arm does the same reps; the set counts the weaker arm's reps.
-- **Swap** for a busy machine (Options): the exercise named after "swap" takes the step's place for the day (same sets, reps
-  and rest; the first one listed is the best).
+- **Each arm** (or **each leg**, for a one-sided leg exercise): the weaker one first, then the other does the same reps; the set
+  counts the weaker side's reps.
+- **Alternatives** (Options): the exercises named after "swap" have their own animation; one of them takes the step's place for
+  the day (same sets, reps and rest; the best one is listed first, with how close it is). **Back** puts the original exercise back.
+- **Other machines** (Options): text-only alternatives (no animation yet), listed after the program. The exercise's figure stays and
+  so do its sets and rest; the machine's weights are kept apart (the first time it starts from the exercise's last weight: "start lighter").
 - **Deload week**, when you choose it (the app suggests it after 6 weeks or when several lifts stall): half the sets, same
   weights, every set 3–4 reps short of failure.
 - **No weight** (knee raise, leg raise, 45° back extension): reps first; once every set reaches the top, the knee raise moves on

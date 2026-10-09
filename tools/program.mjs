@@ -7,7 +7,7 @@
 // The check: every step names an exercise that has an entry; every entry is used by a step, a swap or a harder variant (or is a
 // day's cover); every ready exercise has its animation file in exercises/; every swap and harder variant names a ready exercise;
 // every day's cover is an exercise; every set step has its sets, a rep range and a rest (a top set: its own range, and sets after it;
-// restTop, the rest after it, when given); a timer's phases add up to its time; a day's order (when it has one: steps added later
+// restTop, the rest after it, when given); a one-sided exercise's side (arm or leg) agrees with its primary muscles; a timer's phases add up to its time; a day's order (when it has one: steps added later
 // are appended, so saved progress keeps its step) lists every step once, the automatic warm-up first. A step taken out of the
 // program ("off") keeps its place in the steps (saved progress keeps its step numbers) and is not listed. The list follows each
 // day's order. Run it after ANY change to the program, before committing: a change to the exercises or their order then shows up as a
@@ -15,6 +15,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { sideFor } from './side.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const html = readFileSync(join(ROOT, 'index.html'), 'utf8');
@@ -22,8 +23,9 @@ const m = html.match(/<script type="application\/json" id="program">([\s\S]*?)<\
 if (!m) throw new Error('index.html: no inline program');
 const P = JSON.parse(m[1]);
 
+const sideOf = (e) => (e && e.side === 'leg' ? 'leg' : 'arm');
 const rest = (s) => (s % 60 === 0 ? s / 60 + ' min' : s + ' s');
-const restOf = (st, e) => (st.restTop ? 'rest ' + rest(st.restTop) + ' after the top set, then ' + rest(st.rest) : 'rest ' + rest(st.rest) + (e && e.unilateral ? ' after both arms' : ''));
+const restOf = (st, e) => (st.restTop ? 'rest ' + rest(st.restTop) + ' after the top set, then ' + rest(st.rest) : 'rest ' + rest(st.rest) + (e && e.unilateral ? ' after both ' + sideOf(e) + 's' : ''));
 // a timed step in phases: its line (a warm-up), or the intervals in short: "8 min easy (...), 4 × 4 min hard (...) with 3 min easy (...) between, 5 min easy (...)"
 const phasesText = (st) => {
   const L = st.phases, base = (p) => p.name.replace(/ \d+ of \d+$/, '').toLowerCase(), pt = (p) => (p.pulse ? ' (' + p.pulse + ')' : ''), one = (p) => mins(p.sec) + ' ' + base(p) + pt(p);
@@ -36,7 +38,7 @@ const mins = (s) => (s % 60 === 0 ? s / 60 + ' min' : (s / 60).toFixed(1).replac
 const range = (lo, hi) => lo + (hi !== lo ? '–' + hi : '');
 // "4 × 8–10", or with a heavy top set first "top set 6–8, then 3 × 8–12"; "each arm", "every set to failure", "+ drop set"
 const reps = (st, e) => (Array.isArray(st.top) ? 'top set ' + range(st.top[0], st.top[1]) + ', then ' + (st.n - 1) : st.n) + ' × ' + range(st.lo, st.hi)
-  + (e.unilateral ? ' each arm' : '') + (e.failAll ? ', every set to failure' : '') + (e.drop ? ' + drop set' : '');
+  + (e.unilateral ? ' each ' + sideOf(e) : '') + (e.failAll ? ', every set to failure' : '') + (e.drop ? ' + drop set' : '');
 const swaps = (e) => (e.swap && e.swap.length ? '; swap: ' + e.swap.map((id) => (P.ex[id] ? P.ex[id].name : id)).join(', ') : '')
   + (e.next && P.ex[e.next] ? '; next: ' + P.ex[e.next].name : '');
 const orderOf = (d) => (Array.isArray(d.order) ? d.order : d.steps.map((_, i) => i)).filter((i) => !d.steps[i].off);
@@ -97,6 +99,10 @@ for (const [id, e] of Object.entries(P.ex)) {
   }
   if (Array.isArray(e.swap) || Array.isArray(e.alts)) for (const k of [...(e.swap || []), ...(e.alts || []).map((a) => a.id)]) if (!(e.eq && e.eq[k])) notes.push('"' + id + '" has no eq entry for "' + k + '" (Options then shows no match line for it)');
   if (e.reps !== undefined && !(Array.isArray(e.reps) && e.reps.length === 2 && e.reps[0] >= 1 && e.reps[1] >= e.reps[0])) problems.push('"' + id + '": reps must be [lo, hi]');
+  // a one-sided exercise says what it does one of at a time: side "arm" (the default) or "leg" (all its primary muscles are leg muscles)
+  if (e.side !== undefined && !['arm', 'leg'].includes(e.side)) problems.push('"' + id + '": side must be "arm" or "leg"');
+  else if (e.side !== undefined && !e.unilateral) problems.push('"' + id + '": side only means something on a unilateral exercise');
+  else if (e.unilateral && sideFor(e) !== (e.side || 'arm')) problems.push('"' + id + '": unilateral with primary muscles ' + (e.muscles && e.muscles.primary || []).join(', ') + ' needs side: "' + sideFor(e) + '"');
   // a no-weight exercise (kg0 0) is straight sets in its own range wherever it is done (a swap into a top-set step, a harder version)
   if (e.kg0 === 0) {
     if (!Array.isArray(e.reps)) problems.push('"' + id + '" has no weight (kg0 0): it needs its own rep range (reps: [lo, hi])');
@@ -142,10 +148,11 @@ Around the list, the app adds what is not a working set (the counts below leave 
   before a top set; 75% × 4 alone when an earlier exercise has worked its muscles); one light set (about 50% × 10) before an
   isolation for a muscle the day has not worked yet. Whole kg (or lb).
 - **Drop set** right after the last set of an exercise marked "+ drop set": no rest, about 30% lighter, to failure.
-- **Each arm**: the weaker arm first, then the other arm does the same reps; the set counts the weaker arm's reps.
-- **Swap** for a busy machine (Options): the exercise named after "swap" takes the step's place for the day (same sets, reps
-  and rest; the first one listed is the best).
-- **Other machines** (Options): text-only alternatives, listed after the program. The exercise's figure stays and so do its sets and
+- **Each arm** (or **each leg**, for a one-sided leg exercise): the weaker one first, then the other does the same reps; the set
+  counts the weaker side's reps.
+- **Alternatives** (Options): the exercises named after "swap" have their own animation; one of them takes the step's place for
+  the day (same sets, reps and rest; the best one is listed first, with how close it is). **Back** puts the original exercise back.
+- **Other machines** (Options): text-only alternatives (no animation yet), listed after the program. The exercise's figure stays and so do its sets and
   rest; the machine's weights are kept apart (the first time it starts from the exercise's last weight: "start lighter").
 - **Deload week**, when you choose it (the app suggests it after 6 weeks or when several lifts stall): half the sets, same
   weights, every set 3–4 reps short of failure.
