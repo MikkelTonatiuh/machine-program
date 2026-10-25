@@ -16,7 +16,8 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@87.5..100,400..500&family=Newsreader:ital,opsz,wght@0,6..72,300..400;1,6..72,300&display=swap" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@87.5..100,400..500&family=Newsreader:ital,opsz,wght@0,6..72,300..400;1,6..72,300&display=swap" crossorigin media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@87.5..100,400..500&family=Newsreader:ital,opsz,wght@0,6..72,300..400;1,6..72,300&display=swap"></noscript>
 <style>
 :root { color-scheme: dark; --ink: #ece7de; --ink2: #aeb5b8; --ink3: #818b90; --amber: #e0a060; --ember: #c4511f;
   --line: rgba(236,231,222,.12); --line2: rgba(236,231,222,.26); --gut: 20px; --ease: cubic-bezier(.2,0,0,1);
@@ -112,6 +113,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .nicon { display: inline-flex; align-self: center; }
 .nicon svg { width: 16px; height: 16px; fill: none; stroke: var(--amber); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
 .sel { display: flex; align-items: flex-start; justify-content: center; gap: 18px; margin: 0 0 10px; pointer-events: auto; touch-action: manipulation; }
+@media (max-width: 340px) { .sel { gap: 6px; } .num { min-width: 0; } .stp { gap: 0; } } /* (the reps and weight selectors fit a 320 px screen) */
 .stp { display: flex; align-items: flex-start; gap: 2px; }
 .stepbtn { position: relative; width: 44px; height: 44px; margin-top: 3px; flex: none; border-radius: 50%; display: grid; place-items: center; color: var(--ink); border: 1px solid rgba(236,231,222,.28);
   transition: background-color .15s var(--ease), border-color .15s var(--ease), opacity .15s var(--ease); -webkit-user-select: none; user-select: none; touch-action: manipulation; }
@@ -172,6 +174,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 @keyframes cpop { from { opacity: 0; transform: translateY(3px) scale(.96); } to { opacity: 1; transform: none; } }
 /* the overview: the days as squares */
 .days { position: absolute; inset: 0; z-index: 9; display: flex; justify-content: center; background: #0b0d10; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.dayswrap > * { flex-shrink: 0; } /* (the overview's buttons keep their height when the wrap is stretched to the screen) */
 .dayswrap { display: flex; flex-direction: column; width: 100%; max-width: 720px; min-height: 100%; padding: 6px var(--sr) 18px var(--sl); }
 .dayshead { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 58px; }
 .dayshead h2 { margin: 0; font: 300 26px/1.1 var(--serif); color: var(--ink); letter-spacing: -.01em; }
@@ -339,6 +342,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .app.side .name { font-size: clamp(28px, 4.3vw, 54px); }
 .app.side .clock { font-size: clamp(56px, 8.5vw, 104px); }
 .app.side .info > * { max-width: 30rem; }
+.app.side .info > .name { max-width: 100%; } /* (a long title shrinks or cuts in the column, it does not run off the screen) */
 .app.side .act { left: var(--tx0); bottom: var(--actb, 14px); align-items: flex-start; padding: 0 var(--sr) 0 12px; }
 .app.side .note, .app.side .sel, .app.side .prow { width: min(100%, 340px); max-width: none; }
 .app.side .num .u { color: var(--ink2); }
@@ -1178,7 +1182,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       o.prog[dd] = q;
     }
     if (d.lastDone && typeof d.lastDone === 'object') { const dd = int(d.lastDone.day, 0, nd - 1); if (dd != null) o.lastDone = { day: dd, at: time(d.lastDone.at) }; }
-    o.cycle = time(d.cycle);
+    o.cycle = Math.min(time(d.cycle), Date.now());
     o.week = int(d.week, 1, 9999) || 1; // which run through the program this is (see newWeek)
     // ts: the first set was a top set; bt: every back-off set reached the top of its range
     if (d.last && typeof d.last === 'object') for (const [id, L] of Object.entries(d.last)) if (KEY.test(id) && L && typeof L === 'object') {
@@ -1260,6 +1264,12 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function migrateAll(doc) { for (const [d, q] of Object.entries(doc.prog)) migrateAlts(+d, q); migrateRecords(doc); }
   let S = blank(); // the saved document (in memory: the truth; written on user actions)
   let acted = false; // the viewer has changed something in this visit
+  // a stored document becomes the saved one (S), made ready for this version: at boot, and when another window saved a newer one
+  function takeDoc(r) {
+    S = sane(r); migrateAll(S);
+    // (written with the next action; only v8's days in progress are pinned: v9's are as v10 reads them)
+    if (S.pv < PV) { if (S.pv < PV_PIN) for (const [d, p] of Object.entries(S.prog)) pinOld(+d, p); S.pv = PV; }
+  }
   // The db contract's codes (db.d.ts): these are final for this visit (fix the call, the grant is gone, a count cap);
   // every other code, known or not, counts as "unavailable": retried once after a short random delay, then carried by
   // the next action's write.
@@ -1558,7 +1568,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // A light weight: one kg (or lb) is more than 8 % of it. Reps come first: it stays until every set reaches R reps, the reps
   // that put the next whole unit at the bottom of the range (Epley: R = (1 + 1 / load) x (30 + bottom) - 30; 12-15 at 6 kg: 19)
   const light = (w) => { const u = toU(w); return u > 0 && 1 / u > 0.08; };
-  const lightR = (w, lo) => Math.round((1 + 1 / toU(w)) * (30 + lo) - 30);
+  const lightR = (w, lo) => Math.min(lo + 10, Math.round((1 + 1 / toU(w)) * (30 + lo) - 30)); // (never more than 10 above the bottom of the range: a 1 kg leg raise asked for 50 reps)
   // Double progression: when every set of an exercise reached the top of its rep range last time (a top-set step: its top set;
   // a light weight: R), this time starts a step heavier ({ kg, from, light }); an exercise done with no weight gets harder
   // instead ({ harder }: its "harder" line, e.g. straighten your legs more). null: no step (not in a deload week either).
@@ -1567,7 +1577,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (deloadOn() || !V || !V.top || V.est) return null;
     const w = V.kg[0];
     if (Number.isFinite(w) && w > 0) {
-      const lt = light(w), R1 = rangeAt(d, i, 1);
+      const lt = light(w) && !topAt(d, i), R1 = rangeAt(d, i, 1);
       // (a light weight: every set at R, whatever an older version recorded as the top)
       if (lt && !V.reps.every((x, k) => x >= Math.max(R1.hi, lightR(V.kg[k] > 0 ? V.kg[k] : w, R1.lo)))) return null;
       const up = lt ? stepW(w, 1) : upW(w, stepPct(d, i, 0));
@@ -1749,7 +1759,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     // (a light weight's set reaches the top at R reps: reps first)
     const lo = rangeAt(d, i, 1).lo, need = (k) => { const x = w[k]; return Number.isFinite(x) && x > 0 && light(x) ? Math.max(hi, lightR(x, lo)) : hi; };
     if (top) { L.top = a[0] >= rangeAt(d, i, 0).hi; if (a.length >= n && a.length > 1 && a.slice(1).every((x, k) => x >= need(k + 1))) L.bt = 1; }
-    else L.top = a.length >= n && a.every((x, k) => x >= need(k));
+    else L.top = a.length >= n && a.every((x, k) => x >= need(k) && !(w[k] < w[0] - 1e-6));
     return L;
   }
   // After the last set of an exercise: what next time brings. Every set at the top: "Next time: 62 kg (+2), expect ~2 fewer reps"
@@ -1760,7 +1770,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const id = exIdAt(d, i), e = exOf(id), top = topAt(d, i), w = L.kg[0], a = top ? L.reps.slice(0, 1) : L.reps;
     if (L.top) {
       if (Number.isFinite(w) && w > 0) {
-        const lt = light(w), up = lt ? stepW(w, 1) : upW(w, stepPct(d, i, 0));
+        const lt = light(w) && !top, up = lt ? stepW(w, 1) : upW(w, stepPct(d, i, 0));
         if (up > w) return 'Next time: ' + fmtW(up) + ' (+' + +(toU(up) - toU(w)).toFixed(1) + '), expect ' + (lt ? '~' + rangeAt(d, i, 0).lo + ' reps' : '~2 fewer reps');
       }
       if (bwTop(L) && !altOf(d, i)) { const H = hardList(e); if (e.next && isReady(e.next)) return 'Next time: ' + nameOf(e.next); if (H.length) return 'Next time: ' + H[Math.min(stage || 0, H.length - 1)]; }
@@ -2431,7 +2441,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function amend(nv, nk) {
     if (!amendOn()) return false;
     const r = ui.rest, u = hist[hist.length - 1], d = ui.day, i = r.after, cur = S.prog[d] || {};
-    const keep = {}; for (const k of ['started', 't0', 'gap', 'at', 'step', 'order']) if (cur[k] != null) keep[k] = clone(cur[k]);
+    const keep = {}; for (const k of ['started', 't0', 'gap', 'at', 'step', 'order', 'done']) if (cur[k] != null) keep[k] = clone(cur[k]);
     if (u.prog) S.prog[d] = clone(u.prog); else delete S.prog[d];
     for (const [id, L] of Object.entries(u.last)) { if (L) S.last[id] = clone(L); else delete S.last[id]; }
     if (u.up) S.up = clone(u.up);
@@ -2517,7 +2527,9 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const before = here ? viewNow() : null;
     if (!auto) snapshot((skipped ? 'skip ' : 'finish ') + st.name.toLowerCase());
     const p = ensureProg(d); p.done[i] = 1; touchProg(p); if (!ui.adhoc) S.current = d;
-    if (st.key === 'bike' && (st.open || st.phases) && tm && !skipped) p.bike = Math.max(1, Math.round(elapsedOf(tm) / 60)); // (the recovery days' ride)
+    const late = auto && tm && !st.open ? Math.max(0, elapsedOf(tm) - st.sec) * 1000 / SPEED : 0, away = late > IDLE_MS ? late : 0; // (found long after its time was up: the wait was a break)
+    if (away) p.gap = (p.gap || 0) + away;
+    if (st.key === 'bike' && (st.open || st.phases) && tm && !skipped) p.bike = Math.max(1, Math.round(Math.min(elapsedOf(tm), auto ? st.sec : Infinity) / 60)); // (the recovery days' ride)
     ui.timers.delete(tkey(d, i)); saveTimers();
     if (!here) { Save.persist(); render(); return; }
     ui.rimFade = { t0: now(), p: 1 };
@@ -2525,7 +2537,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (auto && !st.open) before.clock = '0:00';
     const nx = openAfter(d, i);
     let then = null;
-    if (nx < 0) finishDay(null, line);
+    if (nx < 0) finishDay(null, line, away);
     else {
       p.step = nx;
       if (!auto && modeOf(d, nx) !== 'warm') ui.note = { text: line, until: now() + ACK_MS + NOTE_MS }; // (the warm-up sets have a Warm-up done of their own)
@@ -2537,13 +2549,14 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     announce(st.name + ' done.' + (ui.mode === 'end' ? ' ' + endSpeech() : ''));
   }
   // the day is finished: into the history (the last 90 days) with the time it took, the last finished day, the end screen;
-  // note: the done line of the last action. Each exercise's sets go under the exercise they were done on (a swap's under the
-  // swap), drop sets apart from them (dr); a deload week's day is marked (dl) and leaves the progression as it was.
-  function finishDay(msg, note) {
-    const d = ui.day, p = S.prog[d] || { sets: {}, done: {} }, L = stepsOf(d), t = Date.now(), dl = deloadOn();
+  // note: the done line of the last action; ago: how long ago the day really ended (its last timer ran out while the app was
+  // away). Each exercise's sets go under the exercise they were done on (a swap's under the swap), drop sets apart from them
+  // (dr); a deload week's day is marked (dl) and leaves the progression as it was.
+  function finishDay(msg, note, ago) {
+    const d = ui.day, p = S.prog[d] || { sets: {}, done: {} }, L = stepsOf(d), t = Date.now() - (ago || 0), dl = deloadOn();
     const entry = { day: d, at: t, week: S.week, sets: 0, exercises: 0, ex: {}, kg: {} };
-    L.forEach((st, i) => {
-      const a = (p.sets && p.sets[i]) || [];
+    fullOrderOf(d).forEach((i) => { // (in the order they were done: Do this one last moves one to the end)
+      const st = L[i], a = (p.sets && p.sets[i]) || [];
       if (st.t !== 'sets' || !a.length) return;
       const id = logIdAt(d, i), w = ((p.kg && p.kg[i]) || []).slice(0, a.length); while (w.length < a.length) w.push(null);
       entry.sets += a.length; entry.exercises++; entry.ex[id] = a.slice(); entry.kg[id] = w;
@@ -2554,7 +2567,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if ((!Lr || Lr.at < (p.started || 0)) && (!dl || !Lr)) S.last[id] = lastRecord(d, i, a, w, nOf(d, i), t, dl, lr);
     });
     if (p.bike) entry.bike = p.bike;
-    if (p.t0) { entry.dur = Math.max(1, Math.round(sessSecs(p, t))); entry.st = p.t0; } // (st: when the session began: the same session is the same workout, for Strava's sake)
+    if (p.t0) { entry.dur = Math.max(1, Math.round(sessSecs(p, t + (ago || 0)))); entry.st = p.t0; } // (st: when the session began: the same session is the same workout, for Strava's sake)
     if (dl) entry.dl = 1;
     if (!ui.adhoc) {
       S.history.unshift(entry); if (S.history.length > 90) S.history.length = 90;
@@ -2692,7 +2705,9 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   const lc = (s) => (/^(Bayesian|Smith)/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1));
   const canChoose = (d, i) => { const st = i >= 0 ? stepsOf(d)[i] : null; return !!st && ((st.t === 'sets' && !setsOf(d, i).length && !dropDue(d, i)) || (st.t === 'timer' && !!st.ex && !timerOf(d, i) && !isDone(d, i))); };
-  const canBack = (d, i) => canChoose(d, i) && (exIdAt(d, i) !== origAt(d, i) || !!altOf(d, i));
+  // (Back is not offered while another step of the day is doing the original: sets are kept under the exercise, so two steps may not share one)
+  const heldElsewhere = (d, i, id) => stepsOf(d).some((s, j) => j !== i && s.t === 'sets' && !s.off && exIdAt(d, j) === id);
+  const canBack = (d, i) => canChoose(d, i) && (exIdAt(d, i) !== origAt(d, i) || !!altOf(d, i)) && !heldElsewhere(d, i, origAt(d, i));
   // what step i stands in for: { text: "Instead of Hack squat", back }, or null when it is the program's own exercise
   function pillFor(d, i) {
     const st = i >= 0 && d >= 0 ? stepsOf(d)[i] : null;
@@ -2781,7 +2796,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // lifts that have not gone up (a heavier weight, or more reps at the same weight) over their last 3 workouts on the same day
   function stalledLifts() {
     const by = {};
-    for (const h of S.history) if (!h.dl) for (const [id, a] of Object.entries(h.ex || {})) if (a.length) (by[h.day + ':' + id] = by[h.day + ':' + id] || []).push({ a, w: (h.kg && h.kg[id]) || [] });
+    for (const h of S.history) if (!h.dl && (!S.dl || (h.week || 0) > S.dl.w)) for (const [id, a] of Object.entries(h.ex || {})) if (a.length) (by[h.day + ':' + id] = by[h.day + ':' + id] || []).push({ a, w: (h.kg && h.kg[id]) || [] });
     const top = (x) => { const w = x.w.filter((v) => Number.isFinite(v)); return w.length ? Math.max(...w) : 0; };
     const reps = (x) => { const m = top(x); return x.a.reduce((s, r, k) => s + (!m || x.w[k] === m ? r : 0), 0); };
     const beats = (x, y) => top(x) > top(y) || (top(x) === top(y) && reps(x) > reps(y));
@@ -3276,10 +3291,23 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (need) { if (!doc.hidden) raf = requestAnimationFrame(loop); }
     else if (iv) { clearInterval(iv); iv = 0; }
   }
+  // Another window of the app (the installed app and a browser tab: a Strava return can open one) saved a newer document. Each window
+  // works on its own copy in memory and writes all of it on its next action, so the one that acts second would erase what the first
+  // saved: it takes the newer one up first, on the 'storage' event and on coming back into sight (a frozen page misses events), before
+  // closeGap writes. The screen, a running rest and the Undo steps stay as they are; nothing is written here (the writer gets no event
+  // of its own save, and its copy is not newer, so this does not go round).
+  function adoptStored() {
+    if (VERIFY || !P || ui.adhoc || ui.mode === 'boot' || !lsOK) return;
+    const r = lsGet(LS_LOG);
+    if (!r || typeof r !== 'object' || !(num(r.updated) > S.updated)) return;
+    takeDoc(r); render();
+    if (!dlg.hidden) fillDays();
+  }
+  g.addEventListener('storage', (e) => { if (e && e.key === LS_LOG) adoptStored(); });
   // out of sight during a rest: the service worker is told again when it ends (it shows the notification then); back in
   // sight: the notification goes, and the pacer's figure picks up its clock where it is now
   doc.addEventListener('visibilitychange', () => {
-    if (!doc.hidden) { kickLoop(); closeGap(); paintSess(); Alerts.clear(); if (ui.pace) paceStage(); }
+    if (!doc.hidden) { adoptStored(); kickLoop(); closeGap(); paintSess(); Alerts.clear(); if (ui.pace) paceStage(); }
     else { cancelGesture(true); if (ui.mode === 'rest' && ui.rest) Alerts.schedule(); }
   });
 
@@ -3775,7 +3803,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function closeReview() { if (revSheet.hidden) return; revSheet.hidden = true; revThen = null; }
   $('revgo').addEventListener('click', () => {
     const then = revThen; revSheet.hidden = true; revThen = null;
-    newWeek(Date.now()); Save.persist();
+    newWeek(Date.now()); hist = []; saveHist(); Save.persist();
     if (then) then(); else { openDays(); announce('Week ' + S.week + '. Every day is open again.'); }
   });
   $('revclose').addEventListener('click', closeReview);
@@ -3857,7 +3885,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // A finished day as a 1080 x 1350 picture in the app's look: the film horizon with its amber rim, the day's cover exercise
   // standing on it with every muscle the day worked lit (a second, offscreen stage with the engine's muscleOverride; the day's
   // cover still when there is no WebGL), the day and the date, its time, the weight lifted and the working sets, then each
-  // exercise's best set with what went up since last time (a PB: the best estimated 1RM yet, Epley) and the top set marked.
+  // exercise's best set with what went up since that day last time (a PB: the best estimated 1RM yet, Epley) and the top set marked.
   // Built once a day is done (the end screen shows it in the sky; a finished day's square on the overview opens it); Share
   // hands the PNG and a short text to the phone's share sheet (Strava, Instagram, Photos...), Copy puts both on the clipboard
   // (or saves the PNG where the browser can do neither).
@@ -3870,18 +3898,17 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const e1 = (r, x) => x * (1 + r / 30);
     // what the card says about history entry h (the history before it: what went up, what is a best)
     function data(h) {
-      const d = h.day, older = S.history.filter((x) => x.at < h.at), O = orderOf(d), L = stepsOf(d);
+      const d = h.day, older = S.history.filter((x) => x.at < h.at), L = stepsOf(d);
       const topIds = new Set(); L.forEach((st) => { if (isTop(st) && !st.off) { topIds.add(st.ex); topIds.add(levelOf(st.ex)); for (const x of exOf(st.ex).swap) topIds.add(x); } });
-      const pos = (key) => { const id = baseId(key), i = O.findIndex((j) => L[j].t === 'sets' && (L[j].ex === id || levelOf(L[j].ex) === id || exOf(L[j].ex).swap.includes(id))); return i < 0 ? 99 : i; };
       let vol = 0;
-      const rows = Object.keys(h.ex || {}).sort((a, b) => pos(a) - pos(b)).map((id) => {
+      const rows = Object.keys(h.ex || {}).map((id) => {
         const a = h.ex[id] || [], w = (h.kg && h.kg[id]) || [], lr = (h.lr && h.lr[id]) || [], uni = exOf(id).unilateral;
         a.forEach((r, k) => { const x = w[k] > 0 ? w[k] : 0; vol += (lr[k] ? lr[k][0] + lr[k][1] : uni ? 2 * r : r) * x; });
         const dr = h.dr && h.dr[id]; if (dr && dr[1] > 0) vol += dr[0] * dr[1] * (uni ? 2 : 1);
         let bi = 0; a.forEach((r, k) => { const x = w[k] || 0, y = w[bi] || 0; if (x > y + 1e-9 || (Math.abs(x - y) <= 1e-9 && r > a[bi])) bi = k; });
         const best = { r: a[bi] || 0, w: w[bi] > 0 ? w[bi] : 0 }, top = topIds.has(baseId(id)) && bi === 0;
-        // vs the last session of this exercise, and every one before (a best estimated 1RM: PB)
-        const prev = older.find((x) => x.ex && x.ex[id] && x.ex[id].length);
+        // vs the last real (not deload) session of this exercise on this day, as the week review does; PB: the best estimated 1RM of every earlier one
+        const seen = older.filter((x) => x.ex && x.ex[id] && x.ex[id].length), prev = seen.find((x) => x.day === d && !x.dl);
         let up = '', pb = false;
         if (prev) {
           const pw = (prev.kg && prev.kg[id]) || [], pa = prev.ex[id];
@@ -3889,7 +3916,9 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
           const repsAt = (r, ww, m) => r.reduce((s, x, k) => s + (Math.abs((ww[k] || 0) - m) < 1e-6 ? x : 0), 0);
           if (tTop > pTop + 1e-6) up = '+' + fmtU(tTop - pTop) + ' ' + uName();
           else if (Math.abs(tTop - pTop) <= 1e-6) { const n = repsAt(a, w, tTop) - repsAt(pa, pw, pTop); if (n > 0) up = '+' + n + (n === 1 ? ' rep' : ' reps'); }
-          const ever = Math.max(0, ...older.filter((x) => x.ex && x.ex[id]).flatMap((x) => x.ex[id].map((r, k) => e1(r, ((x.kg && x.kg[id]) || [])[k] || 0))));
+        }
+        if (seen.length) {
+          const ever = Math.max(0, ...seen.flatMap((x) => x.ex[id].map((r, k) => e1(r, ((x.kg && x.kg[id]) || [])[k] || 0))));
           const today = Math.max(0, ...a.map((r, k) => e1(r, w[k] || 0)));
           pb = today > 0 && today > ever + 1e-6;
         }
@@ -4857,9 +4886,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     P = idx;
     if (!VERIFY) {
       const u = uiPrefs(); prefs.unit = u.unit === 'lb' ? 'lb' : 'kg'; prefs.sound = u.sound !== 0; // (this phone's choices)
-      S = sane(lsGet(LS_LOG)); migrateAll(S);
-      // (written with the next action; only v8's days in progress are pinned: v9's are as v10 reads them)
-      if (S.pv < PV) { if (S.pv < PV_PIN) for (const [d, p] of Object.entries(S.prog)) pinOld(+d, p); S.pv = PV; }
+      takeDoc(lsGet(LS_LOG));
       restoreSel(); expireWeek();
     }
     const t = startTarget();
