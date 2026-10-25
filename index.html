@@ -2311,7 +2311,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // a tap on a progress segment: that step, as far as it has got; the end screen's segments stay put (the day is done:
   // the overview opens any day)
   function jumpTo(i) {
-    if (dialogOpen() || ui.mode === 'end') return;
+    if (dialogOpen() || ui.mode === 'end' || (ui.pace && paceHere())) return; // (a tap on the top band does not cancel the set being counted)
     if (i === ui.step && ui.mode !== 'rest' && !ackOn()) return;
     cancelGesture(); ui.ack = null; dropNote(); cancelRest(); cancelPace(); goStep(i, { cut: true });
   }
@@ -2665,7 +2665,9 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // restart is a step like any other: Undo brings the workout back.
   function restartDay() {
     if (ui.adhoc || ui.mode === 'end' || !canRestart()) return;
+    const first = hist.length ? hist[0] : null; // (the day's earliest step: what the records were before this run)
     snapshot(T.restartLabel);
+    if (first) { for (const [id, L] of Object.entries(first.last || {})) { if (L) S.last[id] = clone(L); else delete S.last[id]; } if (first.up) S.up = clone(first.up); if (first.hard) S.hard = clone(first.hard); } // (the discarded run's progression goes with it; Undo brings it back)
     cancelGesture(false); cancelRest(); cancelPace(); ui.timers.clear(); saveTimers();
     ui.ack = null; ui.go = null; ui.glow = null; ui.flash = null; ui.sel = null; saveSel();
     delete S.prog[ui.day];
@@ -3817,7 +3819,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // keep Tab inside a dialog (the overview, or a sheet over the workout)
   function trapTab(box, e) {
     if (e.key !== 'Tab') return;
-    const f = [...box.querySelectorAll('button:not([disabled])')].filter((x) => x.offsetParent !== null);
+    const f = [...box.querySelectorAll('button:not([disabled]), input:not([disabled]), a[href]')].filter((x) => x.offsetParent !== null);
     if (!f.length) return;
     const i = f.indexOf(doc.activeElement);
     if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); } else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
@@ -4348,17 +4350,17 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       for (const r of D.rows) {
         const id = r.id, base = baseId(id), a = (h.ex && h.ex[id]) || [], w = (h.kg && h.kg[id]) || [], lr = (h.lr && h.lr[id]) || [], dr = h.dr && h.dr[id];
         const ex = exOf(id), u = !!ex.unilateral, type = P && P.ex[base] && typeof P.ex[base].strava === 'string' ? P.ex[base].strava : '';
-        const kgOf = (k) => (w[k] > 0 ? Math.round(w[k] * 1000) / 1000 : 0), one = (reps, kg) => { const s = { exercise_type: type, repetitions: reps }; if (kg > 0) s.weight = kg; return s; };
+        const kgOf = (k) => (w[k] > 0 ? Math.round(w[k] * 1000) / 1000 : 0), one = (reps, kg) => { const s = { exercise_type: type, repetitions: reps }; if (kg > 0) s.weight = kg; return s; }, add = (...x) => { for (const q of x) if (q.repetitions > 0) sets.push(q); }; // (a set with no reps was not done: Strava gets none)
         const parts = [], noKg = a.length > 0 && a.every((_, k) => !(kgOf(k) > 0)) && !(dr && dr[1] > 0); // (no weight in the whole row: "15, 14, 13 reps")
         a.forEach((reps, k) => {
           const kg = kgOf(k), pair = lr[k] || null;
           parts.push((kg > 0 ? fmtW(kg) + ' × ' : '') + (pair ? pair[0] + '/' + pair[1] : kg > 0 || noKg ? reps : repsWord(reps)) + (k === 0 && r.top ? ' (top set)' : ''));
-          if (type) { if (pair) { sets.push(one(pair[0], kg), one(pair[1], kg)); } else if (u) { sets.push(one(reps, kg), one(reps, kg)); } else sets.push(one(reps, kg)); }
+          if (type) { if (pair) { add(one(pair[0], kg), one(pair[1], kg)); } else if (u) { add(one(reps, kg), one(reps, kg)); } else add(one(reps, kg)); }
         });
         if (dr && dr[0] > 0) {
           const kg = dr[1] > 0 ? Math.round(dr[1] * 1000) / 1000 : 0;
           parts.push('drop ' + (kg > 0 ? fmtW(kg) + ' × ' : '') + (kg > 0 || noKg ? dr[0] : repsWord(dr[0])));
-          if (type) { sets.push(one(dr[0], kg)); if (u) sets.push(one(dr[0], kg)); }
+          if (type) { add(one(dr[0], kg)); if (u) add(one(dr[0], kg)); }
         }
         if (!type) unnamed.push(r.name);
         const tag = u ? (a.some((x, k) => lr[k]) ? ' (left/right)' : ' (each ' + sideNoun(ex) + ')') : '';
