@@ -3897,7 +3897,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         const sets = a.map((r, k) => ({ r, w: w[k] > 0 ? w[k] : 0, lr: lr[k] && lr[k][0] !== lr[k][1] ? lr[k] : null })), drop = dr && dr[0] > 0 ? { r: dr[0], w: dr[1] > 0 ? dr[1] : 0 } : null;
         return { id, name: exOf(id).name, best, top, up, pb, uni, sets, drop };
       });
-      return { d, title: dayLabel(d), date: dateText(h.at), dur: h.dur || 0, sets: h.sets || 0, vol, bike: h.bike || 0, rows, cover: P.days[d].cover, week: h.week || S.week };
+      return { d, title: dayLabel(d), date: dateText(h.at), dur: h.dur || 0, sets: h.sets || 0, vol, bike: h.bike || 0, dl: !!h.dl, rows, cover: P.days[d].cover, week: h.week || S.week };
     }
     // the day's muscles (the animation files' working muscles of what was done) on its cover exercise, rendered offscreen
     async function hero(D, h) {
@@ -3965,15 +3965,14 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       const out = [];
       if (D.dur) out.push({ n: String(minsOf(D)), u: 'min' });
       if (D.vol > 0) out.push({ n: fmtN(toU(D.vol)), u: uName() + ' lifted' });
-      else if (D.bike) out.push({ n: String(D.bike), u: 'min bike' });
-      out.push({ n: String(D.sets), u: D.sets === 1 ? 'working set' : 'working sets' });
+      if (D.sets > 0) out.push({ n: String(D.sets), u: D.sets === 1 ? 'working set' : 'working sets' });
       const pb = D.rows.filter((r) => r.pb).length;
       if (pb) out.push({ n: String(pb), u: pb === 1 ? 'new best' : 'new bests', tone: 'pb' });
       return out;
     }
     function textOf(D) {
       const L = [D.title + MID + (D.dur ? minsOf(D) + ' min' : D.date)];
-      L.push(D.sets + ' sets' + (D.vol > 0 ? MID + fmtN(toU(D.vol)) + ' ' + uName() + ' lifted' : '') + (D.bike ? MID + D.bike + ' min bike' : ''));
+      L.push([D.sets > 0 ? D.sets + (D.sets === 1 ? ' set' : ' sets') : '', D.vol > 0 ? fmtN(toU(D.vol)) + ' ' + uName() + ' lifted' : '', D.bike ? D.bike + ' min bike' : '', D.dl ? 'deload week' : ''].filter(Boolean).join(MID));
       for (const it of itemsOf(D)) L.push(it.name + ' ' + it.parts.map(partOut).join(' / ') + (it.tags.length || it.up ? ' (' + it.tags.map((x) => x.toLowerCase().replace(/^pb$/, 'PB')).concat(it.up ? [it.up] : []).join(', ') + ')' : ''));
       L.push('Machine Program');
       return L.join('\n');
@@ -4009,7 +4008,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       x.textBaseline = 'alphabetic';
       const spaced = (px) => { if ('letterSpacing' in x) x.letterSpacing = px + 'px'; };
       x.fillStyle = ink3; x.font = '600 22px ' + sans; spaced(4);
-      x.fillText('MACHINE PROGRAM' + MID + 'WEEK ' + D.week, 72, 96);
+      x.fillText('MACHINE PROGRAM' + MID + 'WEEK ' + D.week + (D.dl ? MID + 'DELOAD' : ''), 72, 96);
       x.textAlign = 'right'; x.fillText(D.date.toUpperCase(), W - 72 + 4, 96); x.textAlign = 'left'; spaced(0);
       // the day, then its numbers: the time, the weight lifted (or the ride), the working sets, and the new bests
       let y = ARC + 150;
@@ -4092,7 +4091,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     function fill(box, D, o) {
       box.textContent = '';
       if (o.title) {
-        const h = mk('h2', 'rtitle'), sub = mk('p', 'rsub', P.days[D.d].name + MID + D.date);
+        const h = mk('h2', 'rtitle'), sub = mk('p', 'rsub', P.days[D.d].name + MID + (D.dl ? 'Deload week' + MID : '') + D.date);
         h.innerHTML = ICONS.check; h.append('Day ' + (D.d + 1) + ' done'); sub.dataset.base = sub.textContent;
         box.append(h, sub);
       } else box.append(mk('p', 'rsub', D.date));
