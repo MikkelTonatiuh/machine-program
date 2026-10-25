@@ -54,10 +54,15 @@ Open it, and download it to your phone (the **Download app** button is on its fi
   lets it through: on a Xiaomi, set Chrome and the app to Battery saver "No restrictions").
 - The screen stays on while the app is open.
 - The clock at the top right times the workout, from your first action to the last set. The finished day shows its time.
-- A finished day shows its **workout card**: the figure with every muscle the day worked lit, the day and date, the time, the
-  weight lifted, the sets, each exercise's best set, the top set, what went up since last time and new bests (PB). **Share**
-  opens the phone's share sheet (Strava, Instagram, Photos…) with the picture (1080 × 1350) and a short text for the
-  description; the button beside it copies both, to paste. To post the day to Strava straight from the app, see Strava below.
+- A finished day shows its **recap**: the day, its date and time, the weight lifted, the working sets and the new bests (PB: the best
+  estimated one-rep max yet), with the figure that has every muscle the day worked lit; under them every exercise in the order you
+  did it with every set ("62 kg × 8", then "54 kg × 10 · 10 · 9", the drop set after them, a one-arm exercise as left/right reps
+  "12/11"), and in amber what went up since that day last time ("+2 kg", "+1 rep", "Top set", "PB"). The recovery days list the ride in
+  minutes. It scrolls when a day has more exercises than the screen has room for; sideways, the exercises are in the figure's column
+  and the numbers beside the buttons. A finished day's square on the overview opens the same recap. **Share** opens the phone's share
+  sheet (Strava, Instagram, Photos…) with the same recap as a picture (1080 × 1350: the figure on the horizon, the numbers and every
+  set of every exercise) and a short text with the sets for the description; the button beside it copies both, to paste. To post the
+  day to Strava straight from the app, see Strava below.
 - Made a mistake? Undo takes back the last step, and again for the one before. The three dots at the top right also hold
   Restart workout (it starts the day over, and Undo brings it back) and All workouts.
 - A machine is taken? **Options** (top right; during a rest it is about the exercise coming next) opens a sheet "Instead of
@@ -105,7 +110,9 @@ After the first visit it also works without a connection.
 Your sets and weights (drop sets apart), the day you are on, the time each workout took and your reps from last time are saved
 in the browser's storage on that phone only. There is no account and nothing is uploaded, so each phone keeps its own progress.
 Clearing the site's data in the browser starts it fresh. A finished week stays ticked until you begin the next workout (or
-press Start a new week at the bottom of the overview); that is also when the week number goes up.
+press Start a new week at the bottom of the overview); that is also when the week number goes up. A second window of the app
+(the installed app and a browser tab, which a return from Strava can open) picks up what the other window saved, so the two do
+not overwrite each other.
 
 ## Strava
 
