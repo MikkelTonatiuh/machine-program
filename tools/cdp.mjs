@@ -9,6 +9,22 @@ import { join } from 'node:path';
 export const CHROME = process.env.CHROME || 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+// Ask the browser on a debugging port to close itself, and wait until the port stops answering. Chrome hands its work to another
+// chrome.exe than the one node spawned (seen with Chrome 157), so killing the spawned process alone leaves the browser running.
+async function endBrowser(port, waitMs = 8000) {
+  try {
+    const v = await (await fetch(`http://127.0.0.1:${port}/json/version`, { signal: AbortSignal.timeout(2000) })).json();
+    const bw = new WebSocket(v.webSocketDebuggerUrl);
+    await new Promise((res, rej) => { bw.addEventListener('open', res, { once: true }); bw.addEventListener('error', rej, { once: true }); });
+    bw.send(JSON.stringify({ id: 1, method: 'Browser.close' }));
+  } catch { return true; }
+  for (const t0 = Date.now(); Date.now() - t0 < waitMs;) {
+    try { await fetch(`http://127.0.0.1:${port}/json/version`, { signal: AbortSignal.timeout(400) }); } catch { return true; }
+    await sleep(100);
+  }
+  return false;
+}
+
 export async function launch({ gpu = false } = {}) {
   const port = 9200 + ((process.pid * 7 + Math.floor(Math.random() * 600)) % 700);
   const prof = mkdtempSync(join(tmpdir(), 'mce-cdp-'));
@@ -54,7 +70,7 @@ export async function launch({ gpu = false } = {}) {
     async shot(out) { await sleep(60); const s = await send('Page.captureScreenshot', { format: 'png' }); writeFileSync(out, Buffer.from(s.result.data, 'base64')); },
     // wait for Chrome to exit before removing its profile (Windows keeps the files locked until then; removing after a
     // fixed 200 ms left a stale profile folder in %TEMP% on most runs)
-    async close() { try { ws.close(); } catch { /* */ } const gone = chrome.exitCode !== null ? Promise.resolve() : new Promise((r) => chrome.once('exit', r)); chrome.kill(); await Promise.race([gone, sleep(5000)]); try { rmSync(prof, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }); } catch { /* best effort */ } },
+    async close() { await endBrowser(port); try { ws.close(); } catch { /* */ } const gone = chrome.exitCode !== null ? Promise.resolve() : new Promise((r) => chrome.once('exit', r)); try { chrome.kill(); } catch { /* */ } await Promise.race([gone, sleep(3000)]); try { rmSync(prof, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }); } catch { /* best effort */ } },
   };
   return page;
 }
