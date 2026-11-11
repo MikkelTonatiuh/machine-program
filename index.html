@@ -113,7 +113,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .nicon { display: inline-flex; align-self: center; }
 .nicon svg { width: 16px; height: 16px; fill: none; stroke: var(--amber); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
 .sel { display: flex; align-items: flex-start; justify-content: center; gap: 18px; margin: 0 0 10px; pointer-events: auto; touch-action: manipulation; }
-@media (max-width: 340px) { .sel { gap: 6px; } .num { min-width: 0; } .stp { gap: 0; } } /* (the reps and weight selectors fit a 320 px screen) */
+@media (max-width: 340px) { .sel { gap: 6px; } .num { min-width: 0; } .stp { gap: 0; } }
+@media (max-width: 760px) { .app.side .sel { gap: 6px; } .app.side .num { min-width: 0; } .app.side .stp { gap: 0; } } /* (a phone on its side: the text column is narrow) */ /* (the reps and weight selectors fit a 320 px screen) */
 .stp { display: flex; align-items: flex-start; gap: 2px; }
 .stepbtn { position: relative; width: 44px; height: 44px; margin-top: 3px; flex: none; border-radius: 50%; display: grid; place-items: center; color: var(--ink); border: 1px solid rgba(236,231,222,.28);
   transition: background-color .15s var(--ease), border-color .15s var(--ease), opacity .15s var(--ease); -webkit-user-select: none; user-select: none; touch-action: manipulation; }
@@ -199,7 +200,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .tile .tx { position: absolute; left: 14px; right: 12px; bottom: 13px; display: flex; flex-direction: column; gap: 3px; }
 .tile .tn { font: 500 12.5px/1 var(--sans); color: var(--ink2); letter-spacing: .02em; }
 .tile .tt { font: 300 28px/1.02 var(--serif); color: var(--ink); letter-spacing: -.01em; }
-.tile .ts { min-height: 15px; font: 500 12.5px/1.2 var(--sans); color: var(--ink2); font-variant-numeric: tabular-nums; }
+.tile .ts { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 15px; font: 500 12.5px/1.2 var(--sans); color: var(--ink2); font-variant-numeric: tabular-nums; }
 .tile .bd { position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--amber); color: #1c1207; box-shadow: 0 2px 10px rgba(0,0,0,.4); }
 .tile .bd svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
 .tile .pl { position: absolute; top: 10px; left: 10px; padding: 5px 9px 4px; border-radius: 999px; background: rgba(236,231,222,.94); color: #10151a; font: 700 11px/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; }
@@ -341,6 +342,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .app.side .info { left: var(--tx0); right: 0; top: var(--top); bottom: calc(var(--actb, 14px) + 112px); justify-content: flex-end; justify-content: safe flex-end; align-items: flex-start; text-align: left; padding: 0 var(--sr) 0 12px; }
 .app.side[data-view="set"] .info, .app.side[data-view="drop"] .info, .app.side[data-view="rest"] .info { bottom: calc(var(--actb, 14px) + 180px); }
 .app.side .name { font-size: clamp(28px, 4.3vw, 54px); }
+.app.side .name, .app.side .swappill { flex-shrink: 0; } /* (the text block is not squeezed on a phone on its side) */
 .app.side .clock { font-size: clamp(56px, 8.5vw, 104px); }
 .app.side .info > * { max-width: 30rem; }
 .app.side .info > .name { max-width: 100%; } /* (a long title shrinks or cuts in the column, it does not run off the screen) */
@@ -919,7 +921,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // Seated figures seen from above reach furthest below the arc (feet forward on a plate: up to ~0.19 of the figure's
   // height), so the text starts that far under the arc: nothing of the figure ever sits behind the text.
   function playerLayout(w, h) {
-    const a = w / h, top = Math.round(clamp(h * 0.07, 48, 64));
+    const a = w / h, top = Math.round(clamp(h * 0.07, 60, 64)); // (the top band is 60 px tall)
     // the box: a virtual classic stage whose arc is ours, no taller than 1.5 x its width (on a tall phone the extra
     // height becomes sky above the figure, not a figure too big for the width of its machine)
     const boxOn = (x0, x1, arcY, frac) => { const bw = x1 - x0, bh = Math.min((arcY - top) / frac, bw * 1.5), y0 = arcY - frac * bh; return { x0, y0, x1, y1: y0 + bh }; };
@@ -2012,7 +2014,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       if (v.pill && v.kind !== 'rest') v.mus = '';
     }
     // a done line carried over to this step for a while ("Warm-up done"), or a word about what just happened ("Undone")
-    if (ui.note && t < ui.note.until && (ui.mode === 'set' || ui.mode === 'warm' || ui.mode === 'timer' || ui.mode === 'done' || ui.mode === 'end')) v.note = Object.assign({ tone: 'done', icon: true }, ui.note);
+    if (ui.note && t < ui.note.until && (ui.mode === 'set' || ui.mode === 'drop' || ui.mode === 'rest' || ui.mode === 'warm' || ui.mode === 'timer' || ui.mode === 'done' || ui.mode === 'end')) v.note = Object.assign({ tone: 'done', icon: true }, ui.note);
     // a message for a moment in the kicker (e.g. "Next time: add weight" on the stretching screen; over a set's kind for that moment)
     if (ui.flash && t < ui.flash.until && (ui.mode === 'set' || (ui.mode === 'timer' && !v.kicker))) { v.kicker = ui.flash.text; v.kTone = 'warm'; }
     return v;
@@ -2097,10 +2099,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   function paintSel(on) {
     E.sel.hidden = !on;
-    if (!on) return;
+    if (!on) { E.log.setAttribute('aria-disabled', 'false'); return; }
     const v = String(selValue());
     if (E.repsn.textContent !== v) E.repsn.textContent = v;
-    E.minus.setAttribute('aria-disabled', +v <= 0 ? 'true' : 'false');
+    E.minus.setAttribute('aria-disabled', +v <= repsFloor() ? 'true' : 'false');
+    E.log.setAttribute('aria-disabled', ui.mode === 'set' && +v < 1 ? 'true' : 'false');
     E.plus.setAttribute('aria-disabled', +v >= REPS_MAX ? 'true' : 'false');
     const w = selKg(), ws = fmtU(w), unit = w === 0 ? 'bodyweight' : uName();
     if (E.kgn.textContent !== ws) E.kgn.textContent = ws;
@@ -2281,7 +2284,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       b.setAttribute('aria-current', i === cur ? 'step' : 'false');
       const done = f >= 1, nm = stepName(d, i), n = nOf(d, i);
       const sn = st.t === 'sets' ? Math.round(f * n) + ' of ' + n + ' sets' : done ? 'done' : '';
-      b.setAttribute('aria-label', 'Step ' + (pos + 1) + ' of ' + L.length + ': ' + nm + (sn ? ', ' + sn : ''));
+      b.setAttribute('aria-label', 'Step ' + (pos + 1) + ' of ' + O.length + ': ' + nm + (sn ? ', ' + sn : ''));
     });
   }
   // a segment's fill: its sets logged, its timer's progress, 1 once done; on the end screen what the finished day really
@@ -2384,6 +2387,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // done line above the button; the rest (or what comes next) follows the moment.
   function logSet(n, kg, how, lr) {
     if (ui.mode !== 'set' || ackOn()) return;
+    if (!(Math.round(n) >= 1)) return; // (0 reps is not a working set)
     const d = ui.day, i = ui.step, N = nOf(d, i);
     n = clamp(Math.round(n), 0, REPS_MAX); kg = kgOne(kg); if (kg == null) kg = 0;
     lr = lr ? lr.map((x) => clamp(Math.round(x), 0, REPS_MAX)) : null;
@@ -2525,10 +2529,12 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function endRest(auto) {
     const r = ui.rest; if (!r) return;
     if (!auto) snapshot('skip rest');
+    const lateMs = auto ? (now() - (r.t0 + r.dur)) : 0; // (a rest that ran out while the app was not seen: one sign, no late beep)
     ui.rest = null; ui.rimFade = { t0: now(), p: Math.min(1, (now() - r.t0) / r.dur) };
+    selLock = now() + LOCK_MS; closeKeypad();
     saveRest();
     if (!auto) Alerts.cancel(); // (one that ran out: the service worker shows its notification only while the app is out of sight)
-    if (auto && !doc.hidden) { Snd.play('rest'); haptic([160, 90, 160]); } else if (!auto) haptic(10);
+    if (auto && !doc.hidden && lateMs < 2000) { Snd.play('rest'); haptic([160, 90, 160]); } else if (auto && !doc.hidden) haptic([160, 90, 160]); else if (!auto) haptic(10);
     goStep(r.next, { cut: r.next !== r.after, go: true, pre: auto ? 'Rest over.' : '' });
   }
 
@@ -2557,6 +2563,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (away) p.gap = (p.gap || 0) + away;
     if (st.key === 'bike' && (st.open || st.phases) && tm && !skipped) p.bike = Math.max(1, Math.round(Math.min(elapsedOf(tm), auto ? st.sec : Infinity) / 60)); // (the recovery days' ride)
     ui.timers.delete(tkey(d, i)); saveTimers();
+    if (auto && here && !st.open && !away && !doc.hidden) { Snd.play('rest'); haptic([160, 90, 160]); } // (a timed step ends with the tones of a rest)
     if (!here) { Save.persist(); render(); return; }
     ui.rimFade = { t0: now(), p: 1 };
     const line = st.name + (skipped ? ' skipped' : ' done' + (st.key === 'bike' && p.bike ? MID + p.bike + ' min' : ''));
@@ -2675,8 +2682,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     saveHist();
     return u;
   }
+  let undoLock = 0;
   function doUndo() {
+    if (now() < undoLock) return; // (a double tap takes one step back, not two)
     const u = hist.pop(); if (!u || u.day !== ui.day) return;
+    undoLock = now() + LOCK_MS;
     cancelGesture(false); cancelRest(); cancelPace(); ui.ack = null; ui.note = null; ui.glow = null; ui.go = null; ui.end = null; ui.flash = null;
     if (u.prog) S.prog[u.day] = u.prog; else delete S.prog[u.day];
     S.current = u.current; S.lastDone = u.lastDone; if (u.cycleFrom != null) { S.cycle = u.cycleFrom; if (u.weekFrom != null) S.week = u.weekFrom; }
@@ -2688,7 +2698,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     ui.rimFade = ui.mode === 'rest' || ui.mode === 'end' ? { t0: now(), p: 1 } : null;
     ui.timers = new Map(u.timers.map((x) => [x.key, { t0: now() - (Date.now() - x.startedAt) }])); saveTimers();
     if (u.sel) { ui.sel = u.sel; saveSel(); }
-    ui.note = { text: T.undone, tone: 'plain', until: now() + 1600 };
+    ui.note = { text: u.label === 'skip rest' ? 'Rest is back' : u.label ? u.label.charAt(0).toUpperCase() + u.label.slice(1) + ' undone' : T.undone, tone: 'plain', until: now() + 1600 };
     const L = stepsOf(u.day);
     try {
       if (u.rest && L[u.rest.after] && L[u.rest.next] && u.at + u.rest.left > Date.now()) { // a rest that was skipped is back, with what it had left (not one that would have run out by now)
@@ -2894,9 +2904,12 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (!isSets()) return 0; const s = selNow(); return s && Number.isFinite(s.kg) ? s.kg : ui.mode === 'drop' ? dropKg(ui.day, ui.step) : defaultKg(ui.day, ui.step);
   }
   // v: the reps, kg: the weight; null leaves that one as it is
+  let selLock = 0; // the selectors take no press for LOCK_MS after the rest ends: they stand for the next set then
+  // a working set has at least 1 rep (0 is for skipping a drop set)
+  const repsFloor = () => (ui.mode === 'drop' || (amendOn() && ui.rest.set.drop) ? 0 : 1);
   function setSel(v, kg) {
     if (!selMode() || ackOn()) return false;
-    const nv = v == null ? selValue() : clamp(Math.round(v), 0, REPS_MAX), nk = kg == null ? selKg() : clamp(kgOne(kg) == null ? 0 : kgOne(kg), 0, KG_MAX);
+    const nv = v == null ? selValue() : clamp(Math.round(v), repsFloor(), REPS_MAX), nk = kg == null ? selKg() : clamp(kgOne(kg) == null ? 0 : kgOne(kg), 0, KG_MAX);
     if (nv === selValue() && nk === selKg()) return false;
     if (amendOn()) { if (!amend(nv, nk)) return false; render(); bump(v == null ? E.kg : E.reps); haptic(6); return true; }
     const d = ui.day, i = ui.step, k = setsOf(d, i).length, drop = ui.mode === 'drop';
@@ -2923,13 +2936,14 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   // - / +, the wheel, the keys: one rep at a time
   function stepSel(k, how) {
+    if (now() < selLock) return;
     if (!setSel(selValue() + k, null)) return;
     saveSel();
     if (how === 'key' || how === 'button') announce(repsWord(selValue()));
   }
   // one step of the weight: to the next whole kg or lb (mult: a held button's speed-up)
   function stepKg(dir, mult, how) {
-    if (!selMode() || ackOn()) return false;
+    if (!selMode() || ackOn() || now() < selLock) return false;
     const cur = selKg(), nx = stepW(cur, dir, mult);
     if (sameW(nx, cur) || (dir < 0 && nx > cur) || (dir > 0 && nx < cur)) return false;
     if (!setSel(null, nx)) return false;
@@ -2980,7 +2994,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function kpSet() {
     if (kpin.value.trim() === '') { closeKeypad(); return; }
     const v = parseW(kpin.value);
-    if (v == null) { kpin.setAttribute('aria-invalid', 'true'); return; }
+    if (v == null) { kpin.setAttribute('aria-invalid', 'true'); kpin.title = 'Up to ' + fmtU(UMAX()) + ' ' + uWord(); return; }
     closeKeypad();
     if (setSel(null, fromU(v))) { saveSel(); announce(fmtU(selKg()) + ' ' + uWord()); }
   }
@@ -3226,6 +3240,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     }
     const pc = paceNow(t);
     if (!pc) return;
+    if (pc.count >= rangeAt(p.day, p.step, p.k).hi + 10 && !(p.uni && p.side === 1)) { paceAway(pc.count); return; }
     // the second side stops by itself once it has matched the first: at the end of the lowering of the matching rep
     if (p.uni && p.side === 1) {
       const target = p.done[0], stopAt = target > 0 ? (target - 1) * p.tempo.dur + p.tempo.e1 : 0;
@@ -3240,7 +3255,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const p = ui.pace; if (!p || !paceHere() || ackOn()) return;
     const pc = paceNow();
     // (before any rep was counted, on either side: nothing happened, nothing is logged; the set can be done again)
-    if (pc.stage === 'count' || (pc.stage === 'run' && pc.count === 0)) { cancelPace(); render(); haptic(10); announce('Stopped. Nothing logged.'); return; }
+    if (p.uni && p.side === 1 && pc.stage === 'run' && pc.count === 0) { // (the second side, no rep yet: back to "Switch sides", the first side's reps stay)
+      p.stage = 'switch'; p.t0 = now(); p.beat = Math.ceil(SWITCH_MS / 1000); p.seen = 0;
+      savePace(); paceStage(); paceBeeps(true); haptic(10); ui.note = { text: 'Nothing logged', tone: 'plain', until: now() + 2000 }; render(); kickLoop(); announce('Stopped. Nothing logged.'); return;
+    }
+    if (pc.stage === 'count' || (pc.stage === 'run' && pc.count === 0)) { cancelPace(); ui.note = { text: 'Nothing logged', tone: 'plain', until: now() + 2000 }; render(); kickLoop(); haptic(10); announce('Stopped. Nothing logged.'); return; }
     if (pc.stage === 'switch') { paceSecondNow(); return; }
     if (p.uni && p.side === 0) {
       p.done = [pc.count]; p.side = 1; p.stage = 'switch'; p.t0 = now(); p.beat = Math.ceil(SWITCH_MS / 1000); p.seen = 0;
@@ -3267,6 +3286,17 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // the pacer goes (logged, stopped, or its set is not on screen any more): the figure's own loop again
   function endPace() { if (!ui.pace) return; if (ui.pace.stage !== 'run') Snd.cancel(); ui.pace = null; savePace(); paceStage(); }
   function cancelPace() { endPace(); }
+  // The pacer stops by itself when nobody could have followed its count: the app was out of sight for more than 3 s, or the
+  // count is 10 over the top of the range. The count up to that moment goes to the selector; nothing is logged.
+  const PACE_AWAY_MS = 3000;
+  function paceAway(count) {
+    const p = ui.pace; if (!p) return;
+    const n = Math.min(REPS_MAX, Math.max(0, count | 0));
+    endPace();
+    if (n >= 1 && !ackOn()) { ui.sel = { day: ui.day, step: ui.step, k: setsOf(ui.day, ui.step).length, v: n, kg: selKg(), drop: ui.mode === 'drop' ? 1 : 0 }; saveSel(); }
+    ui.note = { text: 'Check the reps', tone: 'warm', until: now() + 4000 };
+    render(); kickLoop(); announce('Stopped. Check the reps.');
+  }
   function savePace() {
     if (VERIFY || ui.adhoc) return;
     const u = lsGet(LS_UI) || {}, p = ui.pace, at = (x) => Math.round(Date.now() - (now() - x));
@@ -3302,8 +3332,21 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (!raf && !doc.hidden) raf = requestAnimationFrame(loop);
     if (!iv) iv = setInterval(() => { if (doc.hidden) loop(); }, 500);
   }
+  // The page's monotonic clock can stand still while the phone sleeps; the wall clock does not. When the two part, the running
+  // rest and the timed steps are moved on by the difference (the pacer is stopped by its own rule, see paceAway).
+  let clk0 = null;
+  function syncClock() {
+    const D = Date.now(), N = now();
+    if (!clk0) { clk0 = [D, N]; return; }
+    const gap = (D - clk0[0]) - (N - clk0[1]);
+    clk0 = [D, N];
+    if (!(gap > 1500)) return;
+    if (ui.rest) ui.rest.t0 -= gap;
+    for (const tm of ui.timers.values()) tm.t0 -= gap;
+  }
   function loop() {
     if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    syncClock();
     const t = now(), ack = ackOn();
     let need = false;
     // timed steps running while another step is on screen: a warm-up or stretching that runs out is done (saved)
@@ -3380,9 +3423,15 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   g.addEventListener('storage', (e) => { if (e && e.key === LS_LOG) adoptStored(); });
   // out of sight during a rest: the service worker is told again when it ends (it shows the notification then); back in
   // sight: the notification goes, and the pacer's figure picks up its clock where it is now
+  let hidAt = null;
   doc.addEventListener('visibilitychange', () => {
-    if (!doc.hidden) { adoptStored(); kickLoop(); closeGap(); paintSess(); Alerts.clear(); if (ui.pace) paceStage(); }
-    else { cancelGesture(true); if (ui.mode === 'rest' && ui.rest) Alerts.schedule(); }
+    if (!doc.hidden) {
+      syncClock();
+      const h = hidAt; hidAt = null;
+      if (h && ui.pace && paceHere() && Date.now() - h.d > PACE_AWAY_MS) { const pc = paceNow(h.n); paceAway(pc && pc.stage === 'run' ? pc.count : 0); }
+      adoptStored(); kickLoop(); closeGap(); paintSess(); Alerts.clear(); if (ui.pace) paceStage();
+    }
+    else { hidAt = { d: Date.now(), n: now() }; cancelGesture(true); if (ui.mode === 'rest' && ui.rest) Alerts.schedule(); }
   });
 
   // Running timed steps and a running rest survive a reload of the page (this device only: their start / end times are
@@ -3577,8 +3626,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (G.kind === 'pending') {
       if (dx * dx + dy * dy < DECIDE * DECIDE) return;
       const vertical = Math.abs(dy) > Math.abs(dx);
-      if (vertical && selMode() && !ackOn()) { G.kind = 'adjust'; G.base = selValue(); G.sel = ui.sel; E.reps.classList.add('big'); app.classList.add('adjusting'); }
-      else if (!vertical && turnable()) { G.kind = 'turn'; clearTimeout(turnT); stage.orbitStart(); markTurn(); stage.orbitBy(dx * 0.42 * yawSign(), 0); return; }
+      if (!vertical && turnable()) { G.kind = 'turn'; clearTimeout(turnT); stage.orbitStart(); markTurn(); stage.orbitBy(dx * 0.42 * yawSign(), 0); return; }
       else { G.kind = 'none'; return; }
     }
     if (G.kind === 'turn') stage.orbitBy(ix * 0.42 * yawSign(), 0);
@@ -3684,6 +3732,27 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     else { wheelAcc += dy; while (Math.abs(wheelAcc) >= 50) { steps -= Math.sign(wheelAcc); wheelAcc -= Math.sign(wheelAcc) * 50; } }
     if (steps) stepSel(steps, 'wheel');
   }, { passive: false });
+  // Android's back closes what is open (the keypad, Options, a sheet, the overview, the menu) before it leaves the app: while
+  // something is open one history entry is pushed, and back (popstate) closes the top one.
+  const overlayOpen = () => kpOpen() || optOpen() || Strava.sheetOpen() || revOpen() || cardOpen() || sheetOpen() || dialogOpen() || menuOpen();
+  function closeTop() {
+    if (kpOpen()) closeKeypad(); else if (optOpen()) { if (ui.preview) cancelPreview(); else closeOpts(); } else if (Strava.sheetOpen()) Strava.close(); else if (revOpen()) closeReview(); else if (cardOpen()) closeCardSheet(); else if (sheetOpen()) closeSheet(); else if (dialogOpen()) closeDays(); else if (menuOpen()) closeMenu(true);
+  }
+  let backPushed = false, backSkip = false;
+  function syncBack() {
+    try {
+      if (backSkip) return; // (a step back we asked for is on its way: popstate calls this again)
+      const open = overlayOpen();
+      if (open && !backPushed) { g.history.pushState({ mp: 1 }, ''); backPushed = true; }
+      else if (!open && backPushed) { backPushed = false; backSkip = true; g.history.back(); }
+    } catch (_) { /* fine */ }
+  }
+  g.addEventListener('popstate', () => {
+    if (backSkip) { backSkip = false; syncBack(); return; }
+    if (!backPushed) return;
+    backPushed = false; closeTop(); syncBack();
+  });
+  if (g.MutationObserver && doc.body) new MutationObserver(syncBack).observe(doc.body, { attributes: true, attributeFilter: ['hidden'], subtree: true });
   // Up / Down change the reps on a set, Left / Right turn the view, Escape closes the day picker; Enter and Space press
   // the focused button, as buttons do
   doc.addEventListener('keydown', (e) => {
@@ -3766,7 +3835,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   function openDays() {
     if (ui.adhoc || !P) return;
-    cancelGesture(false); closeMenu(false); expireWeek();
+    cancelGesture(false); closeMenu(false); closeOpts(); expireWeek();
     fillDays();
     if (dlg.hidden) dlgReturn = doc.activeElement;
     dlg.hidden = false; app.classList.add('dlg'); dlg.scrollTop = 0; syncRender(); // opaque: nothing renders behind it
@@ -4704,7 +4773,13 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     });
   });
   $('munit').addEventListener('click', () => { prefs.unit = prefs.unit === 'kg' ? 'lb' : 'kg'; savePrefs(); closeKeypad(); render(); paintMenu(); announce('Weights in ' + uWord() + '.'); });
-  doc.addEventListener('pointerdown', (e) => { if (menuOpen() && !menu.contains(e.target) && !more.contains(e.target)) closeMenu(false); }, true);
+  // (the first tap outside an open menu only closes it: neither its pointerdown nor the click after it reaches what was tapped)
+  doc.addEventListener('pointerdown', (e) => {
+    if (!menuOpen() || menu.contains(e.target) || more.contains(e.target)) return;
+    closeMenu(false); e.stopPropagation();
+    const eat = (ev) => { ev.stopPropagation(); ev.preventDefault(); doc.removeEventListener('click', eat, true); };
+    doc.addEventListener('click', eat, true); setTimeout(() => doc.removeEventListener('click', eat, true), 700);
+  }, true);
 
   // ---------------------------------------------------------------- Options: instead of this exercise
   // The Options button at the top right (on a set, the warm-up sets, a timed step, and during a rest for what comes next) opens a bottom
@@ -4816,6 +4891,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   function useOpt() {
     const it = optPrev, c = optCtx; if (!it || !c) return;
+    if (c.d !== ui.day || dialogOpen()) { closeOpts(); return; }
     closeOpts(true);
     const d = ui.day, st = stepsOf(d)[c.i];
     if (!st || !canChoose(d, c.i)) { syncFig(); render(); return; }
@@ -4928,7 +5004,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         if (my !== seq || !want || doc.hidden || lock) { drop(l); return; }
         lock = l; refused = false; taken++;
         try { l.addEventListener('release', () => { if (lock === l) { lock = null; if (!doc.hidden) setTimeout(() => take(), 1000); } }); } catch (_) { /* no events: fine */ }
-      }, () => { busy = false; if (my === seq) { refused = true; refusedAt = now(); } });
+      }, () => { busy = false; if (my === seq) { refused = true; refusedAt = now(); setTimeout(() => { refused = false; take(); }, 25000); } }); // (a refusal is tried again by itself)
     };
     doc.addEventListener('visibilitychange', () => { if (doc.hidden) release(); else { refused = false; take(); } });
     for (const ev of ['pointerup', 'keydown']) doc.addEventListener(ev, () => take(true), true);
@@ -4970,7 +5046,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     if (!VERIFY) { restoreTimers(); restoreRest(); restoreHist(); restorePace(); closeGap(); Strava.start(STRAVA_BACK); }
     wake.set(!VERIFY); // the screen stays awake while the app is open
     $('top').hidden = false; E.act.hidden = false;
-    if (!VERIFY && !Q.get('day') && !Q.get('ex')) openDays(); // the app opens on the overview of the days (a link to a day or exercise goes straight to it)
+    if (!VERIFY && !Q.get('day') && !Q.get('ex')) openDays(); // (a rest, the pacer or a timer that was restored: straight back to it) the app opens on the overview of the days (a link to a day or exercise goes straight to it)
     // the stage's data and the first exercise start downloading now, alongside three.js; core.js keeps the requests, so
     // the stage picks them up instead of asking again
     if (MCE.loadJSON && !g.MC_DATA) {
@@ -5124,7 +5200,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   }
   sw.addEventListener('controllerchange', keep);
   window.addEventListener('load', function () {
-    sw.register('sw.js').then(function (r) { reg = r; }, function () { /* no offline use in this browser */ });
+    // (a first visit: the worker's download of every file waits for the first figure, so it does not slow it down)
+    var go = function () { sw.register('sw.js').then(function (r) { reg = r; }, function () { /* no offline use in this browser */ }); }, n = 0;
+    if (sw.controller) go();
+    else { var iv = setInterval(function () { if (window.__ready || ++n > 100) { clearInterval(iv); go(); } }, 300); }
     sw.ready.then(function () { keep(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(keep); });
   });
   document.addEventListener('visibilitychange', function () {
