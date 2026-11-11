@@ -80,7 +80,8 @@ async function pruneCdn() {
   for (const req of await cache.keys()) if (!keep.has(req.url)) await cache.delete(req);
 }
 
-self.addEventListener('install', (event) => { event.waitUntil(Promise.all([precache(), Promise.race([warmCdn(), new Promise((r) => setTimeout(r, 8000))])])); // (a CDN request that never answers does not hold the install) });
+// (a CDN request that never answers does not hold the install)
+self.addEventListener('install', (event) => { event.waitUntil(Promise.all([precache(), Promise.race([warmCdn(), new Promise((r) => setTimeout(r, 8000))])])); });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {

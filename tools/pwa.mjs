@@ -7,10 +7,14 @@
 //   node tools/pwa.mjs --check   exit 1 if the record is stale (nothing is written)
 //
 // sw.js itself is not in the list: the browser checks it byte for byte on its own.
+// Both forms also make sure sw.js still parses as a script, and fail if it does not: a worker with a syntax error is refused by
+// every browser, so no phone can install the app or take an update, while the page itself looks fine (this shipped once, when a
+// trailing comment swallowed the end of a statement).
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import vm from 'node:vm';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SW = join(ROOT, 'sw.js');
@@ -28,6 +32,10 @@ const paths = [...known, ...wanted.filter((p) => !known.includes(p))];
 const files = paths.map((p) => [p, createHash('sha256').update(readFileSync(join(ROOT, p))).digest('base64')]);
 const version = createHash('sha256').update(files.map((f) => f[0] + ' ' + f[1]).join('\n')).digest('hex').slice(0, 12);
 const record = 'const BUILD = ' + JSON.stringify({ version, files, cdn: old.cdn }) + ';';
+try { new vm.Script([record, ...lines.slice(1)].join('\n'), { filename: 'sw.js' }); } catch (e) {
+  console.error('sw.js does not parse: ' + (e && e.message) + (e && e.stack ? '\n' + String(e.stack).split('\n').slice(0, 3).join('\n') : ''));
+  process.exit(1);
+}
 
 if (process.argv.includes('--check')) {
   if (first !== record) { console.error('sw.js: the build record is stale (run: node tools/pwa.mjs)'); process.exit(1); }
