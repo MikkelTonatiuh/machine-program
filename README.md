@@ -54,15 +54,16 @@ Open it, and download it to your phone (the **Download app** button is on its fi
   lets it through: on a Xiaomi, set Chrome and the app to Battery saver "No restrictions").
 - The screen stays on while the app is open.
 - The clock at the top right times the workout, from your first action to the last set. The finished day shows its time.
-- A finished day shows its **recap**: the day, its date and time, the weight lifted, the working sets and the new bests (PB: the best
-  estimated one-rep max yet), with the figure that has every muscle the day worked lit; under them every exercise in the order you
-  did it with every set ("62 kg × 8", then "54 kg × 10 · 10 · 9", the drop set after them, a one-arm exercise as left/right reps
-  "12/11"), and in amber what went up since that day last time ("+2 kg", "+1 rep", "Top set", "PB"). The recovery days list the ride in
-  minutes. It scrolls when a day has more exercises than the screen has room for; sideways, the exercises are in the figure's column
-  and the numbers beside the buttons. A finished day's square on the overview opens the same recap. **Share** opens the phone's share
-  sheet (Strava, Instagram, Photos…) with the same recap as a picture (1080 × 1350: the figure on the horizon, the numbers and every
-  set of every exercise) and a short text with the sets for the description; the button beside it copies both, to paste. To post the
-  day to Strava straight from the app, see Strava below.
+- A finished day shows its **summary**: the day's figure, large on the horizon with every muscle the day worked lit, one headline that
+  says the best true thing about it ("6 of 6 went up", else "Day 4 done", "First workout done" or "Deload day done"), and at most three
+  numbers: the time, the weight lifted (or the ride on a recovery day) and the new bests (the best estimated one-rep max yet), else the
+  sets. Under them "All sets" opens a sheet with every set of every exercise in the order you did it ("62 kg × 8", then "54 kg × 10 · 10 · 9",
+  the drop set after them, a one-arm exercise as left/right reps "12/11"), "Best" and in amber what went up since that day last time
+  ("+2 kg", "+1 rep"); the recovery days list the ride in minutes. "Next: Day 2" opens the next day. A finished day's square on the
+  overview opens the same sheet. **Share** is the main button: it opens the phone's share sheet (Strava, Instagram, Photos…) with a poster
+  (1080 × 1350: the day's name, the figure on the horizon, the numbers and one line per exercise with its best set and what went up) and a
+  short text with every set for the description; the button beside it copies both, to paste. The poster is drawn when you share or copy. To post
+  the day to Strava straight from the app, see Strava below.
 - Made a mistake? Undo takes back the last step, and again for the one before. The three dots at the top right also hold
   Restart workout (it starts the day over, and Undo brings it back) and All days.
 - A machine is taken? **Options** (top right; during a rest it is about the exercise coming next) opens a sheet "Instead of

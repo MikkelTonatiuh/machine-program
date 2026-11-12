@@ -110,6 +110,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .note[data-tone="guide"], .note[data-tone="soft"], .note[data-tone="tip"] { font: 500 16px/1.35 var(--sans); color: var(--ink); }
 .note[data-tone="soft"] { color: var(--ink2); }
 .note[data-tone="done"] { color: var(--ink); }
+.note[data-tone="warm"] { color: var(--amber); }
 .nicon { display: inline-flex; align-self: center; }
 .nicon svg { width: 16px; height: 16px; fill: none; stroke: var(--amber); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
 .sel { display: flex; align-items: flex-start; justify-content: center; gap: 18px; margin: 0 0 10px; pointer-events: auto; touch-action: manipulation; }
@@ -253,71 +254,85 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .optlist { display: flex; flex-direction: column; gap: 4px; margin: 4px 0 16px; }
 .optlist button { display: block; width: 100%; padding: 15px 14px; border-radius: 12px; text-align: left; font: 500 16px/1.2 var(--sans); color: var(--ink); background: rgba(236,231,222,.06); touch-action: manipulation; }
 .optlist button:active { background: rgba(236,231,222,.15); }
-/* the recap of a finished day: on the end screen it lies over the sky and the horizon (the day's figure beside its numbers, every exercise
-   with every set on a glass panel above the buttons); in a finished day's sheet (from the overview) it is the sheet's content */
-.endnext { pointer-events: auto; margin: -4px 0 6px; }
-.endrow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; column-gap: 20px; max-width: 100%; margin: -4px 0 6px; } /* (the next day's link, and beside it the Strava line when it is on: a second row only when they do not fit) */
-.endrow .endnext { margin: 0; }
-.endrow .stravabar { display: contents; }
-.app.side .endrow { justify-content: flex-start; }
-.recap { display: flex; flex-direction: column; min-height: 0; text-align: left; }
-.recap ul li { counter-increment: none; gap: 0; font: inherit; } /* (the sheet's own list styles: numbered rows with a circle, not for these) */
-.recap ul li::before { content: none; }
-.recap ul li.rrow { display: block; }
-.recap .rtitle { margin: 0; font: 300 clamp(32px, 9vw, 40px)/1.06 var(--serif); letter-spacing: -.012em; color: var(--ink); }
-.recap .rtitle svg { width: .6em; height: .6em; margin: 0 .24em 0 -.02em; vertical-align: .02em; fill: none; stroke: var(--amber); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
-.recap .rsub { margin: 5px 0 0; font: 400 14px/1.3 var(--sans); color: var(--ink2); }
-.recap .rsub[data-tone="warm"] { color: var(--amber); font-weight: 500; }
-.recap .rtop { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 10px; min-height: 150px; }
-.recap .rstats { list-style: none; margin: 0; padding: 0 0 4px; display: flex; flex-direction: column; gap: 3px; flex: 1 1 auto; min-width: 0; }
-.recap .rstat { display: flex; align-items: baseline; gap: 8px; white-space: nowrap; }
-.recap .rstat b { font: 300 34px/1.12 var(--serif); letter-spacing: -.01em; color: var(--ink); font-variant-numeric: tabular-nums lining-nums; }
-.recap .rstat span { font: 400 13px/1.2 var(--sans); color: var(--ink3); }
-.recap .rstat[data-tone="pb"] b, .recap .rstat[data-tone="pb"] span { color: var(--amber); }
-.rfig { flex: none; display: block; align-self: stretch; width: 46%; height: auto; max-height: 176px; min-height: 120px; object-fit: contain; object-position: center bottom; opacity: 0; transition: opacity .6s var(--ease);
-  -webkit-mask-image: linear-gradient(#000 74%, transparent); mask-image: linear-gradient(#000 74%, transparent); -webkit-user-drag: none; pointer-events: none; }
-.rfig[data-on] { opacity: 1; }
-.rfig.still { -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent); mask-image: radial-gradient(closest-side, #000 62%, transparent); }
-.recap .rlist { list-style: none; margin: 12px 0 0; padding: 2px 16px; flex: 0 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; pointer-events: auto; touch-action: pan-y;
-  border-radius: 18px; background: rgba(8,11,14,.74); border: 1px solid rgba(236,231,222,.16); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-.recap .rrow { padding: 9px 0 10px; border-top: 1px solid var(--line); }
-.recap .rrow:first-child { border-top: 0; }
-.recap .rrh { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.recap .rn { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; min-width: 0; font: 500 16px/1.25 var(--sans); color: var(--ink); }
-.recap .rn small { font: 400 12.5px/1.25 var(--sans); color: var(--ink3); white-space: nowrap; }
-.recap .rtags { display: inline-flex; align-items: baseline; gap: 9px; flex: none; font: 600 11.5px/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--amber); white-space: nowrap; }
-.recap .rtags i { font: 500 13.5px/1 var(--sans); font-style: normal; letter-spacing: 0; text-transform: none; font-variant-numeric: tabular-nums; }
-.recap .rsets { display: flex; flex-wrap: wrap; column-gap: 18px; row-gap: 1px; margin-top: 4px; font: 400 15px/1.35 var(--sans); color: var(--ink2); font-variant-numeric: tabular-nums; }
-.recap .rp { white-space: nowrap; }
-.recap .rp.dim { color: var(--ink3); }
-#recap { position: absolute; z-index: 3; left: 0; right: 0; top: calc(var(--top) + 4px); bottom: calc(var(--acth, 106px) + 12px); width: min(100%, 460px); margin: 0 auto; padding: 0 var(--sr) 0 var(--sl);
-  pointer-events: none; opacity: 0; transition: opacity .5s var(--ease); }
-.app[data-view="end"][data-recap] #recap { opacity: 1; }
-.app:not([data-view="end"]) #recap, .app:not([data-view="end"]) #recapfig { display: none; }
-.app[data-view="end"][data-recap] .info { display: none; } /* (the recap says the day's name, its time and what it held) */
-.recap > .rtitle, .recap > .rsub, .recap > .rtop { flex: none; }
-#recap .rtop { min-height: var(--rfigh, 176px); padding-right: calc(min(44%, 200px) + 6px); }
-#recapfig { position: absolute; z-index: 3; top: calc(var(--top) + 4px + 1.06 * clamp(32px, 9vw, 40px) + 33px); right: max(var(--sr), calc((100% - 460px) / 2 + var(--sr))); width: min(44%, 200px); height: var(--rfigh, 176px); }
-@media (max-height: 760px) { .app:not(.side) { --rfigh: 150px; } }
-@media (max-height: 660px) { .app:not(.side) #recapfig { display: none; } .app:not(.side) #recap .rtop { min-height: 0; padding-right: 0; } .app:not(.side) #recap .rstats { flex-direction: row; flex-wrap: wrap; column-gap: 18px; } .app:not(.side) #recap .rstat b { font-size: 28px; } }
-/* sideways: the exercises in the figure's column (nothing else to show there), the day and its numbers above the buttons in the text column */
-.app.side #recap { left: 0; right: 0; top: var(--top); bottom: 14px; width: auto; margin: 0; padding: 0; display: grid; grid-template-columns: var(--tx0) minmax(0, 1fr); grid-template-rows: auto auto 1fr; align-content: start; }
-.app.side #recap > .rtitle { grid-column: 2; grid-row: 1; padding: 4px var(--sr) 0 12px; font-size: clamp(30px, 4.3vw, 44px); }
-.app.side #recap > .rsub { grid-column: 2; grid-row: 2; padding: 0 var(--sr) 0 12px; }
-.app.side #recap > .rtop { grid-column: 2; grid-row: 3; align-self: start; min-height: 0; margin-top: 10px; padding: 0 var(--sr) 0 12px; }
-.app.side #recap .rstats { display: grid; grid-template-columns: repeat(2, minmax(0, auto)); justify-content: start; column-gap: 24px; row-gap: 0; }
-.app.side #recap .rstat b { font-size: 28px; }
-.app.side #recap > .rlist { grid-column: 1; grid-row: 1 / span 3; align-self: start; justify-self: center; width: min(calc(100% - var(--sl) - 12px), 560px); max-height: calc(100% - 8px); margin: 8px 0 0; }
-.app.side #recapfig { display: none; }
-.cardsheet .sheetbox { display: flex; flex-direction: column; align-items: stretch; max-height: 100%; overflow-y: auto; }
-.cardsheet h3 { align-self: flex-start; }
-#cardsheetrecap { position: relative; display: flex; margin: 2px 0 6px; max-height: min(64vh, 520px); }
-#cardsheetrecap .rtop { min-height: 120px; }
-#cardsheetrecap .rfig { max-height: 150px; width: 46%; }
-#cardsheetrecap .rlist { background: rgba(236,231,222,.05); -webkit-backdrop-filter: none; backdrop-filter: none; }
+/* the finished day: the day's figure large on the horizon with its muscles lit, one headline, at most three numbers (over the sky and the
+   horizon, where an exercise's name sits on a set's screen); above the buttons one line (Strava, or a word about what just happened) and two
+   quiet buttons: every set (a sheet) and the next day */
+.herofig { position: absolute; z-index: 2; display: block; max-width: none; opacity: 0; pointer-events: none; -webkit-user-drag: none; transition: opacity .5s var(--ease); }
+.herofig[data-on] { opacity: 1; }
+.herofig.still { -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent); mask-image: radial-gradient(closest-side, #000 62%, transparent); }
+.hero { position: absolute; left: 0; right: 0; top: var(--ty0); z-index: 3; display: flex; flex-direction: column; align-items: center; padding: 0 var(--sr) 0 var(--sl); text-align: center; pointer-events: none; }
+.hl { margin: 0; max-width: 100%; font: 300 clamp(34px, 10.2vw, 46px)/1.06 var(--serif); letter-spacing: -.012em; color: var(--ink); white-space: nowrap; font-variant-numeric: lining-nums; }
+.hl svg { width: .6em; height: .6em; margin: 0 .2em 0 -.08em; vertical-align: -.02em; fill: none; stroke: var(--amber); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
+.nums { list-style: none; display: flex; justify-content: center; gap: clamp(18px, 6.6vw, 30px); margin: 11px 0 0; padding: 0; }
+.nums li { display: flex; flex-direction: column; align-items: center; min-width: 54px; }
+.nums b { font: 300 36px/1.11 var(--serif); letter-spacing: -.01em; color: var(--ink); font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
+.nums span { margin-top: -1px; font: 400 12.5px/1.12 var(--sans); color: var(--ink3); white-space: nowrap; }
+.nums li[data-tone="pb"] b, .nums li[data-tone="pb"] span { color: var(--amber); }
+.hero[data-rise] .hl { animation: heroRise .35s .15s var(--ease) both; }
+.hero[data-rise] .nums li { animation: heroFade .25s .3s var(--ease) both; }
+.hero[data-rise] ~ .act .endrow { animation: heroFade .25s .45s var(--ease) both; }
+@keyframes heroRise { from { opacity: 0; transform: translateY(8px); } }
+@keyframes heroFade { from { opacity: 0; } }
+.endrow { display: flex; flex-direction: column; align-items: center; max-width: 100%; margin: 0 0 10px; }
+.endrow .stravabar { margin: 0 0 8px; min-height: 20px; }
+.pills { display: flex; justify-content: center; gap: 8px; max-width: 100%; pointer-events: auto; }
+.pill { pointer-events: auto; flex: 0 1 auto; min-width: 0; height: 40px; margin: 0; padding: 0 16px; overflow: hidden; text-overflow: ellipsis; border-radius: 999px; border: 1px solid rgba(236,231,222,.34); background: rgba(236,231,222,.08);
+  font: 500 14px/1 var(--sans); color: var(--ink); letter-spacing: .01em; white-space: nowrap; touch-action: manipulation; }
+.pill:active { background: rgba(236,231,222,.17); }
+.app[data-view="end"][data-recap] .info, .app:not([data-view="end"]) .hero, .app:not([data-view="end"]) .herofig { display: none; }
+.app[data-view="end"][data-recap] .sess { visibility: hidden; }
+/* a larger system font, or a long line above the buttons on a small screen: the numbers get smaller first, then the headline, then the numbers go on one line */
+.app.crowded:not(.side) .nums { margin-top: 6px; } .app.crowded:not(.side) .nums b { font-size: 28px; }
+.app.crowded2:not(.side) .hl { font-size: clamp(28px, 8.4vw, 36px); }
+.app.crowded3:not(.side) .nums { flex-wrap: wrap; gap: 0 12px; margin-top: 4px; }
+.app.crowded3:not(.side) .nums li { flex-direction: row; align-items: baseline; gap: 5px; min-width: 0; }
+.app.crowded3:not(.side) .nums b { font: 500 15px/1.4 var(--sans); letter-spacing: 0; }
+.app.crowded3:not(.side) .nums span { margin: 0; font-size: 14px; line-height: 1.4; color: var(--ink2); }
+.app.crowded3:not(.side) .nums li[data-tone="pb"] span { color: var(--amber); }
+@media (max-height: 699px) { .app:not(.side) .nums b { font-size: 32px; } .app:not(.side) .nums { margin-top: 8px; } .app:not(.side) .endrow { margin-bottom: 8px; } }
+.app.side .hero { left: var(--tx0); right: 0; top: var(--herotop, calc(var(--top) + 4px)); align-items: flex-start; text-align: left; padding: 0 var(--sr) 0 12px; }
+.app.side .hl { font-size: clamp(30px, 4.3vw, 46px); }
+.app.side .nums { justify-content: flex-start; margin-top: 8px; }
+.app.side .nums li { align-items: flex-start; min-width: 0; }
+.app.side .nums b { font-size: 32px; }
+.app.side .endrow { align-items: flex-start; }
+.app.side .pills { justify-content: flex-start; }
+/* every set: the sheet of a finished day (from "All sets", and from a finished day's square on the overview) */
+.cardsheet .sheetbox { display: flex; flex-direction: column; max-height: calc(100% - 28px); padding-top: 20px; }
+.glance { position: relative; flex: none; min-height: 132px; margin: 0 0 4px; padding: 14px clamp(120px, 38%, 150px) 20px 16px; border-radius: 18px; border: 1px solid var(--line); overflow: hidden; isolation: isolate;
+  background: radial-gradient(circle 700px at 78% calc(100% + 684px), #1c1614 0 99%, transparent 100%), linear-gradient(#0f1a22, #14100f); }
+.glance canvas { position: absolute; right: 0; top: 0; z-index: -1; pointer-events: none; }
+.glance .gk { margin: 0; font: 500 13px/1.2 var(--sans); color: var(--ink2); letter-spacing: .01em; }
+.glance .gh { margin: 6px 0 0; font: 300 clamp(23px, 6.6vw, 27px)/1.08 var(--serif); letter-spacing: -.012em; color: var(--ink); font-variant-numeric: lining-nums; text-wrap: balance; }
+.glance .gh svg { width: .58em; height: .58em; margin: 0 .2em 0 -.04em; vertical-align: -.01em; fill: none; stroke: var(--amber); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.glance .gn { display: flex; flex-wrap: wrap; column-gap: 12px; margin: 8px 0 0; font: 500 14px/1.45 var(--sans); color: var(--ink2); font-variant-numeric: tabular-nums; }
+.glance .gn b { font-weight: 500; color: var(--ink); }
+.glance .gn i { font-style: normal; color: var(--amber); white-space: nowrap; } .glance .gn i b { color: inherit; }
+.glance .gn span { white-space: nowrap; }
+.rlist { list-style: none; margin: 0; padding: 2px 0; flex: 0 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; }
+.rlist.more { -webkit-mask-image: linear-gradient(#000 calc(100% - 44px), transparent); mask-image: linear-gradient(#000 calc(100% - 44px), transparent); }
+.sheetbox li.rrow { display: block; counter-increment: none; gap: 0; font: inherit; padding: 10px 0 11px; border-top: 1px solid var(--line); }
+.sheetbox li.rrow::before { content: none; }
+.rrow:first-child { border-top: 0; }
+.rrh { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.rn { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; min-width: 0; font: 500 16px/1.25 var(--sans); color: var(--ink); }
+.rn small { font: 400 12.5px/1.25 var(--sans); color: var(--ink3); white-space: nowrap; }
+.rtags { display: inline-flex; align-items: baseline; gap: 9px; flex: none; font: 600 11.5px/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--amber); white-space: nowrap; }
+.rtags i { font: 500 13.5px/1 var(--sans); font-style: normal; letter-spacing: 0; text-transform: none; font-variant-numeric: tabular-nums; }
+.rsets { display: flex; flex-wrap: wrap; column-gap: 18px; row-gap: 1px; margin-top: 4px; font: 400 15px/1.35 var(--sans); color: var(--ink2); font-variant-numeric: tabular-nums; }
+.rp { white-space: nowrap; }
+.rp.dim { color: var(--ink3); }
+.cardsheet .foot { flex: none; padding-top: 12px; border-top: 1px solid var(--line); }
 .cardsheetnote { min-height: 20px; margin: 0 0 8px !important; text-align: center; font: 500 14px/1.4 var(--sans) !important; color: var(--ink2); }
+.cardsheetnote:empty { display: none; }
 .cardsheet .kpact { width: 100%; align-items: center; }
 .cardsheet .kpact .primary { flex: 1 1 auto; }
+@media (max-height: 560px) { /* on its side: the glance and the buttons left, the sets beside them */
+  .cardsheet .sheetbox { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); grid-template-rows: auto 1fr auto; column-gap: 20px; width: min(100%, 860px); max-height: calc(100% - 10px); padding: 16px var(--sr) 12px var(--sl); }
+  .cardsheet .glance { grid-column: 1; grid-row: 1; margin: 0; }
+  .cardsheet .rlist { grid-column: 2; grid-row: 1 / span 3; align-self: stretch; }
+  .cardsheet .foot { grid-column: 1; grid-row: 3; border-top: 0; padding-top: 10px; }
+}
 .app[data-view="rest"] .num { font-size: 32px; line-height: 38px; }
 .app[data-view="rest"] .sel { margin-bottom: 6px; }
 .app[data-view="rest"] .note { margin-bottom: 6px; }
@@ -458,12 +473,13 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
 .stravaswitch[aria-checked="true"] i::after { transform: translateX(20px); }
 .stravaoff { width: 100%; }
 .stravaoff[data-arm] { color: var(--amber); border-color: rgba(224,160,96,.6); }
-.stravabar { pointer-events: auto; display: flex; flex-direction: column; align-items: center; gap: 2px; margin: -2px 0 6px; max-width: min(100%, 30rem); }
+.stravabar { pointer-events: auto; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; column-gap: 6px; margin: -2px 0 6px; max-width: min(100%, 30rem); }
+.stravastat:not([hidden]) + .linkbtn:not([hidden])::before { content: '\00b7\00a0'; text-decoration: none; display: inline-block; }
 .stravabar .linkbtn { position: relative; padding: 6px 0; }
 .stravabar .linkbtn::after { content: ''; position: absolute; left: -14px; right: -14px; top: -8px; bottom: -8px; } /* (a bigger target than the line that shows) */
 .stravabar .linkbtn[aria-disabled="true"] { opacity: .5; cursor: default; }
 .stravastat { margin: 0; text-align: center; font: 500 14px/1.35 var(--sans); color: var(--ink2); }
-.stravastat[data-tone="err"] { color: var(--amber); }
+.stravastat[data-tone="err"] { color: var(--ink); }
 .stravalink, .stravastat a { font-weight: 700; color: #FC5200; text-decoration: underline; text-underline-offset: 3px; padding: 11px 5px; margin: 0 -5px; } /* (the padding is only the tap target: an inline box's padding takes no room in the line) */
 .cardsheet .stravabar { margin: 0 0 8px; }
 </style>
@@ -499,8 +515,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     <button type="button" id="mhome">All days</button>
   </div>
   <p class="savefail" id="savefail" role="alert" hidden>Not saved</p>
-  <section class="recap" id="recap" aria-label="Workout recap" hidden></section>
-  <img class="rfig" id="recapfig" alt="" hidden>
+  <img class="herofig" id="herofig" alt="" hidden>
+  <section class="hero" id="hero" aria-label="Workout summary" hidden><h2 class="hl" id="hl"></h2><ul class="nums" id="nums"></ul></section>
   <section class="coach" id="coach" aria-label="How to do this exercise" hidden>
     <p class="cphase" id="cphase" data-k="still" aria-hidden="true"><b class="cverb" id="cverb"></b><span class="cspeed" id="cspeed"></span><i class="cbar" id="cbar"></i></p>
     <p class="cbreath" id="cbreath" aria-hidden="true" hidden></p>
@@ -529,7 +545,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         <button class="stepbtn" id="kgplus" type="button" aria-label="More weight"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4.5 10h11M10 4.5v11"/></svg></button>
       </div>
     </div>
-    <div class="endrow" id="endrow" hidden><button class="linkbtn endnext" id="endnext" type="button" hidden></button><div class="stravabar" id="stravabar" hidden><button class="linkbtn" id="stravapost" type="button">Post to Strava</button><p class="stravastat" id="stravastat" role="status" aria-live="polite" hidden></p></div></div>
+    <div class="endrow" id="endrow" hidden><div class="stravabar" id="stravabar" hidden><p class="stravastat" id="stravastat" role="status" aria-live="polite" hidden></p><button class="linkbtn" id="stravapost" type="button">Post to Strava</button></div><div class="pills"><button class="pill" id="endsets" type="button" hidden>All sets</button><button class="pill endnext" id="endnext" type="button" hidden></button></div></div>
     <div class="prow">
       <button class="undobtn" id="back" type="button" aria-label="Undo" aria-disabled="true" title="Undo the last step"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M7.2 4.2 3.6 7.8l3.6 3.6"/><path d="M4 7.8h7.6a4.2 4.2 0 0 1 0 8.4H7.6"/></svg></button>
       <button class="primary" id="primary" type="button" hidden><span class="pic" id="pic" aria-hidden="true"></span><span id="plabel"></span></button>
@@ -575,12 +591,15 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   </div>
   <div class="sheet cardsheet" id="cardsheet" role="dialog" aria-modal="true" aria-labelledby="cardsheettitle" hidden>
     <div class="sheetbox">
-      <h3 id="cardsheettitle"></h3>
-      <div class="recap" id="cardsheetrecap" role="group" aria-label="Workout recap"></div>
+      <h3 class="sr" id="cardsheettitle"></h3>
+      <div class="glance" id="glance" role="group" aria-label="Summary"><canvas aria-hidden="true"></canvas><p class="gk" id="gk"></p><p class="gh" id="gh"></p><p class="gn" id="gn"></p></div>
+      <ul class="rlist" id="rlist"></ul>
+      <div class="foot">
       <p class="cardsheetnote" id="cardsheetnote" aria-live="polite"></p>
-      <div class="stravabar" id="cardstravabar" hidden><button class="linkbtn" id="cardstravapost" type="button">Post to Strava</button><p class="stravastat" id="cardstravastat" role="status" aria-live="polite" hidden></p></div>
+      <div class="stravabar" id="cardstravabar" hidden><p class="stravastat" id="cardstravastat" role="status" aria-live="polite" hidden></p><button class="linkbtn" id="cardstravapost" type="button">Post to Strava</button></div>
       <div class="kpact"><button class="kpcancel" id="cardclose" type="button">Close</button><button class="undobtn" id="cardcopy" type="button" aria-label="Copy the image" title="Copy the image"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="7" y="7" width="9.5" height="9.5" rx="2"/><path d="M13 4.5H5.8A1.8 1.8 0 0 0 4 6.3V13"/></svg></button><button class="primary" id="cardshare" type="button"><span class="pic" aria-hidden="true"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="14.5" cy="4.8" r="2.2"/><circle cx="5.5" cy="10" r="2.2"/><circle cx="14.5" cy="15.2" r="2.2"/><path d="m7.4 8.9 5.2-3M7.4 11.1l5.2 3"/></svg></span><span>Share</span></button></div>
       <button class="linkbtn" id="cardagain" type="button">Do this day again</button>
+      </div>
     </div>
   </div>
   <div class="sheet stravasheet" id="stravasheet" role="dialog" aria-modal="true" aria-labelledby="stravatitle" hidden>
@@ -2046,10 +2065,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       // the end of the day: "Day 1 done" with a check, how long it took, what it held, the next day as the button
       const x = ui.end, nd = dayAfter(x.day);
       v.name = 'Day ' + (x.day + 1) + ' done'; v.check = true;
-      if (x.entry.dur) { v.kicker = 'Workout time'; v.clock = sessClock(x.entry.dur); }
+      if (x.entry.dur && ui.adhoc) { v.kicker = 'Workout time'; v.clock = sessClock(x.entry.dur); }
       v.line = (x.entry.exercises ? x.entry.exercises + (x.entry.exercises === 1 ? ' exercise' : ' exercises') + MID : '') + x.entry.sets + (x.entry.sets === 1 ? ' set' : ' sets') + (x.entry.bike ? MID + x.entry.bike + ' min ' + rideNoun(x.entry) : '');
-      if (x.msg && t < x.msgUntil) { v.kicker = x.msg; v.kTone = 'warm'; }
-      if (x.note && t < x.noteUntil) v.note = { text: x.note, tone: 'done', icon: true };
+      if (x.msg && t < x.msgUntil) { if (ui.adhoc) { v.kicker = x.msg; v.kTone = 'warm'; } else v.note = { text: x.msg, tone: 'warm', icon: false }; } // (the line above the buttons: "Next time: ...")
+      if (ui.adhoc && x.note && t < x.noteUntil) v.note = { text: x.note, tone: 'done', icon: true }; // (the last set's own line stays with the set, not on the summary)
       // the workout card is in the sky: Share it (the phone's share sheet), or copy it; the next day is the link above
       v.primary = { act: 'share', label: 'Share', icon: 'share', aria: 'Share the workout card' };
       if (!ui.adhoc) v.log = { act: 'copy', aria: 'Copy the workout card, to paste it' };
@@ -2106,7 +2125,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       else if (v.hint.rule && !cs.rule) note = { text: v.hint.rule, tone: 'guide' };
     }
     paintNote(note); paintSel(v.sel); paintPrimary(v.primary); paintLog(v.log); paintBack(); paintSess(); paintOpt(); paintToast();
-    { const en = $('endnext'), on = !!v.next; if (en.hidden === on) en.hidden = !on; if (on && en.textContent !== v.next) en.textContent = v.next; }
+    { const en = $('endnext'), on = !!v.next; if (en.hidden === on) en.hidden = !on; if (on && en.textContent !== v.next) en.textContent = v.next; const es = $('endsets'), eon = ui.mode === 'end' && !!ui.end && !ui.adhoc; if (es.hidden === eon) es.hidden = !eon; }
     // a control that had the keyboard's focus went away with the state (the selector in the rest): the focus
     // goes to the primary button, so a keyboard user stays in the action area
     if (hadFocus && hadFocus !== E.primary && (hadFocus.offsetParent === null || hadFocus.hidden)) { try { E.primary.focus({ preventScroll: true }); } catch (_) { /* fine */ } }
@@ -2124,7 +2143,8 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function crowd() {
     try {
       const L = app.classList;
-      L.remove('crowded', 'crowded2');
+      if (app.dataset.view === 'end' && app.hasAttribute('data-recap')) { endCrowd(); return; }
+      L.remove('crowded', 'crowded2', 'crowded3');
       if (L.contains('side') || E.act.hidden || E.info.hidden) return;
       const vis = (e) => !!e && !e.hidden && e.offsetParent !== null;
       const over = () => {
@@ -2693,7 +2713,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const prog = clone({ sets: p.sets || {}, done: p.done || {}, order: p.order || null });
     delete S.prog[d];
     ui.timers.clear(); saveTimers(); cancelRest(); cancelPace(); cancelGesture(); ui.go = null; ui.note = null;
-    ui.end = { day: d, entry, prog, msg, msgUntil: msg ? now() + ACK_MS + 4500 : 0, note: note || null, noteUntil: note ? now() + ACK_MS + NOTE_MS : 0 };
+    ui.end = { day: d, entry, prog, msg, msgUntil: msg ? now() + ACK_MS + 4500 : 0, note: note || null, noteUntil: note ? now() + ACK_MS + NOTE_MS : 0, fresh: true };
     ui.mode = 'end'; ui.step = L.length - 1;
     if (!ui.adhoc) Strava.afterFinish(entry); // (posted at once, when the owner asked for that; the recap and its card are drawn when the end screen is painted)
     markTurn(); // the first day is done: the tip about turning has had its time
@@ -2708,7 +2728,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     finishDay(null, null); Save.persist(); announce(endSpeech());
     toast(T.finished, u);
   }
-  const endSpeech = () => { const x = ui.end; return x ? dayLabel(x.day).replace(MID, ', ') + ' done' + (x.entry.dur ? ' in ' + Math.max(1, Math.round(x.entry.dur / 60)) + ' minutes' : '') + '. ' + x.entry.sets + ' sets. Next: ' + dayLabel(dayAfter(x.day)).replace(MID, ', ') + '.' : ''; };
+  const endSpeech = () => { const x = ui.end; return x ? dayLabel(x.day).replace(MID, ', ') + ' done' + (x.entry.dur ? ' in ' + Math.max(1, Math.round(x.entry.dur / 60)) + ' minutes' : '') + '. ' + Card.glance(Card.data(x.entry)).head + '. ' + x.entry.sets + ' sets. Next: ' + dayLabel(dayAfter(x.day)).replace(MID, ', ') + '.' : ''; };
   function continueEnd() { if (weekDone() >= P.days.length && !revOpen()) { openReview(() => continueEnd()); return; } const nd = dayAfter(ui.end.day); ui.end = null; openDay(nd, { step: 0 }); }
 
   // Undo: every step that changes the workout (a set, a timer started or finished, a rest skipped, a step moved on from, the
@@ -4086,20 +4106,24 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
 
 
   // ---------------------------------------------------------------- the workout card (to share, e.g. on Strava)
-  // A finished day as a 1080 x 1350 picture in the app's look: the film horizon with its amber rim, the day's cover exercise
-  // standing on it with every muscle the day worked lit (a second, offscreen stage with the engine's muscleOverride; the day's
-  // cover still when there is no WebGL), the day and the date, its time, the weight lifted and the working sets, then each
-  // exercise's best set with what went up since that day last time (a PB: the best estimated 1RM yet, Epley) and the top set marked.
-  // Built once a day is done (the end screen shows it in the sky; a finished day's square on the overview opens it); Share
-  // hands the PNG and a short text to the phone's share sheet (Strava, Instagram, Photos...), Copy puts both on the clipboard
-  // (or saves the PNG where the browser can do neither).
+  // A finished day as a 1080 x 1350 poster in the app's look: the day's name large, the day's cover exercise standing on the film
+  // horizon with every muscle the day worked lit (a second, offscreen stage with the engine's muscleOverride; the day's cover still when
+  // there is no WebGL), the headline (what went up), the time, the weight lifted, the sets and the new bests, then one line per exercise:
+  // its best set and what went up since that day last time (a best: the best estimated 1RM yet, Epley). The sets themselves are in the
+  // text that goes with the picture, and in "All sets". The horizon sits as low or as high as the lines need, so the figure gets the sky.
+  // The picture is drawn when it is needed (Share, Copy, or when the sheet of a finished day opens), the figure for the screen when the
+  // end screen is up. Share hands the PNG and a short text to the phone's share sheet, Copy puts both on the clipboard (or saves the PNG
+  // where the browser can do neither).
   const Card = (() => {
-    const W = 1080, Hh = 1350, ARC = 450, FIGH = 335; // (the horizon's y, the figure's height on the card)
-    let cur = null; // the card of the latest entry: { at, unit, promise, res: { blob, file, url, fig, text, w, h } }
+    const W = 1080, Hh = 1350, MX = 52;
+    let cur = null; // the card of the latest entry: { at, unit, promise, res: { blob, file, url, text, w, h } }
     let prev = null; // the one before it (the finished day on the end screen stays whole when a sheet opens another day's)
+    let figC = null; // the figure of the latest entry: { at, promise }
     const fmtN = (n) => Math.round(n).toLocaleString('en-US');
     const dateText = (t) => new Date(t).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+    const shortDate = (t) => new Date(t).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }).replace(/,/g, '');
     const e1 = (r, x) => x * (1 + r / 30);
+    const clampN = (v, a, b) => Math.min(b, Math.max(a, v));
     // what the card says about history entry h (the history before it: what went up, what is a best)
     function data(h) {
       const d = h.day, older = S.history.filter((x) => x.at < h.at), L = stepsOf(d);
@@ -4133,12 +4157,13 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         const sets = a.map((r, k) => ({ r, w: w[k] > 0 ? w[k] : 0, lr: lr[k] && lr[k][0] !== lr[k][1] ? lr[k] : null })), drop = dr && dr[0] > 0 ? { r: dr[0], w: dr[1] > 0 ? dr[1] : 0 } : null;
         return { id, name: exOf(id).name, best, top, up, pb, uni, sets, drop };
       });
-      return { d, title: dayLabel(d), date: dateText(h.st || h.at), dur: h.dur || 0, sets: h.sets || 0, vol, bike: h.bike || 0, dl: !!h.dl, rows, cover: P.days[d].cover, week: h.week || S.week };
+      return { d, at: h.st || h.at, title: dayLabel(d), date: dateText(h.st || h.at), dur: h.dur || 0, sets: h.sets || 0, vol, bike: h.bike || 0, dl: !!h.dl, first: !older.length, rows, cover: P.days[d].cover, week: h.week || S.week };
     }
-    // the day's muscles (the animation files' working muscles of what was done) on its cover exercise, rendered offscreen
+    // the day's muscles (the animation files' working muscles of what was done, the ride's too) on its cover exercise, rendered offscreen
     async function hero(D, h) {
       if (engine !== 'ready' || !g.THREE || !MCE.Stage || !D.cover || !isReady(D.cover)) return null;
-      const files = await Promise.all(Object.keys(h.ex || {}).map(baseId).filter(isReady).map((id) => loadJSON('exercises/' + id + '.json').catch(() => null)));
+      const ids = Object.keys(h.ex || {}).map(baseId); if (h.bike) ids.push(baseId(h.ride || 'bike'));
+      const files = await Promise.all([...new Set(ids)].filter(isReady).map((id) => loadJSON('exercises/' + id + '.json').catch(() => null)));
       const prim = new Set(); for (const EX of files) if (EX && EX.muscles) for (const m of EX.muscles.primary || []) prim.add(m);
       // (the engine lights at most 32 muscle heads: a day with more than that lights the first ones it finds)
       for (const lim of [99, 9]) {
@@ -4152,30 +4177,34 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
           const inf = await st.load(D.cover);
           st.pause(); st.setPhase(inf.peak);
           const c = doc.createElement('canvas'); c.width = st.glCanvas.width; c.height = st.glCanvas.height;
-          c.getContext('2d').drawImage(st.glCanvas, 0, 0);
-          // (the figure's framing: its height as a fraction of the stage, where its own lowest point is: the machine fades under it)
+          const cx = c.getContext('2d'); cx.drawImage(st.glCanvas, 0, 0);
+          // (the figure's framing: its height as a fraction of the stage, where its own lowest point is: the machine fades under it; what the render draws)
           const F = st.cur && st.cur.fits ? st.cur.fits[st.size.w + 'x' + st.size.h] : null, fill = st.cur && st.cur.cam && st.cur.cam.fill;
-          return { canvas: c, arc: st.arc.y / st.size.h, fill: fill > 0.2 && fill < 1 ? fill : 0.58, bottom: F && Number.isFinite(F.figBottom) ? F.figBottom / st.size.h : null };
+          const w = c.width, hh = c.height, px = cx.getImageData(0, 0, w, hh).data;
+          let x0 = w, x1 = -1, y0 = hh, y1 = -1;
+          for (let yy = 0; yy < hh; yy += 2) for (let xx = 0; xx < w; xx += 2) if (px[(yy * w + xx) * 4 + 3] > 10) { if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; }
+          if (x1 < 0) return null;
+          return { canvas: c, sw: st.size.w, sh: st.size.h, w, h: hh, arc: st.arc.y / st.size.h, fill: fill > 0.2 && fill < 1 ? fill : 0.58, bottom: F && Number.isFinite(F.figBottom) ? F.figBottom / st.size.h : null, bbox: [Math.max(0, x0 - 2), Math.max(0, y0 - 2), Math.min(w, x1 + 3), Math.min(hh, y1 + 3)] };
         } catch (e) { console.info('Machine Program: no figure on the card', String(e && e.message || e)); } finally { if (st) { try { st.destroy(); } catch (_) { /* gone */ } } box2.remove(); }
       }
       return null;
     }
     const still = (d) => new Promise((res) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = 'covers/day' + (d + 1) + '-still.webp'; });
-    // the figure alone with the day's muscles lit, on a clear ground and cropped to what it draws: the recap's picture ({ url, still })
-    async function figureOf(hr, d) {
-      try {
-        if (hr) {
-          const c = hr.canvas, w = c.width, h = c.height, px = c.getContext('2d').getImageData(0, 0, w, h).data;
-          let x0 = w, x1 = -1, y0 = h, y1 = -1;
-          for (let yy = 0; yy < h; yy += 2) for (let xx = 0; xx < w; xx += 2) if (px[(yy * w + xx) * 4 + 3] > 10) { if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; }
-          if (x1 < 0) return null;
-          const pad = 6, cx = Math.max(0, x0 - pad), cy = Math.max(0, y0 - pad), cw = Math.min(w, x1 + pad) - cx, ch = Math.min(h, y1 + pad) - cy;
-          const o = doc.createElement('canvas'); o.width = cw; o.height = ch; o.getContext('2d').drawImage(c, cx, cy, cw, ch, 0, 0, cw, ch);
-          const blob = await new Promise((res) => o.toBlob(res, 'image/png'));
-          return blob ? { url: URL.createObjectURL(blob), still: false } : null;
-        }
-      } catch (e) { console.info('Machine Program: no figure for the recap', String(e && e.message || e)); }
-      return d != null ? { url: 'covers/day' + (d + 1) + '-still.webp', still: true } : null;
+    // the day's figure, once per entry: { hr (the render, whole), url (it as a picture), still: false } or the cover still { im, url, still: true }
+    function figOf(h) {
+      if (figC && figC.at === h.at) return figC.promise;
+      if (figC && figC.url) { try { URL.revokeObjectURL(figC.url); } catch (_) { /* fine */ } }
+      const c = { at: h.at, url: '', promise: null };
+      c.promise = (async () => {
+        try {
+          const D = data(h), hr = await hero(D, h);
+          if (hr) { const blob = await new Promise((res) => hr.canvas.toBlob(res, 'image/png')); if (blob) { c.url = URL.createObjectURL(blob); return { hr, url: c.url, still: false }; } }
+          const im = await still(D.d);
+          return im ? { hr: null, im, url: im.src, still: true } : null;
+        } catch (e) { console.info('Machine Program: no figure for the day', String(e && e.message || e)); return null; }
+      })();
+      figC = c;
+      return c.promise;
     }
     // An exercise's sets as runs of one weight, in order: "20 kg × 8 · 8 · 7", then "17.5 kg × 10 · 9"; a bodyweight run is "10 · 9 · 8 reps",
     // a one-arm set with unequal sides "12/11" (left/right); the drop set comes last, dimmer
@@ -4196,96 +4225,143 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     }
     const partOut = (p) => p.text || partText(p);
     const minsOf = (D) => (D.dur ? Math.max(1, Math.round(D.dur / 60)) : 0);
-    // the day's numbers: its time, the weight lifted (or the ride), the working sets, and what went up
+    // the day's numbers on the poster: its time, the weight lifted, the sets, and what is a new best
     function statsOf(D) {
       const out = [];
       if (D.dur) out.push({ n: String(minsOf(D)), u: 'min' });
       if (D.vol > 0) out.push({ n: fmtN(toU(D.vol)), u: uName() + ' lifted' });
-      if (D.sets > 0) out.push({ n: String(D.sets), u: D.sets === 1 ? 'working set' : 'working sets' });
-      const pb = D.rows.filter((r) => r.pb).length;
-      if (pb) out.push({ n: String(pb), u: pb === 1 ? 'new best' : 'new bests', tone: 'pb' });
+      if (D.sets > 0) out.push({ n: String(D.sets), u: D.sets === 1 ? 'set' : 'sets' });
+      const pb = D.dl ? 0 : D.rows.filter((r) => r.pb).length;
+      if (pb) out.push({ n: String(pb), u: pb === 1 ? 'best' : 'bests', tone: 'pb' });
       return out;
     }
+    // the best true thing about the day, and at most three numbers (the end screen and the sheet)
+    function glanceOf(D) {
+      const n = D.rows.length, ups = D.dl ? 0 : D.rows.filter((r) => r.up).length, pbs = D.dl ? 0 : D.rows.filter((r) => r.pb).length;
+      const head = D.dl ? 'Deload day done' : ups ? ups + ' of ' + n + ' went up' : D.first ? 'First workout done' : 'Day ' + (D.d + 1) + ' done';
+      const nums = [];
+      if (D.dur) nums.push({ n: String(minsOf(D)), u: 'min' });
+      if (D.bike) nums.push({ n: String(D.bike), u: 'min cardio' }); else if (D.vol > 0) nums.push({ n: fmtN(toU(D.vol)), u: uName() + ' lifted' });
+      if (pbs) nums.push({ n: String(pbs), u: pbs === 1 ? 'best' : 'bests', tone: 'pb' }); else if (D.sets > 0) nums.push({ n: String(D.sets), u: D.sets === 1 ? 'set' : 'sets' });
+      return { head, nums: nums.slice(0, 3), ups, pbs };
+    }
     function textOf(D) {
-      const L = [D.title + MID + (D.dur ? minsOf(D) + ' min' : D.date)];
-      const sum = [D.sets > 0 ? D.sets + (D.sets === 1 ? ' set' : ' sets') : '', D.vol > 0 ? fmtN(toU(D.vol)) + ' ' + uName() + ' lifted' : '', D.dl ? 'deload week' : ''].filter(Boolean).join(MID);
+      const G = glanceOf(D), L = [D.title + MID + (D.dur ? minsOf(D) + ' min' : D.date)];
+      const sum = [G.head, D.sets > 0 ? D.sets + (D.sets === 1 ? ' set' : ' sets') : '', D.vol > 0 ? fmtN(toU(D.vol)) + ' ' + uName() + ' lifted' : '', D.dl ? 'deload week' : ''].filter(Boolean).join(MID);
       if (sum) L.push(sum);
       for (const it of itemsOf(D)) L.push(it.name + ' ' + it.parts.map(partOut).join(' / ') + (it.tags.length || it.up ? ' (' + it.tags.map((x) => x.toLowerCase().replace(/^pb$/, 'PB')).concat(it.up ? [it.up] : []).join(', ') + ')' : ''));
       L.push('Machine Program');
       return L.join('\n');
     }
-    async function draw(h) {
-      const D = data(h);
-      try { if (doc.fonts) { await Promise.all([doc.fonts.load('300 72px Newsreader'), doc.fonts.load('500 30px "Instrument Sans"'), doc.fonts.load('400 24px "Instrument Sans"')]); await doc.fonts.ready; } } catch (_) { /* the fallback faces */ }
-      const hr = await hero(D, h), im = hr ? null : await still(D.d), fig = await figureOf(hr, im ? D.d : null);
-      const cv = doc.createElement('canvas'); cv.width = W; cv.height = Hh;
-      const x = cv.getContext('2d'), arc = { x: W / 2, y: ARC, R: 1.25 * Hh };
-      // the horizon (the app's own backdrop) and its lit rim (the rim timer, full)
+    // ---- the poster. It is built from the bottom up, so the horizon moves: many lines raise it, few lower it, and the sky is what is left
+    const DENS = { 3: [96, 46], 4: [90, 46], 5: [84, 44], 6: [80, 44], 7: [72, 42], 8: [66, 40], 9: [62, 40] };
+    function poster(cv, D, G, F) {
+      const x = cv.getContext('2d'), SERIF = 'Newsreader, Georgia, serif', SANS = '"Instrument Sans", Arial, sans-serif';
+      const INK = '#ece7de', INK2 = '#aeb5b8', INK3 = '#818b90', AMBER = '#e0a060';
+      const set = (f, ls) => { x.font = f; if ('letterSpacing' in x) x.letterSpacing = (ls || 0) + 'px'; };
+      const all = [];
+      if (D.bike) all.push({ name: 'Cardio', value: D.bike + ' min', up: '', pb: false });
+      for (const r of D.rows) all.push({ name: r.name, value: r.best.w > 0 ? fmtW(r.best.w) + ' × ' + r.best.r : r.best.r + (r.best.r === 1 ? ' rep' : ' reps'), up: D.dl ? '' : r.up, pb: !D.dl && r.pb });
+      let rows = all, more = 0; if (all.length > 9) { more = all.length - 8; rows = all.slice(0, 8); }
+      const n = rows.length + (more ? 1 : 0), dn = DENS[clampN(n, 3, 9)], pitch = dn[0], f = dn[1], fd = f - 4;
+      const footBase = Hh - 50, rowsBottom = footBase - 57, rowsTop = rowsBottom - n * pitch, unitBase = rowsTop - 34, numBase = unitBase - 50, numTop = numBase - 86, Y0 = numTop - 86;
+      const title = P.days[D.d].name;
+      set('300 200px ' + SERIF, -3);
+      const tf = Math.round(clampN(200 * 508 / x.measureText(title).width, 120, 200));
+      set('300 ' + tf + 'px ' + SERIF, -3 * tf / 200);
+      const tm = x.measureText(title), kickBase = 124 + Math.round(Math.max(0, Y0 - 507) * 0.35), titleBase = kickBase + 44 + (tm.actualBoundingBoxAscent || 0.72 * tf), subBase = titleBase + (tm.actualBoundingBoxDescent || 0.02 * tf) + 64;
+      set('500 40px ' + SANS, 0.2);
+      const figX0 = Math.max(MX + tm.width, MX + 38 + x.measureText(G.head).width) + 30;
+      // the horizon (the app's own backdrop and lit rim, the phone's radius)
+      const arc = { x: W / 2, y: Y0, R: 2.35 * W };
       if (MCE.Backdrop) new MCE.Backdrop(cv, null).draw(W, Hh, 1, arc); else { x.fillStyle = '#101618'; x.fillRect(0, 0, W, Hh); }
       if (MCE.RimTimer) { const rc = doc.createElement('canvas'); new MCE.RimTimer(rc).draw(W, Hh, 1, arc, 1, { head: false, k: 0.9 }); x.save(); x.globalCompositeOperation = 'screen'; x.drawImage(rc, 0, 0); x.restore(); }
-      // the figure on the horizon (scaled so the stage's arc lands on the card's)
-      if (hr) {
-        // (scaled so the figure stands FIGH tall, its feet on the horizon: its top stays under the header line; under its lowest point
-        // the machine fades out, so nothing of it reaches the words)
-        const s = Math.min(0.9, FIGH / (hr.fill * hr.canvas.height)), cw = hr.canvas.width * s, ch = hr.canvas.height * s, top = ARC - hr.arc * ch;
-        const low = hr.bottom != null ? top + hr.bottom * ch : ARC + 40, y1 = Math.min(ARC + 62, Math.max(low + 56, ARC + 30)), y0 = Math.min(Math.max(low + 6, ARC + 8), y1 - 20);
-        const lay = doc.createElement('canvas'); lay.width = W; lay.height = Hh;
-        const lx = lay.getContext('2d');
-        lx.drawImage(hr.canvas, (W - cw) / 2, top, cw, ch);
+      const arcAt = (px) => Y0 + arc.R - Math.sqrt(arc.R * arc.R - (px - W / 2) * (px - W / 2));
+      // the figure: its feet on the horizon, as tall as the sky lets it stand and no wider than the room beside the day's name; under its lowest point the machine fades
+      const lay = doc.createElement('canvas'); lay.width = W; lay.height = Hh;
+      const lx = lay.getContext('2d'); lx.imageSmoothingQuality = 'high';
+      if (F && F.hr) {
+        const H = F.hr, cx = H.bbox[0], cy = H.bbox[1], cw = H.bbox[2] - cx, ch = H.bbox[3] - cy, zx1 = W - 30;
+        const s = Math.min((Y0 - 44) / (H.fill * H.h), (zx1 - figX0) / cw), w = cw * s, h = ch * s, left = zx1 - w, mid = left + (H.w / 2 - cx) * s, ay = arcAt(mid);
+        const dip = H.bottom != null ? (H.bottom - H.arc) * H.h * s : 0, top = ay - (H.arc * H.h - cy) * s - Math.max(0, dip - 30);
+        const low = H.bottom != null ? top + (H.bottom * H.h - cy) * s : ay + 30;
+        const y1 = Math.min(Math.max(low + 26, ay + 30), numTop - 20), y0 = Math.min(Math.max(low + 4, ay + 6), y1 - 18);
+        lx.drawImage(H.canvas, cx, cy, cw, ch, left, top, w, h);
         lx.globalCompositeOperation = 'destination-in';
-        const m = lx.createLinearGradient(0, y0, 0, y1); m.addColorStop(0, '#000'); m.addColorStop(1, 'rgba(0,0,0,0)'); lx.fillStyle = m; lx.fillRect(0, 0, W, Hh);
+        let mk = lx.createLinearGradient(0, y0, 0, y1); mk.addColorStop(0, '#000'); mk.addColorStop(1, 'rgba(0,0,0,0)'); lx.fillStyle = mk; lx.fillRect(0, 0, W, Hh);
+        // (a machine wider than the offscreen stage it was rendered on is cut at the stage's edge: it fades out there instead)
+        const side = (xa, xb) => { const gr = lx.createLinearGradient(xa, 0, xb, 0); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, '#000'); lx.fillStyle = gr; lx.fillRect(0, 0, W, Hh); };
+        if (cx <= 3) side(left, left + 0.09 * w);
+        if (H.bbox[2] >= H.w - 4) { const gr = lx.createLinearGradient(left + w, 0, left + 0.91 * w, 0); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, '#000'); lx.fillStyle = gr; lx.fillRect(0, 0, W, Hh); }
+        if (cy <= 3 && top <= 0) { const gr = lx.createLinearGradient(0, top, 0, top + 0.06 * h); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, '#000'); lx.fillStyle = gr; lx.fillRect(0, 0, W, Hh); }
         x.drawImage(lay, 0, 0);
-      } else if (im) {
-        const s = Math.min(560 / im.height, 760 / im.width); x.save(); x.globalAlpha = 0.95; x.drawImage(im, (W - im.width * s) / 2, ARC - im.height * s + 30, im.width * s, im.height * s); x.restore();
+      } else if (F && F.im) {
+        const s = Math.min((Y0 + 20) / F.im.height, (W - figX0 - 30) / F.im.width, 1.4), w = F.im.width * s, h = F.im.height * s;
+        x.save(); x.globalAlpha = 0.95; x.drawImage(F.im, W - 30 - w, Y0 + 24 - h, w, h); x.restore();
       }
-      // the planet below: the words
-      const ink = '#ece7de', ink2 = '#aeb5b8', ink3 = '#818b90', amber = '#e0a060', serif = 'Newsreader, Georgia, serif', sans = '"Instrument Sans", Arial, sans-serif';
-      const fade = x.createLinearGradient(0, ARC + 10, 0, ARC + 120); fade.addColorStop(0, 'rgba(14,14,14,0)'); fade.addColorStop(1, 'rgba(14,14,14,0.55)');
-      x.fillStyle = fade; x.fillRect(0, ARC + 10, W, Hh - ARC - 10);
+      // the ground under the words, a little darker
+      const fade = x.createLinearGradient(0, Y0 + 50, 0, Y0 + 190); fade.addColorStop(0, 'rgba(14,14,14,0)'); fade.addColorStop(1, 'rgba(14,14,14,0.5)');
+      x.fillStyle = fade; x.fillRect(0, Y0 + 50, W, Hh - Y0 - 50);
       x.textBaseline = 'alphabetic';
-      const spaced = (px) => { if ('letterSpacing' in x) x.letterSpacing = px + 'px'; };
-      x.fillStyle = ink3; x.font = '600 22px ' + sans; spaced(4);
-      x.fillText('MACHINE PROGRAM' + MID + 'WEEK ' + D.week + (D.dl ? MID + 'DELOAD' : ''), 72, 96);
-      x.textAlign = 'right'; x.fillText(D.date.toUpperCase(), W - 72 + 4, 96); x.textAlign = 'left'; spaced(0);
-      // the day, then its numbers: the time, the weight lifted (or the ride), the working sets, and the new bests
-      let y = ARC + 150;
-      x.fillStyle = ink; x.font = '300 76px ' + serif; x.fillText(D.title, 72, y);
-      const stats = statsOf(D).slice(0, 4), gap = (W - 144) / stats.length;
-      y += 100;
-      stats.forEach((q, k) => {
-        const sx = 72 + k * gap;
-        x.fillStyle = q.tone === 'pb' ? amber : ink; x.font = '300 64px ' + serif; x.fillText(q.n, sx, y);
-        x.fillStyle = q.tone === 'pb' ? amber : ink3; x.font = '500 23px ' + sans; x.fillText(q.u, sx, y + 36);
+      const say = (s, X, Y, font, col, ls, align) => { set(font, ls); x.fillStyle = col; x.textAlign = align || 'left'; x.fillText(s, align === 'right' ? X + (ls || 0) : X, Y); };
+      // the headline with its check, the day's name, the kind of week when that matters
+      x.save(); x.translate(MX - 8, kickBase - 33); x.scale(2, 2); x.strokeStyle = AMBER; x.lineWidth = 2.3; x.lineCap = 'round'; x.lineJoin = 'round'; x.beginPath(); x.moveTo(4.4, 10.6); x.lineTo(8.1, 14.2); x.lineTo(15.7, 5.8); x.stroke(); x.restore();
+      say(G.head, MX + 38, kickBase, '500 40px ' + SANS, INK, 0.2);
+      say(title, MX - tf * 0.012, titleBase, '300 ' + tf + 'px ' + SERIF, INK, -3 * tf / 200);
+      if (D.dl) say('Deload week', MX, subBase, 'italic 300 58px ' + SERIF, INK2, 0);
+      // the numbers, from margin to margin, the last against the right margin: 124 at most, a step smaller while they would crowd
+      const stats = statsOf(D).slice(0, 4); let NUM = 124, st, gap;
+      for (;;) {
+        st = stats.map((q) => { set('300 ' + NUM + 'px ' + SERIF, -1.5 * NUM / 124); const nw = x.measureText(q.n).width; set('400 34px ' + SANS, 0); return { q, w: Math.max(nw, x.measureText(q.u).width) }; });
+        gap = st.length > 1 ? (W - 2 * MX - st.reduce((s, a) => s + a.w, 0)) / (st.length - 1) : 0;
+        if (gap >= 84 || NUM <= 92 || st.length < 2) break;
+        NUM -= 8;
+      }
+      let sx = MX;
+      st.forEach((a, i) => {
+        const last = st.length > 1 && i === st.length - 1, X = last ? W - MX : sx, al = last ? 'right' : 'left', pb = a.q.tone === 'pb';
+        say(a.q.n, X, numBase, '300 ' + NUM + 'px ' + SERIF, pb ? AMBER : INK, -1.5 * NUM / 124, al);
+        say(a.q.u, X, unitBase, '400 34px ' + SANS, pb ? AMBER : INK3, 0, al);
+        sx += a.w + gap;
       });
-      // every exercise with every set: its name and what went up (amber), then its sets as weight × reps, the drop set last
-      y += 78;
-      x.strokeStyle = 'rgba(236,231,222,.14)'; x.lineWidth = 2; x.beginPath(); x.moveTo(72, y); x.lineTo(W - 72, y); x.stroke();
-      const list = itemsOf(D), most = 7, shown = list.length > most ? list.slice(0, most - 1) : list, room = Hh - 64 - (y + 8), pitch = Math.min(84, room / Math.max(1, shown.length + (list.length > shown.length ? 0.5 : 0)));
-      shown.forEach((it, k) => {
-        const top = y + 8 + k * pitch, base = top + pitch * 0.5 - 10, nameSz = pitch < 66 ? 28 : 31, setSz = pitch < 66 ? 24 : 26;
-        if (k) { x.strokeStyle = 'rgba(236,231,222,.1)'; x.lineWidth = 2; x.beginPath(); x.moveTo(72, top); x.lineTo(W - 72, top); x.stroke(); }
-        const tag = it.tags.concat(it.up ? [it.up] : []).join('   ');
-        x.textAlign = 'left'; x.fillStyle = ink; x.font = '500 ' + nameSz + 'px ' + sans; x.fillText(it.name, 72, base);
-        if (it.sides) { const nw = x.measureText(it.name).width; x.fillStyle = ink3; x.font = '400 ' + (nameSz - 8) + 'px ' + sans; x.fillText(it.sides, 72 + nw + 14, base); }
-        if (tag) { x.textAlign = 'right'; x.fillStyle = amber; x.font = '600 ' + (nameSz - 8) + 'px ' + sans; spaced(1); x.fillText(tag.toUpperCase().replace(/(\+\d+(?:[.,]\d+)?) (KG|LB|REPS?)/g, (m, n, u) => n + ' ' + u.toLowerCase()), W - 72, base); spaced(0); x.textAlign = 'left'; }
-        // (the sets, each run of one weight and the drop set a block; when they do not fit one line the type gets smaller)
-        let sz = setSz, widths, total;
-        do { x.font = '400 ' + sz + 'px ' + sans; widths = it.parts.map((q) => x.measureText(partOut(q)).width); total = widths.reduce((u, v) => u + v, 0) + 34 * Math.max(0, widths.length - 1); } while (total > W - 144 && (sz -= 1) > 18);
-        let px = 72;
-        it.parts.forEach((q, j) => { x.fillStyle = q.dim ? ink3 : ink2; x.fillText(partOut(q), px, base + sz + 6); px += widths[j] + 34; });
+      // the lines: name, best set (amber when it is a best), what went up in the amber column on the right
+      x.fillStyle = 'rgba(236,231,222,.17)'; x.fillRect(MX, rowsTop - 1, W - 2 * MX, 2);
+      set('500 ' + fd + 'px ' + SANS, 0);
+      const dW = Math.max(0, ...rows.map((r) => (r.up ? x.measureText(r.up).width : 0))), xv = W - MX - (dW ? dW + 32 : 0);
+      rows.forEach((r, i) => {
+        const top = rowsTop + i * pitch, base = top + pitch / 2 + f * 0.35;
+        if (i) { x.fillStyle = 'rgba(236,231,222,.085)'; x.fillRect(MX, top - 1, W - 2 * MX, 2); }
+        set((r.pb ? '500 ' : '400 ') + f + 'px ' + SANS, 0);
+        const room = xv - x.measureText(r.value).width - 30 - MX;
+        let nf = f, stretch = '', name = r.name;
+        const wOf = () => { set('500 ' + (stretch ? stretch + ' ' : '') + nf + 'px ' + SANS, 0); return x.measureText(name).width; };
+        if (wOf() > room) { stretch = 'semi-condensed'; while (wOf() > room && nf > f - 6) nf -= 1; while (wOf() > room && name.length > 6) name = name.replace(/…$/, '').slice(0, -1).trimEnd() + '…'; }
+        say(name, MX, base, '500 ' + (stretch ? stretch + ' ' : '') + nf + 'px ' + SANS, INK);
+        say(r.value, xv, base, (r.pb ? '500 ' : '400 ') + f + 'px ' + SANS, r.pb ? AMBER : INK2, 0, 'right');
+        if (r.up) say(r.up, W - MX, base, '500 ' + fd + 'px ' + SANS, AMBER, 0, 'right');
       });
-      y += 8 + shown.length * pitch;
-      if (list.length > shown.length) { x.fillStyle = ink3; x.font = '500 24px ' + sans; x.fillText('+ ' + (list.length - shown.length) + ' more', 72, y + 24); }
+      if (more) say('+ ' + more + ' more', MX, rowsTop + rows.length * pitch + pitch / 2 + f * 0.35, '400 ' + f + 'px ' + SANS, INK3);
+      // the foot: whose picture it is, the week, the date
+      x.fillStyle = 'rgba(236,231,222,.085)'; x.fillRect(MX, rowsBottom - 1, W - 2 * MX, 2);
+      say(('Machine Program' + MID + 'Week ' + D.week).toUpperCase(), MX, footBase, '500 30px ' + SANS, INK3, 4.2);
+      say(shortDate(D.at).toUpperCase(), W - MX, footBase, '500 30px ' + SANS, INK3, 4.2, 'right');
+    }
+    async function draw(h) {
+      const D = data(h), G = glanceOf(D);
+      try { if (doc.fonts) { await Promise.all([doc.fonts.load('300 72px Newsreader'), doc.fonts.load('italic 300 58px Newsreader'), doc.fonts.load('500 30px "Instrument Sans"'), doc.fonts.load('400 24px "Instrument Sans"')]); await doc.fonts.ready; } } catch (_) { /* the fallback faces */ }
+      const F = await figOf(h);
+      const cv = doc.createElement('canvas'); cv.width = W; cv.height = Hh;
+      poster(cv, D, G, F);
       const blob = await new Promise((res) => cv.toBlob(res, 'image/png'));
       const name = 'machine-program-day' + (D.d + 1) + '-' + new Date(h.at).toISOString().slice(0, 10) + '.png';
-      return { blob, file: blob ? new File([blob], name, { type: 'image/png' }) : null, url: blob ? URL.createObjectURL(blob) : '', text: textOf(D), w: W, h: Hh, name, data: D, fig, hero: hr ? 'figure' : im ? 'still' : 'none' };
+      return { blob, file: blob ? new File([blob], name, { type: 'image/png' }) : null, url: blob ? URL.createObjectURL(blob) : '', text: textOf(D), w: W, h: Hh, name, data: D, hero: F ? (F.still ? 'still' : 'figure') : 'none' };
     }
     // the card of history entry h, built once (a new entry: a new card)
     function of(h) {
       if (!h) return null;
       if (cur && cur.at === h.at && cur.unit === prefs.unit) return cur;
       if (prev && prev.at === h.at && prev.unit === prefs.unit) { const c = prev; prev = cur; cur = c; return c; }
-      if (prev) { for (const u of [prev.res && prev.res.url, prev.res && prev.res.fig && !prev.res.fig.still ? prev.res.fig.url : '']) if (u) { try { URL.revokeObjectURL(u); } catch (_) { /* fine */ } } }
+      if (prev && prev.res && prev.res.url) { try { URL.revokeObjectURL(prev.res.url); } catch (_) { /* fine */ } }
       const c = { at: h.at, unit: prefs.unit, res: null, promise: null };
       c.promise = draw(h).then((res) => { c.res = res; return res; }, (e) => { console.info('Machine Program: the card could not be drawn', String(e && e.message || e)); return null; });
       prev = cur; cur = c;
@@ -4314,76 +4390,164 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
       save(r); return 'saved';
     }
     function save(r) { const a = doc.createElement('a'); a.href = r.url; a.download = r.name; doc.body.appendChild(a); a.click(); a.remove(); }
-    return { of, share, copy, data, items: itemsOf, stats: statsOf, part: partText, current: () => cur };
+    return { of, share, copy, data, items: itemsOf, stats: statsOf, glance: glanceOf, fig: figOf, part: partText, shortDate, mins: minsOf, current: () => cur };
   })();
-  // ---------------------------------------------------------------- the recap of a finished day
-  // What the day held, as words you can read at once: its name and date, its time, the weight lifted and the working sets (and the new
-  // bests), then every exercise in the order it was done with every set (weight × reps; a drop set after them, dimmer) and what went up
-  // since last time (amber). The day's figure, with every muscle it worked lit, stands beside the numbers. On the end screen it lies over
-  // the sky and the horizon, above the buttons; in a finished day's sheet (from the overview) it is the sheet's content. The picture that
-  // Share sends (Card) says the same words.
-  const Recap = (() => {
-    const mk = (tag, cls, text) => { const e = doc.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
-    // fills box with the day of D; title: the end screen's "Day 1 done" (the sheet has its own title). Returns the figure's <img>, to be set when it is drawn.
-    function fill(box, D, o) {
-      box.textContent = '';
-      if (o.title) {
-        const h = mk('h2', 'rtitle'), sub = mk('p', 'rsub', P.days[D.d].name + MID + (D.dl ? 'Deload week' + MID : '') + D.date);
-        h.innerHTML = ICONS.check; h.append('Day ' + (D.d + 1) + ' done'); sub.dataset.base = sub.textContent;
-        box.append(h, sub);
-      } else box.append(mk('p', 'rsub', D.date));
-      const top = mk('div', 'rtop'), st = mk('ul', 'rstats'), fig = o.fig || mk('img', 'rfig');
-      for (const q of Card.stats(D)) { const li = mk('li', 'rstat'); if (q.tone) li.dataset.tone = q.tone; li.append(mk('b', null, q.n), mk('span', null, q.u)); st.append(li); }
-      fig.alt = ''; fig.decoding = 'async'; fig.removeAttribute('data-on'); fig.removeAttribute('src'); fig.classList.remove('still');
-      top.append(st); if (!o.fig) top.append(fig);
-      const list = mk('ul', 'rlist'); list.tabIndex = 0; list.setAttribute('aria-label', 'Exercises');
-      for (const it of Card.items(D)) {
-        const li = mk('li', 'rrow'), head = mk('div', 'rrh'), tags = mk('span', 'rtags'), sets = mk('div', 'rsets');
-        head.setAttribute('aria-hidden', 'true'); sets.setAttribute('aria-hidden', 'true');
-        const rn = mk('span', 'rn'); rn.append(mk('span', null, it.name)); if (it.sides) rn.append(mk('small', null, it.sides));
-        head.append(rn);
-        for (const t of it.tags) tags.append(mk('b', null, t));
-        if (it.up) tags.append(mk('i', null, it.up));
-        head.append(tags);
-        for (const q of it.parts) sets.append(mk('span', q.dim ? 'rp dim' : 'rp', q.text || Card.part(q)));
-        li.append(mk('span', 'sr', it.say), head, sets);
-        list.append(li);
-      }
-      box.append(top, list);
-      return fig;
-    }
-    return { fill };
-  })();
-  // the recap on the end screen (over the sky) and on its sheet (a finished day's square on the overview); the picture to share is drawn in
-  // the background, and the figure beside the numbers is that picture's figure when it is ready
-  const recapEl = $('recap'), recapFig = $('recapfig'), cardSheet = $('cardsheet');
+  // ---------------------------------------------------------------- the finished day on the screen, and its sheet of every set
+  // The end screen: the day's figure large on the horizon (the render of the card's own figure, placed where the figure stood all
+  // workout), the headline, at most three numbers; above the buttons one line (Strava, or a word about what just happened) and two quiet
+  // buttons: "All sets" opens the sheet with every set of every exercise, the next day opens that day. The sheet is also what a finished
+  // day's square on the overview opens.
+  const heroEl = $('hero'), heroFig = $('herofig'), cardSheet = $('cardsheet');
   const cardOpen = () => !cardSheet.hidden;
-  let cardEntry = null, recapKey = '';
-  function showCard(h, where) {
-    const c = Card.of(h), fig = Recap.fill(where === 'sheet' ? $('cardsheetrecap') : recapEl, Card.data(h), where === 'sheet' ? { title: false } : { title: true, fig: recapFig });
-    if (where !== 'sheet') { recapEl.hidden = false; recapFig.hidden = false; }
-    if (!c) return;
-    c.promise.then((r) => { if (r && r.fig && fig.isConnected && !fig.hasAttribute('src')) { fig.classList.toggle('still', !!r.fig.still); fig.src = r.fig.url; fig.setAttribute('data-on', ''); } });
+  let cardEntry = null, recapKey = '', heroF = null, heroRise = 0;
+  const mkEl = (tag, cls, text) => { const e = doc.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const reduced = () => !!(g.matchMedia && g.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  // a machine the 540 x 720 stage cut off at an edge fades there, so no machine ends in a straight line
+  function maskFig(img, H, iw, ih, f0, f1) {
+    const t = H.bbox[1] <= 3 ? 0.06 * ih : 0, l = H.bbox[0] <= 3 ? 0.07 * iw : 0, r = H.bbox[2] >= H.w - 4 ? 0.07 * iw : 0;
+    const v = 'linear-gradient(to bottom, ' + (t ? 'transparent 0, #000 ' + t.toFixed(1) + 'px, ' : '') + '#000 ' + f0.toFixed(1) + 'px, transparent ' + f1.toFixed(1) + 'px)';
+    const hz = l || r ? 'linear-gradient(to right, ' + (l ? 'transparent 0, #000 ' + l.toFixed(1) + 'px' : '#000 0') + ', ' + (r ? '#000 ' + (iw - r).toFixed(1) + 'px, transparent ' + iw.toFixed(1) + 'px' : '#000 100%') + ')' : '';
+    img.style.webkitMaskImage = img.style.maskImage = hz ? v + ', ' + hz : v;
+    if (hz) { img.style.maskComposite = 'intersect'; img.style.webkitMaskComposite = 'source-in'; }
   }
-  // the end screen's recap follows the state: built once for the finished day (and again when the unit changes), its "Next time" line
-  // for the moment it is news
+  // at the size the live stage gives a figure in this layout's box, its arc on the horizon under the box's centre
+  function placeHero(f) {
+    const c = curComp; if (!c || !f) return;
+    const B = c.box, bw = B.x1 - B.x0, bh = B.y1 - B.y0, cx = (B.x0 + B.x1) / 2, R = c.arc.R, dx = cx - c.arc.x, arcY = c.arc.y + R - Math.sqrt(R * R - dx * dx), img = heroFig;
+    heroFig.classList.toggle('still', !!f.still);
+    if (f.hr) {
+      const H = f.hr, SW = H.sw, SH = H.sh, k = H.w / SW, bbw = (H.bbox[2] - H.bbox[0]) / k;
+      const s = Math.min(bh / SH, 0.9 * bw / bbw), iw = SW * s, ih = SH * s, top = arcY - H.arc * ih;
+      let left = cx - iw / 2;
+      const x0 = left + H.bbox[0] / k * s, x1 = left + H.bbox[2] / k * s;
+      if (x0 < B.x0 + 6) left += B.x0 + 6 - x0; else if (x1 > B.x1 - 6) left -= x1 - (B.x1 - 6);
+      const low = H.bottom != null ? top + H.bottom * ih : arcY + 20, f1 = c.fade[1], f0 = Math.min(Math.max(low, c.fade[0]), f1 - 6);
+      Object.assign(img.style, { left: left + 'px', top: top + 'px', width: iw + 'px', height: ih + 'px' });
+      maskFig(img, H, iw, ih, f0 - top, f1 - top);
+    } else {
+      const sz = Math.min(240, bh * 0.6, bw * 0.7);
+      Object.assign(img.style, { left: cx - sz / 2 + 'px', top: arcY - sz + 'px', width: sz + 'px', height: sz + 'px', webkitMaskImage: '', maskImage: '' });
+    }
+  }
+  function showHero(f) {
+    heroF = f;
+    if (!f || !f.url || ui.mode !== 'end' || !recapKey) return;
+    if (heroFig.getAttribute('src') !== f.url) heroFig.src = f.url;
+    placeHero(f); heroFig.hidden = false; heroFig.setAttribute('data-on', '');
+  }
+  // the headline never runs off the screen: a long one gets smaller
+  function fitHead() {
+    const e = $('hl'), pe = e.parentElement; e.style.fontSize = '';
+    try {
+      const cs = getComputedStyle(pe), room = pe.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight), w = e.scrollWidth;
+      if (room > 0 && w > room) e.style.fontSize = Math.max(28, Math.floor(parseFloat(getComputedStyle(e).fontSize) * room / w)) + 'px';
+    } catch (_) { /* no layout here */ }
+  }
+  // the words never run into the buttons: what gives way is the numbers' size, then the headline's, then the numbers go on one line of text
+  function endCrowd() {
+    const L = app.classList; L.remove('crowded', 'crowded2', 'crowded3');
+    fitHead();
+    if (L.contains('side') || E.act.hidden) return;
+    const over = () => { const kids = [E.note, $('endrow'), E.act.querySelector('.prow')].filter((e) => e && !e.hidden && e.offsetParent !== null); return kids.length ? heroEl.getBoundingClientRect().bottom + 6 - Math.min(...kids.map((e) => e.getBoundingClientRect().top)) : 0; };
+    for (const c of ['crowded', 'crowded2', 'crowded3']) { if (over() > 0) { L.add(c); fitHead(); } else break; }
+  }
+  // on its side the words and the buttons are one group in the sky of the text column, centred between the top band and the lit rim
+  function endPlace() {
+    const c = curComp, on = !!c && c.mode === 'side' && ui.mode === 'end' && !!recapKey;
+    if (!on) { app.style.removeProperty('--herotop'); if (actbBase) app.style.setProperty('--actb', actbBase); else app.style.removeProperty('--actb'); return; }
+    const R = c.arc.R, dx = c.text.x0 + 12 - c.arc.x, rimClear = c.arc.y + R - Math.sqrt(Math.max(0, R * R - dx * dx)) - 26, px = (v) => Math.round(v) + 'px';
+    const A = E.act.getBoundingClientRect().height, T = heroEl.getBoundingClientRect().height, G = T + 16 + A, low = Math.min(rimClear, c.top + (rimClear - c.top + G) / 2);
+    app.style.setProperty('--actb', px(c.text.y1 - low)); app.style.setProperty('--herotop', px(Math.max(c.top + 2, low - G)));
+  }
+  // (the layout changed: the figure and the group move with it)
+  function endRelayout() { if (recapKey) { if (heroF) placeHero(heroF); endPlace(); endCrowd(); } }
+  function countUp(b, full) {
+    const t0 = now(), v = parseInt(String(full).replace(/\D/g, ''), 10);
+    if (!(v > 0) || reduced()) return;
+    const step = () => { const p = Math.min(1, (now() - t0 - 300) / 700); b.textContent = p >= 1 ? full : fmtNum(v * (1 - Math.pow(1 - Math.max(0, p), 3))); if (p < 1) g.requestAnimationFrame(step); };
+    b.textContent = '0'; g.requestAnimationFrame(step);
+  }
+  const fmtNum = (n) => Math.round(n).toLocaleString('en-US');
+  function buildHero(x) {
+    const D = Card.data(x.entry), G = Card.glance(D), hl = $('hl'), nums = $('nums');
+    hl.textContent = ''; hl.innerHTML = ICONS.check; hl.append(mkEl('span', null, G.head));
+    nums.textContent = '';
+    for (const q of G.nums) { const li = mkEl('li'), b = mkEl('b', null, q.n); if (q.tone) li.dataset.tone = q.tone; li.append(b, mkEl('span', null, q.u)); nums.append(li); if (x.fresh) countUp(b, q.n); }
+    heroEl.hidden = false;
+    clearTimeout(heroRise); heroEl.removeAttribute('data-rise');
+    if (x.fresh && !reduced()) { heroEl.setAttribute('data-rise', ''); heroRise = setTimeout(() => heroEl.removeAttribute('data-rise'), 1400); }
+    x.fresh = false;
+    heroFig.hidden = true; heroFig.removeAttribute('data-on'); heroF = null;
+    // (the figure is drawn offscreen a moment after the words are up, so the last tap of the day is not followed by a pause)
+    const at = x.entry.at;
+    setTimeout(() => { Card.fig(x.entry).then((f) => { if (ui.mode === 'end' && ui.end && ui.end.entry.at === at) showHero(f); }); }, 120);
+  }
+  // the end screen follows the state: built once for the finished day (and again when the unit changes)
   function paintRecap() {
     const x = ui.mode === 'end' && ui.end && !ui.adhoc ? ui.end : null;
-    if (!x) { if (recapKey) { recapKey = ''; app.removeAttribute('data-recap'); } return; }
+    if (!x) {
+      if (recapKey) { recapKey = ''; app.removeAttribute('data-recap'); heroEl.hidden = true; heroFig.hidden = true; heroFig.removeAttribute('data-on'); heroF = null; endPlace(); }
+      return;
+    }
     const key = x.entry.at + '|' + prefs.unit;
     if (key !== recapKey) {
-      try { showCard(x.entry, 'end'); recapKey = key; app.setAttribute('data-recap', ''); } catch (e) { console.info('Machine Program: no recap', String(e && e.message || e)); recapKey = ''; app.removeAttribute('data-recap'); }
+      try { buildHero(x); recapKey = key; app.setAttribute('data-recap', ''); endPlace(); } catch (e) { console.info('Machine Program: no recap', String(e && e.message || e)); recapKey = ''; app.removeAttribute('data-recap'); heroEl.hidden = true; }
     }
-    const f = recapEl.querySelector('.rsub'), on = !!x.msg && now() < x.msgUntil, want = on ? x.msg : f && f.dataset.base;
-    if (f && f.textContent !== want) { f.textContent = want; if (on) f.dataset.tone = 'warm'; else delete f.dataset.tone; }
+    const es = $('endsets'), on = true; if (es.hidden === on) es.hidden = !on;
   }
-  function openCardSheet(k) {
-    const h = doneIn(k) || S.history.find((x) => x.day === k); if (!h) return;
-    cardEntry = h; showCard(h, 'sheet');
-    $('cardsheettitle').textContent = dayLabel(k);
-    cardSheet.hidden = false; paintStrava();
+  // the sheet: every set of every exercise (the glance first, then the rows), from "All sets" and from a finished day's square on the overview
+  function glanceFig(f) {
+    const gl = $('glance'), cv = gl.querySelector('canvas');
+    if (!f || cardSheet.hidden || !cv) return;
+    const w = gl.clientWidth, h = gl.clientHeight, zone = Math.min(150, Math.max(120, w * 0.38)), dpr = Math.min(g.devicePixelRatio || 1, 2);
+    cv.width = Math.round(zone * dpr); cv.height = Math.round(h * dpr); cv.style.width = zone + 'px'; cv.style.height = h + 'px';
+    const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, zone, h);
+    const base = h - 16; let top, bot;
+    if (f.hr) {
+      const H = f.hr, cx = H.bbox[0], cy = H.bbox[1], cw = H.bbox[2] - cx, ch = H.bbox[3] - cy, above = H.arc * H.h - cy;
+      const s = Math.min((zone - 12) / cw, (base - 6) / above);
+      top = base - above * s; x.drawImage(H.canvas, cx, cy, cw, ch, (zone - cw * s) / 2, top, cw * s, ch * s);
+      bot = H.bottom != null ? top + (H.bottom * H.h - cy) * s : base + 8;
+    } else { const s = Math.min((zone - 12) / f.im.width, (base - 6) / f.im.height); x.drawImage(f.im, (zone - f.im.width * s) / 2, base - f.im.height * s + 10, f.im.width * s, f.im.height * s); bot = base; }
+    x.globalCompositeOperation = 'destination-in';
+    const y0 = Math.min(Math.max(bot, base - 6), h - 10), m = x.createLinearGradient(0, y0, 0, h - 2); m.addColorStop(0, '#000'); m.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = m; x.fillRect(0, 0, zone, h);
+    cv.setAttribute('data-on', '');
+  }
+  function fillSheet(h, from) {
+    const D = Card.data(h), G = Card.glance(D), gl = $('glance');
+    $('cardsheettitle').textContent = D.title;
+    const cv = gl.querySelector('canvas'); cv.removeAttribute('data-on');
+    const gk = $('gk'), gh = $('gh'), gn = $('gn'), list = $('rlist');
+    gk.textContent = D.title + MID + Card.shortDate(D.at);
+    gh.innerHTML = ICONS.check; gh.append(G.head);
+    gn.textContent = '';
+    for (const q of G.nums) { const e = mkEl(q.tone ? 'i' : 'span'); e.append(mkEl('b', null, q.n), ' ' + q.u); gn.append(e); }
+    list.textContent = ''; list.tabIndex = 0; list.setAttribute('aria-label', 'Every set');
+    for (const it of Card.items(D)) {
+      const li = mkEl('li', 'rrow'), head = mkEl('div', 'rrh'), tags = mkEl('span', 'rtags'), sets = mkEl('div', 'rsets');
+      head.setAttribute('aria-hidden', 'true'); sets.setAttribute('aria-hidden', 'true');
+      const rn = mkEl('span', 'rn'); rn.append(mkEl('span', null, it.name)); if (it.sides) rn.append(mkEl('small', null, it.sides));
+      head.append(rn);
+      if (!D.dl) { if (it.tags.includes('PB')) tags.append(mkEl('b', null, 'Best')); if (it.up) tags.append(mkEl('i', null, it.up)); }
+      head.append(tags);
+      for (const q of it.parts) sets.append(mkEl('span', q.dim ? 'rp dim' : 'rp', q.text || Card.part(q)));
+      li.append(mkEl('span', 'sr', it.say), head, sets);
+      list.append(li);
+    }
+    $('cardagain').hidden = from === 'end';
+    $('cardsheetnote').textContent = '';
+    Card.fig(h).then((f) => { if (cardEntry === h) glanceFig(f); });
+  }
+  function moreHint() { const l = $('rlist'); l.classList.toggle('more', l.scrollHeight > l.clientHeight + 4 && l.scrollTop + l.clientHeight < l.scrollHeight - 6); }
+  $('rlist').addEventListener('scroll', moreHint, { passive: true });
+  function openSheetFor(h, from) {
+    if (!h) return;
+    cardEntry = h; fillSheet(h, from);
+    Card.of(h); // (the picture is drawn now, so Share and Copy have it)
+    cardSheet.hidden = false; paintStrava(); moreHint();
     try { $('cardshare').focus({ preventScroll: true }); } catch (_) { /* fine */ }
   }
+  function openCardSheet(k) { openSheetFor(doneIn(k) || S.history.find((x) => x.day === k), 'overview'); }
   function closeCardSheet() { if (cardSheet.hidden) return; cardSheet.hidden = true; cardEntry = null; }
   async function cardAct(how, h) {
     if (!h) return;
@@ -4394,6 +4558,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   $('cardshare').addEventListener('click', () => cardAct('share', cardEntry));
   $('cardcopy').addEventListener('click', () => cardAct('copy', cardEntry));
   $('cardclose').addEventListener('click', closeCardSheet);
+  $('endsets').addEventListener('click', () => { wake.on(); if (ui.mode === 'end' && ui.end && !ackOn() && !dialogOpen() && !cardOpen()) openSheetFor(ui.end.entry, 'end'); });
   $('cardagain').addEventListener('click', () => { const k = cardEntry ? cardEntry.day : null; closeCardSheet(); if (k != null) chooseDay(k); });
   cardSheet.addEventListener('click', (e) => { if (e.target === cardSheet) closeCardSheet(); });
   cardSheet.addEventListener('keydown', (e) => trapTab(cardSheet, e));
@@ -4652,10 +4817,10 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     function view(h) {
       if (!h) return { show: false };
       const key = extId(h), p = readPosts()[key], m = msg.get(key);
-      if (!connected()) return m && m.k === 'reconnect' ? { show: true, kind: 'failed', label: 'Connect again', text: 'Couldn’t post: ' + m.text + '. Connect again', link: '', again: true } : { show: false }; // (the tokens were refused: the keys are still here)
+      if (!connected()) return m && m.k === 'reconnect' ? { show: true, kind: 'failed', label: 'Connect again', text: 'Couldn’t post: ' + m.text, link: '', again: true } : { show: false }; // (the tokens were refused: the keys are still here)
       if (busy.has(key)) return { show: true, kind: 'posting', label: 'Posting…', text: '', link: '' };
       if (p && p.st === 'posted') return { show: true, kind: 'posted', label: '', text: 'Posted', link: p.aid ? 'https://www.strava.com/activities/' + p.aid : '' };
-      if (m && m.k === 'failed') return { show: true, kind: 'failed', label: 'Post again', text: 'Couldn’t post: ' + m.text + '. Try again', link: '' };
+      if (m && m.k === 'failed') return { show: true, kind: 'failed', label: 'Post again', text: 'Couldn’t post: ' + m.text, link: '' };
       if ((m && m.k === 'offline') || (p && p.st === 'pending')) return { show: true, kind: 'offline', label: 'Post again', text: 'Not posted yet' + (m && m.text ? ': ' + m.text : ''), link: '' };
       return { show: true, kind: 'idle', label: 'Post to Strava', text: '', link: '' };
     }
@@ -4768,11 +4933,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   function paintStrava() {
     if (!Strava) return;
     try {
-      const e = ui.mode === 'end' && ui.end && !ui.adhoc ? ui.end.entry : null;
+      const noteOn = ui.mode === 'end' && !E.note.hidden, e = ui.mode === 'end' && ui.end && !ui.adhoc && !noteOn ? ui.end.entry : null; // (a word about what just happened takes the line's place for its moment)
       Strava.paintBar($('stravabar'), $('stravapost'), $('stravastat'), e);
       Strava.paintBar($('cardstravabar'), $('cardstravapost'), $('cardstravastat'), cardOpen() ? cardEntry : null);
       Strava.paintSheet();
-      const er = $('endrow'), none = $('endnext').hidden && $('stravabar').hidden; // (the row is there when the next day's link or the Strava line is)
+      const er = $('endrow'), none = $('endnext').hidden && $('endsets').hidden && $('stravabar').hidden; // (the row is there when a button or the Strava line is)
       if (er && er.hidden !== none) er.hidden = none;
     } catch (_) { /* nothing to paint */ }
   }
@@ -4982,7 +5147,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // The shell reads the same composition (MCE.playerLayout) to place its text: CSS variables on .app; the page ground
   // above and below the stage takes the backdrop's edge colours (the Artifact skeleton pads the page by the phone's
   // safe-area insets, and those strips read as sky and planet).
-  let compKey = '', curComp = null;
+  let compKey = '', curComp = null, actbBase = null;
   function layout(c, edge) {
     if (!c) {
       const r = box.getBoundingClientRect(); if (!r.width || !r.height || !MCE.playerLayout) return;
@@ -5007,11 +5172,12 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         const W = c.text.x1, H = c.text.y1, R = c.arc.R, dx = c.text.x0 + 12 - c.arc.x;
         const rimClear = c.arc.y + R - Math.sqrt(Math.max(0, R * R - dx * dx)) - 26, big = W >= 1000 && H >= 600;
         const G = 1.06 * clamp(0.043 * W, 28, 54) + (big ? 36 : 30) + (H < 420 ? 0 : big ? 25 : 23) + 20 + 156;
-        s.setProperty('--actb', px(H - Math.min(rimClear, c.top + (rimClear - c.top + G) / 2)));
-      } else s.removeProperty('--actb');
+        actbBase = px(H - Math.min(rimClear, c.top + (rimClear - c.top + G) / 2)); s.setProperty('--actb', actbBase);
+      } else { actbBase = null; s.removeProperty('--actb'); }
       app.classList.toggle('side', c.mode === 'side');
       app.classList.toggle('compact', !!c.compact);
       fitName(); crowd();
+      try { endRelayout(); } catch (_) { /* the summary is not set up yet */ }
     }
     if (edge && edge.top && edge.bottom) {
       const rgb = (a) => 'rgb(' + a.join(',') + ')';
@@ -5218,7 +5384,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         log: !E.log.hidden, opt: !E.opt.hidden, optOpen: optOpen(), opts: optState(), pill: E.pill.hidden ? null : E.pill.textContent, toast: E.toast.hidden ? null : { text: $('toasttxt').textContent }, unit: prefs.unit, sound: prefs.sound, sounds: Object.assign({}, Snd.played), mirrored, side: sideNow(),
         breath: E.cbreath.hidden ? '' : E.cbreath.textContent, want: { rule: (coachC && coachC.rule) || '', cue: (coachC && coachC.cue) || '', breath: (coachC && coachC.breath) || '' }, wake: wake.state(), alerts: Alerts.state(), amend: amendOn(),
         clockTone: E.clock.dataset.tone || '', crowded: (app.classList.contains('crowded') ? 1 : 0) + (app.classList.contains('crowded2') ? 1 : 0), lastLog, alt: ui.mode === 'end' ? null : altOf(ui.day, ui.step), logId: ui.mode === 'end' ? null : logIdAt(ui.day, ui.step), review: revOpen(), cardSheet: cardOpen(), endNext: $('endnext').hidden ? '' : $('endnext').textContent,
-        card: (() => { const c = Card.current(); return c ? { ready: !!c.res, w: c.res ? c.res.w : 0, h: c.res ? c.res.h : 0, hero: c.res ? c.res.hero : null, text: c.res ? c.res.text : '', shown: !!document.querySelector('#recapfig[data-on], #cardsheetrecap .rfig[data-on]') } : null; })(),
+        card: (() => { const c = Card.current(); return { ready: !!(c && c.res), w: c && c.res ? c.res.w : 0, h: c && c.res ? c.res.h : 0, hero: c && c.res ? c.res.hero : null, text: c && c.res ? c.res.text : '', shown: !!document.querySelector('#herofig[data-on]:not([hidden]), #cardsheet:not([hidden]) #glance canvas[data-on]') }; })(),
       };
     },
     // one clock: the pacer at the instant the stage drew its frame, against the stage's own phase; the card's phase label as
@@ -5234,7 +5400,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     },
     doc: () => clone(S),
     // the current workout card as a PNG data URL (the tests save and look at it)
-    cardPng: () => { const c = Card.current(); return c ? c.promise.then((r) => (r && r.blob ? new Promise((res) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(r.blob); }) : null)) : null; },
+    cardPng: () => { const h = cardEntry || (ui.mode === 'end' && ui.end ? ui.end.entry : null), c = h ? Card.of(h) : Card.current(); return c ? c.promise.then((r) => (r && r.blob ? new Promise((res) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(r.blob); }) : null)) : null; },
     go: (i) => jumpTo(i), day: (d) => chooseDay(d), render: () => render(),
     // a finished day's end screen from the history (S.history[i]), without playing the day
     end: (i) => { const h = S.history[i]; if (!h) return false; ui.day = h.day; ui.adhoc = false; cancelRest(); cancelPace(); ui.ack = null; ui.note = null; ui.go = null; ui.end = { day: h.day, entry: h, prog: { sets: {}, done: {}, order: null }, msg: null, msgUntil: 0, note: null, noteUntil: 0 }; ui.mode = 'end'; ui.step = stepsOf(h.day).length - 1; showFigure(null, true); render(); kickLoop(); return true; },
