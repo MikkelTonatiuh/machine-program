@@ -22,12 +22,12 @@ Open it, and download it to your phone (the **Download app** button is on its fi
   logged and correct it. The weight moves by 1 kg (or 1 lb: the three dots switch the unit) and starts on what you lifted last
   time; tap it to type one ("52,5" or "52.5").
 - **One arm at a time** (cable lateral raise, Bayesian curl): the weaker arm first (the left, then whichever did fewer reps),
-  then "Switch sides" with no rest, and the other arm, mirrored on screen, does the same reps: the counter stops it there with
+  then "Switch arms" with no rest, and the other arm, mirrored on screen, does the same reps: the counter stops it there with
   a buzz. Both sides are logged; the lower one counts. 60 s rest after both arms.
   A one-sided leg exercise (a standing cable abduction, a cable kickback) says "each leg", "Left leg", "Switch legs" instead: its
   entry has `"unilateral": true` and `"side": "leg"` ("arm" is the default; `tools/program.mjs --check` fails when the muscles say leg and the
   side does not, and `tools/apply_patch.mjs` sets it for a new one-sided entry).
-- The first set of an exercise says how to beat last time: "Today: 52 kg (+2): you hit 12 on every set" or "Today: beat 12 · 11
+- The first set of an exercise says how to beat last time: "Today: 52 kg (+2)" or "Today: beat 12 · 11
   · 10 at 50 kg"; every later set shows last time's numbers ("Last time 11 × 50 kg"); after the last set, "Next time: …".
 - Progression is double progression: when every set reached the top of the rep range, the next time is heavier: +2.5% for a top
   set and a 2-rep range, +4% for an upper-body compound, +5% for the rest, rounded down to a whole kg, at least 1 kg; the reps
@@ -38,7 +38,7 @@ Open it, and download it to your phone (the **Download app** button is on its fi
   **Warm-up done**; they are not logged. An isolation exercise for a muscle the day has not worked yet gets one light set.
 - The first compound of a lifting day starts with a heavy **top set** (6–8 reps, then 3 min rest); the sets after it are
   **back-off sets** (8–12 reps, 2 min rest) that start at about 87.5% of what you lifted on the top set.
-- After the last set of a machine or cable isolation comes a **drop set**: "No rest · go now at 35 kg", about 30% lighter, as
+- After the last set of a machine or cable isolation comes a **drop set**: "No rest · now 35 kg", about 30% lighter, as
   many reps as you can. It is kept apart from the working sets (set the reps to 0 to skip it). The rest after it is the
   exercise's own (2 min when the next exercise works the same muscle).
 - Abs: every set to failure. Exercises with no weight go up by reps. Once every set reaches the top, the knee raise makes way
@@ -64,7 +64,7 @@ Open it, and download it to your phone (the **Download app** button is on its fi
   set of every exercise) and a short text with the sets for the description; the button beside it copies both, to paste. To post the
   day to Strava straight from the app, see Strava below.
 - Made a mistake? Undo takes back the last step, and again for the one before. The three dots at the top right also hold
-  Restart workout (it starts the day over, and Undo brings it back) and All workouts.
+  Restart workout (it starts the day over, and Undo brings it back) and All days.
 - A machine is taken? **Options** (top right; during a rest it is about the exercise coming next) opens a sheet "Instead of
   Hack squat" over the figure, with every alternative that fits that exercise, best first: a picture with the muscles lit,
   its name, its muscles and how close it is ("Same muscles", "Close" or "Weaker", with a one-line reason). A tap on one shows
