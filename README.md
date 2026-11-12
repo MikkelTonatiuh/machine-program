@@ -84,7 +84,7 @@ Open it, and download it to your phone (the **Download app** button is on its fi
   rope face pull, the assisted pull-up, the Smith squat with feet forward and the Smith seated press became Face pull, Assisted
   pull-up, Smith squat and Smith shoulder press) is the exercise in the place of a day that chose it, its sets stay, its last-time
   record is copied to the exercise's own record when that has none, and its history lines move to it.
-- **Week review**: "Start a new week" (or a workout chosen once all seven days are done) first shows what went up since the week
+- **Week review**: "Start week N" (at the top of the overview once all seven days are done; before that, "Start a new week" in the three dots), or a workout chosen once all seven days are done, first shows what went up since the week
   before ("Chest press 61 → 62 kg", "Lat pulldown +1 rep"), what is stuck (3 sessions with no progress) and the next step of the
   stall ladder, and a deload when one is due. One button, "Start week 4", starts the week.
 - **Deload week** (also in the three dots): half the sets, the same weights, every set 3–4 reps short of failure, for that
@@ -110,7 +110,7 @@ After the first visit it also works without a connection.
 Your sets and weights (drop sets apart), the day you are on, the time each workout took and your reps from last time are saved
 in the browser's storage on that phone only. There is no account and nothing is uploaded, so each phone keeps its own progress.
 Clearing the site's data in the browser starts it fresh. A finished week stays ticked until you begin the next workout (or
-press Start a new week at the bottom of the overview); that is also when the week number goes up. A second window of the app
+press Start week N at the top of the overview, or Start a new week in the three dots before the week is complete); that is also when the week number goes up. A second window of the app
 (the installed app and a browser tab, which a return from Strava can open) picks up what the other window saved, so the two do
 not overwrite each other.
 

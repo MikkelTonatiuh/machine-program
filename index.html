@@ -189,6 +189,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .based { align-self: flex-start; display: flex; align-items: center; gap: 9px; margin: 10px 0 4px; padding: 8px 14px 8px 11px; border-radius: 14px; border: 1px solid rgba(224,160,96,.34); background: linear-gradient(100deg, rgba(224,160,96,.17), rgba(224,160,96,.05)); font: 500 13.5px/1.3 var(--sans); color: var(--ink); }
 .based svg { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--amber); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .based b { font-weight: 500; color: var(--amber); }
+.dl.wk { border-color: rgba(224,160,96,.6); background: rgba(224,160,96,.16); }
+.dl.wk svg { stroke: var(--amber); }
 .dl svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .dl:active { background: rgba(236,231,222,.17); }
 #deload:not([data-on="1"]) { border-color: rgba(224,160,96,.62); color: var(--amber); }
@@ -512,6 +514,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     <button type="button" id="mstrava"><span>Strava</span><small id="mstravas">Not connected</small></button>
     <button type="button" id="mtest"><span>Test rest alert</span><small id="mtests"></small></button>
     <button type="button" id="mfinish">Finish workout</button>
+    <button type="button" id="mweek">Start a new week</button>
     <button type="button" id="mrestart">Restart workout</button>
     <button type="button" id="mhome">All days</button>
   </div>
@@ -562,11 +565,11 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
         </div>
       </div>
       <p class="based"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M8 2.8h4M9 2.8v4.7l-4.4 7.9a1.5 1.5 0 0 0 1.3 2.2h8.2a1.5 1.5 0 0 0 1.3-2.2L11 7.5V2.8M6.4 12.5h7.2"/></svg><span>Based on <b>Jeff Nippard</b> &amp; the latest science</span></p>
+      <button class="dl wk" id="newweek" type="button" hidden><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M15.6 7.2A6.2 6.2 0 1 0 16.2 11.8M15.8 3.2v4h-4"/></svg><span id="newweekt">Start a new week</span></button>
       <button class="dl" id="install" type="button" hidden><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 3v9.5m-4-4 4 4 4-4M4 16.5h12"/></svg><span>Download app</span></button>
       <button class="dl" id="deload" type="button" hidden><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3.5 6.5h13M5.5 10h9M7.5 13.5h5"/></svg><span id="deloadt">Time for a deload week</span></button>
       <ol class="daygrid" id="daylist"></ol>
       <div class="homefoot">
-        <button class="linkbtn" id="newweek" type="button" hidden>Start a new week</button>
         <p class="savenote" id="savenote" hidden>Not saved in this view</p>
       </div>
     </div>
@@ -3899,7 +3902,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     const n = weekDone(), N = P.days.length, w = $('week');
     w.textContent = 'Week ' + S.week + (deloadOn() ? MID + 'deload' : '') + (n >= N ? MID + 'complete' : n ? MID + n + ' of ' + N + ' days done' : '');
     if (n >= N) w.setAttribute('data-full', ''); else w.removeAttribute('data-full');
-    const nw = $('newweek'); nw.hidden = !n; nw.removeAttribute('data-arm'); nw.textContent = n >= N ? 'Start week ' + (S.week + 1) : 'Start a new week'; clearTimeout(nw._t);
+    const nw = $('newweek'); nw.hidden = n < N; nw.removeAttribute('data-arm'); $('newweekt').textContent = 'Start week ' + (S.week + 1); clearTimeout(nw._t); // (before the week is complete: the three dots)
     // the deload week: suggested here when it is due (after 8 weeks, or when several lifts stall), and ended here while it is on
     const dl = $('deload'), on = deloadOn(), due = !on && deloadDue();
     dl.hidden = !on && !due; dl.dataset.on = on ? '1' : '';
@@ -4952,7 +4955,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   // the items as the screen is now (render() calls it while the menu is open: a rest that ran out changes what it acts on)
   function paintMenu() {
     const on = deloadOn();
-    const key = [on, ui.adhoc, ui.mode, canRestart(), canFinish(), prefs.sound, prefs.unit, Strava ? Strava.sig() : ''].join('|');
+    const key = [on, ui.adhoc, ui.mode, canRestart(), canFinish(), weekDone(), prefs.sound, prefs.unit, Strava ? Strava.sig() : ''].join('|');
     if (key === menuKey && !menu.hidden) return;
     menuKey = key;
     const had = menu.contains(doc.activeElement);
@@ -4960,6 +4963,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
     $('mdeloads').textContent = on ? '' : deloadDue() ? 'Due now: ' + T.deloadWhat.charAt(0).toLowerCase() + T.deloadWhat.slice(1) : T.deloadWhat;
     $('mdeload').setAttribute('aria-disabled', ui.adhoc ? 'true' : 'false');
     $('mfinish').hidden = !canFinish();
+    { const wd = weekDone(); $('mweek').hidden = ui.adhoc || !(wd > 0 && wd < P.days.length); }
     $('mrestart').setAttribute('aria-disabled', !ui.adhoc && ui.mode !== 'end' && canRestart() ? 'false' : 'true');
     $('msounds').textContent = prefs.sound ? 'On' : 'Off'; $('msound').setAttribute('aria-label', 'Sound: ' + (prefs.sound ? 'on' : 'off'));
     $('mstravas').textContent = Strava && Strava.connected() ? 'Connected' : 'Not connected';
@@ -4984,6 +4988,7 @@ html:has(.app.dlg) { background: #0b0d10 !important; }
   });
   $('mrestart').addEventListener('click', () => { if ($('mrestart').getAttribute('aria-disabled') === 'true') return; closeMenu(true); restartDay(); });
   $('mfinish').addEventListener('click', () => { closeMenu(true); finishNow(); });
+  $('mweek').addEventListener('click', () => { closeMenu(true); openReview(null); });
   $('mhome').addEventListener('click', () => { closeMenu(false); openDays(); });
   $('mstrava').addEventListener('click', () => { closeMenu(false); Strava.open(); });
   $('mdeload').addEventListener('click', () => { if ($('mdeload').getAttribute('aria-disabled') === 'true') return; closeMenu(true); setDeload(!deloadOn()); });
