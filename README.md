@@ -92,9 +92,8 @@ Open it, and download it to your phone (the **Download app** button is on its fi
 - Recovery days: Day 3 is a bike interval ride (8 min easy, 4 × 4 min hard with 3 min easy between, 5 min easy; a beep and a
   buzz at each change, the screen shows the phase, its time left and the pulse to reach), Day 7 a 40–45 min easy ride. The
   stretching after the abs is optional.
-- The overview has a line on food (about 5–10% above maintenance and 1.6–2.2 g of protein per kg a day), one on steps
-  (8,000–10,000 a day, some of it brisk) and one on breathing: with high blood pressure, heart or eye problems, breathe out on
-  every rep.
+- Outside the gym (the app does not show it): eat about 5–10% above maintenance with 1.6–2.2 g of protein per kg a day, walk
+  8,000–10,000 steps a day, some of it brisk, and with high blood pressure, heart or eye problems breathe out on every rep.
 - Drag sideways on the figure to turn it. Tap the day at the top left for the overview.
 
 ## Download it to your phone
